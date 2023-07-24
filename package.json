@@ -1,0 +1,17 @@
+{
+  "name": "ecommerce-project",
+  "version": "1.0.0",
+  "description": "Ecommerce platform that allows the business of online retail.",
+  "main": "index.ts",
+  "scripts": {
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && npm start",
+    "start": "npm run frontend & npm run backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jschwery/ecom-project.git"
+  },
+  "author": "Jared Schwery",
+  "license": "ISC"
+}

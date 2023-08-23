@@ -1,0 +1,33 @@
+{
+  "name": "ecommerce-project",
+  "version": "1.0.0",
+  "description": "Ecommerce platform that allows the business of online retail.",
+  "main": "index.ts",
+  "scripts": {
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && npm start",
+    "start": "concurrently --kill-others \"npm --prefix backend run start\" \"npm --prefix frontend run start\"",
+    "build": "cd backend && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jschwery/ecom-project.git"
+  },
+  "author": "Jared Schwery",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
+    "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^2.1.0",
+    "axios": "^1.4.0",
+    "formik": "^2.4.3",
+    "gapi-script": "^1.2.0",
+    "jsonwebtoken": "^9.0.1",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "react-google-login": "^5.2.2",
+    "yup": "^1.2.0"
+  }
+}

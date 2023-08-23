@@ -1,0 +1,211 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Raleway:wght@600,700&family=Open+Sans:wght@300,400&display=swap");
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.siblingPage {
+  @apply bg-ca5 p-2 transition-colors duration-200 opacity-75;
+}
+
+.activePage {
+  @apply bg-ca7 p-2 opacity-100 transition-colors duration-200;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+h1 {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  font-size: xx-large;
+}
+
+h2 {
+  font-family: "Raleway", sans-serif;
+  font-weight: 600;
+  font-size: x-large;
+}
+
+h3 {
+  font-family: "Raleway", sans-serif;
+  font-weight: 600;
+  font-size: large;
+}
+
+h4 {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  font-size: medium;
+}
+
+h5 {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  font-size: small;
+}
+
+h6 {
+  font-family: "Raleway", sans-serif;
+  font-size: x-small;
+}
+
+p {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+}
+
+.star-ratings {
+  unicode-bidi: bidi-override;
+  color: #ccc;
+  font-size: 28px;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+.star-ratings .fill-ratings {
+  color: #e7711b;
+  padding: 0;
+  position: absolute;
+  z-index: 1;
+  display: block;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+.star-ratings .fill-ratings span {
+  display: inline-block;
+}
+.star-ratings .empty-ratings {
+  padding: 0;
+  display: block;
+  z-index: 0;
+}
+
+.custom-form-control-disabled {
+  opacity: 0;
+  max-height: 0px;
+  overflow: hidden;
+  visibility: hidden;
+  transition: opacity 0.3s, max-height 0.3s, visibility 0s linear 0.3s;
+}
+
+.custom-form-control-enabled {
+  opacity: 1;
+  max-height: 150px;
+  visibility: visible;
+  transition: opacity 0.3s 0.1s, max-height 0.3s 0.1s, visibility 0s linear 0s;
+}
+
+.react-select__multi-value {
+  @apply !bg-ca2 !rounded-md !transition-none;
+}
+.react-select__multi-value__label {
+  @apply !text-black !transition-none;
+}
+
+.react-select__input-container {
+  @apply !text-white !transition-none;
+}
+
+.react-select__control {
+  @apply hover:!border hover:!border-ca7 focus:!border-ca7 !transition-none;
+}
+.react-select__placeholder {
+  @apply !text-white !transition-none;
+}
+.react-select__menu {
+  @apply !bg-ca5 !transition-none;
+}
+.react-select__option:active {
+  @apply !bg-ca6 !transition-none;
+}
+.react-select__option:visited {
+  @apply !bg-ca6 !transition-none;
+}
+
+.react-select__option {
+  @apply !text-white hover:!bg-ca6 !transition-none;
+}
+.react-select__option--is-creatable {
+  @apply !bg-ca5 !text-white !transition-none;
+}
+.react-select__clear-indicator {
+  @apply hover:!text-red-500 !text-ca1 hover:!cursor-pointer;
+}
+.react-select__indicator-separator {
+  @apply !text-ca3 !bg-ca6;
+}
+.react-select__dropdown-indicator {
+  @apply hover:!text-ca3 !text-ca1 hover:cursor-pointer;
+}
+.Dropdown-control {
+  @apply !bg-ca5 !rounded-md;
+}
+.Dropdown-placeholder {
+  color: white;
+}
+
+div.flex-col-items {
+  @apply !flex !flex-col;
+}
+
+div.flex-row-items {
+  @apply !flex !flex-row !items-start;
+}
+
+.is-open .Dropdown-arrow {
+  border-color: transparent transparent white !important;
+  border-width: 0 5px 5px;
+}
+
+.Dropdown-arrow-wrapper > span {
+  color: white !important;
+  border-color: white transparent transparent;
+}
+
+div.Dropdown-menu {
+  @apply rounded-b-md;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.Dropdown-menu::-webkit-scrollbar {
+  display: none;
+}
+
+div.Dropdown-option {
+  @apply bg-ca5 text-ca1 hover:bg-ca6 hover:text-white;
+}
+
+div.Dropdown-option.is-selected {
+  @apply bg-ca6 text-white;
+}
+div.react-select__option--is-focused {
+  @apply !bg-ca6 text-white;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

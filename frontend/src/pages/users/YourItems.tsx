@@ -11,23 +11,22 @@ import ListedItem from "../../components/util/ListedItem";
 import useResizable from "../../hooks/useResizable";
 import { getDivWidth } from "../AddItem";
 import DetailedItem from "../../components/DetailedItem";
+import ViewProducts from "./ViewProducts";
+import useRemove from "../../hooks/useRemove";
 
 function YourItems() {
-  const { user, isLoading, products } = useUser();
+  const { user, isLoading, products, setUserProducts } = useUser();
   const [open, setNotOpen] = useState(false);
   const [closeUser, setCloseUser] = useState(false);
   const divRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    console.log("the products are: ");
-    console.log(products);
-  }, [user, products]);
+  const { setItems, removeItemByIndex, items } = useRemove();
+  const validItems = items.filter((item) => item && item._id);
 
   return (
     <>
       <SignedInNav />
 
-      <div className="pt-16 w-full h-screen bg-teal-900">
+      <div className="pt-16 w-full h-screen">
         <Button
           onClick={() => {
             setNotOpen(!open);
@@ -35,7 +34,6 @@ function YourItems() {
         >
           Hello
         </Button>
-        {open && <div>SUP BRO</div>}
         <div className="flex h-full w-full bg-slate-500">
           <div
             className={`bg-slate-50 transition-all duration-500 ${
@@ -50,7 +48,7 @@ function YourItems() {
               open ? "w-11/12" : "w-9/12"
             }`}
           >
-            <div className="flex flex-col justify-center items-center w-full">
+            <div className="flex flex-col justify-center items-center w-full h-full">
               <h2>Your items</h2>
               <p
                 onClick={() => (window.location.pathname = "/add-item")}
@@ -58,14 +56,18 @@ function YourItems() {
               >
                 Add another?
               </p>
-              <div className="w-full bg-ca5">
-                {products &&
-                  products.map((product, index) => (
-                    <DetailedItem
-                      key={`${product._id}-${index}`}
-                      product={product}
-                    />
-                  ))}
+              <div className="w-full space-y-4">
+                {validItems.map((product, index) => (
+                  <DetailedItem
+                    key={`${product._id}-${index}`}
+                    product={product}
+                    removeItemByIndex={removeItemByIndex}
+                    index={index}
+                  />
+                ))}
+              </div>
+              <div style={{ marginTop: "auto" }}>
+                <ViewProducts showProductsCallback={setItems} />
               </div>
             </div>
           </div>

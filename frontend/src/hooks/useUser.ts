@@ -1,11 +1,12 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Product, User } from "../../typings";
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setUserProducts] = useState<Product[] | null>(null);
+
   const getUserProducts = async () => {
     try {
       const productRequest = await axios.get(
@@ -67,5 +68,5 @@ export default function useUser() {
     checkUserStatus();
   }, []);
 
-  return { user, updateUser, isLoading, products };
+  return { user, updateUser, isLoading, products, setUserProducts };
 }

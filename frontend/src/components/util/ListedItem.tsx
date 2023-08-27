@@ -13,7 +13,7 @@ interface ListedItemProps {
   images?: string[];
   wrapTextStyle?: React.CSSProperties;
   formikValues?: {
-    productName?: string;
+    name?: string;
     productDescription?: string;
     category?: string;
     price?: number | string;
@@ -32,7 +32,7 @@ function ListedItem({
   customStyles = {},
   product = {
     accountId: "",
-    productName: "",
+    name: "",
     productDescription: "",
     category: "",
     price: 0,
@@ -40,7 +40,7 @@ function ListedItem({
   },
 }: ListedItemProps) {
   const defaultContent = {
-    productName: "Product Name",
+    name: "Product Name",
     productDescription: "Product Description",
     category: "",
     price: "15.00",
@@ -81,7 +81,7 @@ function ListedItem({
         <div className="flex flex-col justify-between px-4 max-w-1/3">
           <div className="flex flex-col space-y-1 pt-2 pb-12 pl-2">
             <h3 className="text-ca1" style={wrapTextStyle}>
-              {content.productName ? content.productName : "Title"}
+              {content.name ? content.name : "Title"}
             </h3>
             <h2 className="text-ca1" style={wrapTextStyle}>{`${
               content.price ? "$" + content.price : "$15.00"

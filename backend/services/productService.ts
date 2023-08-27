@@ -15,3 +15,14 @@ export async function createProduct(product: IProduct): Promise<Document> {
     throw new Error("Product creation failed");
   }
 }
+
+export async function deleteProductById(
+  productID: string
+): Promise<Document | null> {
+  try {
+    return await Product.findByIdAndDelete(productID);
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw new Error("Product deletion failed");
+  }
+}

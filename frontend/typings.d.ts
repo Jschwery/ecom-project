@@ -47,7 +47,7 @@ export interface User {
 export type Product = {
   accountId: string;
   _id?: string;
-  productName: string;
+  name: string;
   productDescription: string;
   category: string;
   price: number;

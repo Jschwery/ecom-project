@@ -23,5 +23,10 @@ router.delete(
   extractTokenAndUser,
   productController.deleteFromS3
 );
+router.delete(
+  "/products/:productId",
+  extractTokenAndUser,
+  productController.deleteProductById
+);
 
 export default router;

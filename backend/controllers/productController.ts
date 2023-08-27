@@ -22,6 +22,16 @@ export const findProductById = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const deleteProductById = async (req: CustomRequest, res: Response) => {
+  try {
+    await productService.deleteProductById(req.params.productId);
+    res.status(200).send({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).send({ error: "Failed to delete product" });
+  }
+};
+
 export const createProduct = async (req: CustomRequest, res: Response) => {
   try {
     const product = new Product(req.body);

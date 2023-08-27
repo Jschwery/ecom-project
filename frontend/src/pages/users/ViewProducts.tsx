@@ -1,64 +1,53 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Product } from "../../../typings";
 import Pagination from "../../components/util/Pagination";
 import useUser from "../../hooks/useUser";
+
 interface AddProductProps {
   showProductsCallback: (product: Product[]) => void;
 }
 
 function ViewProducts({ showProductsCallback }: AddProductProps) {
-  const { user, isLoading } = useUser();
-  const [productNames, setProductNames] = useState<string[]>([]);
-  const [products, setProducts] = useState<Product[] | null>([]);
+  const { user, products, updateUser } = useUser();
   const [currentPage, setCurrentPage] = useState<number>(1);
-
-  useEffect(() => {
-    if (productNames.length > 0) {
-      axios
-        .post("http://localhost:5000/api/products/details", {
-          productIds: productNames,
-        })
-        .then((response) => {
-          setProducts(response.data);
-        })
-        .catch((error: any) => {
-          console.error("Error fetching product details:", error);
-        });
-    }
-  }, [productNames]);
+  const [shownProducts, setShownProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     if (products) {
-      showProductsCallback(products);
+      const validProducts = products.filter((product) => product);
+      const slicedProducts = validProducts
+        .filter((product) => product._id)
+        .slice((currentPage - 1) * 4, currentPage * 4);
+      setShownProducts(slicedProducts);
     }
-  }, [products]);
+  }, [products, currentPage]);
 
+  useEffect(() => {
+    if (shownProducts) {
+      showProductsCallback(shownProducts.filter((product) => product._id));
+    }
+  }, [shownProducts]);
+
+  const totalProducts = products?.length || 0;
+  useEffect(() => {
+    console.log("currentpage  " + currentPage);
+    console.log(products);
+
+    console.log(totalProducts);
+  }, [currentPage]);
   return (
-    <>
-      <div className="inline-flex">
-        {user && user.products && (
-          <Pagination
-            totalItems={user.products.length}
-            itemsPerPage={10}
-            currentPage={currentPage}
-            onPageChange={(page: number) => {
-              setCurrentPage(page);
-              if (user.products) {
-                const slicedProducts = user.products.slice(
-                  (page - 1) * 10,
-                  page * 10
-                );
-                const namesArray = slicedProducts.map(
-                  (product) => product.productName
-                );
-                setProductNames(namesArray);
-              }
-            }}
-          />
-        )}
-      </div>
-    </>
+    <div className="inline-flex">
+      {totalProducts > 0 && (
+        <Pagination
+          totalItems={totalProducts}
+          itemsPerPage={4}
+          currentPage={currentPage}
+          onPageChange={(page: number) => {
+            setCurrentPage(page);
+          }}
+        />
+      )}
+    </div>
   );
 }
 

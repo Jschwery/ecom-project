@@ -18,9 +18,9 @@ function Pagination({
   }
 
   return (
-    <div className="inline-flex">
+    <div className="flex justify-between items-center h-full">
       <button
-        className="h-3 mr-2"
+        className="cursor-pointer pr-1"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
@@ -40,18 +40,20 @@ function Pagination({
         </svg>
       </button>
 
-      {pageNumbers.map((number) => (
-        <button
-          key={number}
-          onClick={() => onPageChange(number)}
-          className={`mr-2 ${number === currentPage ? "activePage" : ""}`}
-        >
-          {number}
-        </button>
-      ))}
+      <div className="flex items-center space-x-2">
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => onPageChange(number)}
+            className={`${number === currentPage ? "activePage" : ""}`}
+          >
+            {number}
+          </button>
+        ))}
+      </div>
 
       <button
-        className="h-3"
+        className="cursor-pointer pl-1"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >

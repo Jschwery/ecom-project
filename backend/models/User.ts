@@ -33,7 +33,11 @@ export interface IUser extends Document {
       details: string;
     }
   ];
-  shippingAddresses?: string[];
+  shippingAddresses?: {
+    name: string;
+    state: string;
+    zip: string;
+  }[];
   reviews?: [
     {
       product: Schema.Types.ObjectId;
@@ -96,11 +100,23 @@ const UserSchema: Schema = new Schema(
         details: { type: String, required: true },
       },
     ],
-    shippingAddresses: {
-      type: [String], 
-      required: false,
-      default: [] 
-  },
+    shippingAddresses: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        state: {
+          type: String,
+          required: true,
+        },
+        zip: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+
     reviews: [
       {
         product: {

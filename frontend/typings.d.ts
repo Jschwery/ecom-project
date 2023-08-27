@@ -17,7 +17,7 @@ export interface User {
   googleID?: string;
   age?: number;
   sellerName?: string;
-  products?: string[];
+  products?: Product[];
   profilePicture?: string;
   isSeller?: boolean;
   phoneNumber?: string;
@@ -33,12 +33,8 @@ export interface User {
   }[];
   shippingAddresses?: {
     name: string;
-    street: string;
-    city: string;
     state: string;
     zip: string;
-    country: string;
-    phoneNumber: string;
   }[];
   reviews?: {
     product: string;

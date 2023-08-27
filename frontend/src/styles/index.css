@@ -155,8 +155,8 @@ p {
 .react-select__dropdown-indicator {
   @apply hover:!text-ca3 !text-ca1 hover:cursor-pointer;
 }
-.Dropdown-control {
-  @apply !bg-ca5 !rounded-md;
+div.Dropdown-control {
+  @apply !bg-ca5 !rounded-md !pl-5;
 }
 .Dropdown-placeholder {
   color: white;
@@ -199,6 +199,9 @@ div.Dropdown-option.is-selected {
 }
 div.react-select__option--is-focused {
   @apply !bg-ca6 text-white;
+}
+div.chakra-input__right-element {
+  @apply !-right-3;
 }
 
 @keyframes spin {

@@ -47,6 +47,15 @@ export type MultiValue<T = string> = {
   label: string;
   value: T;
 };
+export function getDivWidth(
+  divRefElement: React.MutableRefObject<HTMLDivElement | null>
+) {
+  if (divRefElement.current) {
+    const width = divRefElement.current.getBoundingClientRect().width;
+    return width;
+  }
+  return 0;
+}
 
 function AddItem() {
   const { user, isLoading } = useUser();
@@ -74,6 +83,8 @@ function AddItem() {
     selectedCategory,
     selectedTags,
     handleTagChange,
+    setSelectedTags,
+    setSelectedCategory,
   } = useCategories();
 
   const uploadImageToS3 = async (images: string[]): Promise<string[]> => {
@@ -114,14 +125,6 @@ function AddItem() {
     return uploadedImageUrls;
   };
 
-  function getDivWidth() {
-    if (divRef.current) {
-      const width = divRef.current.getBoundingClientRect().width;
-      return width;
-    }
-    return 0;
-  }
-
   const handleSubmit = async (values: any) => {
     try {
       let uploadedImageUrls: string[] = [];
@@ -148,10 +151,18 @@ function AddItem() {
     if (imageUrls && imageUrls.length > 0) {
       formValues.imageUrls = imageUrls;
     }
+    console.log("form values after");
+    console.log(formValues);
 
     return axios.post(
-      "http://localhost:5000/api/products",
-      { ...formValues, imageUrls: imageUrls, accountId: user?._id },
+      "http://localhost:5000/api/products/create",
+      {
+        ...formValues,
+        imageUrls: imageUrls,
+        sellerID: user?._id,
+        tags: selectedTags.map((tag) => tag.value),
+        category: selectedCategory,
+      },
       {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -160,8 +171,8 @@ function AddItem() {
   };
 
   const validationSchema = Yup.object().shape({
-    productName: Yup.string().required("Product name is required"),
-    productDescription: Yup.string()
+    name: Yup.string().required("Product name is required"),
+    description: Yup.string()
       .min(8, "Description must be at least 8 characters")
       .max(250, "Description cannot exceed 250 characters")
       .required("Description is required"),
@@ -175,8 +186,8 @@ function AddItem() {
   });
   const formik = useFormik({
     initialValues: {
-      productName: "",
-      productDescription: "",
+      name: "",
+      description: "",
       price: 0,
       quantity: 0,
       category: "",
@@ -192,13 +203,13 @@ function AddItem() {
   };
 
   function toggleModal(): void {
+    setSelectedTags([]);
+    setSelectedCategory("");
     setIsOpen(!isOpen);
   }
 
   const isReadyToSubmit = () => {
-    if (selectedTags.length > 0) {
-      return true;
-    }
+    return selectedTags.length > 0;
   };
 
   function handleAddTags(): void {
@@ -208,7 +219,7 @@ function AddItem() {
   }
 
   useEffect(() => {
-    const currentWidth = getDivWidth();
+    const currentWidth = getDivWidth(divRef);
 
     if (currentWidth > 500 && flexDirection !== "flex-row-items") {
       setFlexDirection("flex-row-items");
@@ -253,19 +264,17 @@ function AddItem() {
             <div className="flex flex-col w-full  bg-ca3 px-5 space-y-5 p-16 sm:px-16 mt-2 overflow-auto">
               <h2 className="pb-2">Create product listing</h2>
               <FormControl
-                id="productName"
+                id="name"
                 isRequired
-                isInvalid={
-                  !!(formik.errors.productName && formik.touched.productName)
-                }
+                isInvalid={!!(formik.errors.name && formik.touched.name)}
               >
                 <FormLabel color={"ca9"}>Product Name</FormLabel>
                 <Input
-                  type={"productName"}
-                  name="productName"
+                  type={"name"}
+                  name="name"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.productName}
+                  value={formik.values.name}
                   _focus={{
                     borderColor: "co8",
                     color: "co8",
@@ -273,26 +282,23 @@ function AddItem() {
                   }}
                 />
 
-                {formik.errors.productName && formik.touched.productName ? (
-                  <Text color="red">{formik.errors.productName}</Text>
+                {formik.errors.name && formik.touched.name ? (
+                  <Text color="red">{formik.errors.name}</Text>
                 ) : null}
               </FormControl>
               <FormControl
-                id="productDescription"
+                id="description"
                 isRequired
                 isInvalid={
-                  !!(
-                    formik.errors.productDescription &&
-                    formik.touched.productDescription
-                  )
+                  !!(formik.errors.description && formik.touched.description)
                 }
               >
                 <FormLabel color={"ca9"}>Product Description</FormLabel>
                 <Textarea
-                  name="productDescription"
+                  name="description"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values.productDescription}
+                  value={formik.values.description}
                   resize="none"
                   _focus={{
                     borderColor: "co8",
@@ -301,9 +307,8 @@ function AddItem() {
                   }}
                 />
 
-                {formik.errors.productDescription &&
-                formik.touched.productDescription ? (
-                  <Text color="red">{formik.errors.productDescription}</Text>
+                {formik.errors.description && formik.touched.description ? (
+                  <Text color="red">{formik.errors.description}</Text>
                 ) : null}
               </FormControl>
 
@@ -318,7 +323,6 @@ function AddItem() {
                     name="price"
                     onBlur={formik.handleBlur}
                     onChange={(value) => formik.setFieldValue("price", value)}
-                    defaultValue={15}
                     precision={2}
                     step={0.2}
                   >
@@ -345,7 +349,6 @@ function AddItem() {
                     onChange={(value) =>
                       formik.setFieldValue("quantity", value)
                     }
-                    defaultValue={100}
                   >
                     <NumberInputField />
                   </NumberInput>
@@ -366,9 +369,9 @@ function AddItem() {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
-                      className="w-6 h-6 cursor-pointer"
+                      className="w-6 h-6 cursor-pointer hover:scale-[110%]"
                       onClick={() => {
                         setIsOpen(true);
                       }}
@@ -382,11 +385,16 @@ function AddItem() {
                   </Box>
 
                   <Box className="w-full flex space-x-2">
-                    {selectedTags.map((tag) => {
+                    {selectedTags.map((tag, index) => {
                       return (
                         <ITag
+                          key={`tag-${index}`}
                           tagName={tag.value}
-                          onClose={function (): void {}}
+                          onClose={() => {
+                            setSelectedTags((prevTags) =>
+                              prevTags.filter((t) => t.value !== tag.value)
+                            );
+                          }}
                         />
                       );
                     })}
@@ -407,6 +415,7 @@ function AddItem() {
               >
                 {isReadyToSubmit() ? "Submit" : "Continue"}
               </Button>
+
               <Modal
                 closeOnOverlayClick={false}
                 isOpen={isOpen}
@@ -428,7 +437,12 @@ function AddItem() {
                   <ModalCloseButton />
                   <ModalBody>
                     <Stack spacing={5} w={"full"}>
-                      <Stack spacing={2} minW="73px" w={"50%"}>
+                      <Stack
+                        className="inline-flex"
+                        spacing={2}
+                        minW="73px"
+                        w={"50%"}
+                      >
                         <FormLabel fontSize="sm" mb="1">
                           Categories
                         </FormLabel>

@@ -7,6 +7,7 @@ import User from "../models/User";
 import * as AWS from "aws-sdk";
 import { CustomRequest } from "../types";
 import { v4 as uuidv4 } from "uuid";
+import Product from "../models/Product";
 
 export const createUser = async (req: CustomRequest, res: Response) => {
   let newUser: any;
@@ -60,20 +61,56 @@ export const verifyEmail = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const getUserProducts = async (req: CustomRequest, res: Response) => {
+  try {
+    const user = req.foundUser;
+
+    if (!user || !user.products) {
+      return res
+        .status(404)
+        .send({ message: "User not found or user has no products." });
+    }
+
+    const userProducts = await Promise.all(
+      user.products.map(async (product) => await Product.findById(product))
+    );
+
+    return res.status(200).send(userProducts);
+  } catch (error) {
+    console.error("Error fetching user products:", error);
+    return res.status(500).send({ message: "Internal server error." });
+  }
+};
+
 export const updateUser = async (req: CustomRequest, res: Response) => {
   try {
+    console.log(
+      `Received request to update user. Body: ${JSON.stringify(req.body)}`
+    );
+    if (req.body.password) {
+      const passwordHash = await bcrypt.hash(req.body.password, 10);
+      req.body.password = passwordHash;
+    }
     if (req.foundUser) {
+      const updatePayload = {
+        ...req.body,
+        shippingAddresses: req.body.shippingAddresses,
+      };
+
       const user = await userService.updateUserById(
         req.foundUser._id,
-        req.body
+        updatePayload
       );
+
       res.status(200).send(user);
     } else {
+      console.warn("Attempted to update user, but user was not found.");
       res.status(404).send({
         message: "User not found.",
       });
     }
   } catch (error: any) {
+    console.error(`Error while updating user. Error: ${error.message}`);
     res.status(500).send({
       message: "An error occurred while updating the user.",
       error: error.message,
@@ -82,6 +119,10 @@ export const updateUser = async (req: CustomRequest, res: Response) => {
 };
 
 export const uploadToS3 = async (req: CustomRequest, res: Response) => {
+  console.log(`Received upload request at: ${new Date().toISOString()}`);
+  console.log(`Method: ${req.method}`);
+  console.log(`Headers: ${JSON.stringify(req.headers)}`);
+
   const s3 = new AWS.S3({
     signatureVersion: "v4",
   });

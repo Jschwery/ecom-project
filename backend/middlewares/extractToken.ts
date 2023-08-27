@@ -28,6 +28,8 @@ export async function extractTokenAndUser(
       process.env.JWT_SECRET as string
     );
     const userId = decodedPayload._id;
+    console.log("the userid is: " + userId);
+
     const user = await User.findById(userId);
 
     if (user) {

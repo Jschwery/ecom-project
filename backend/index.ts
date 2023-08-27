@@ -13,6 +13,7 @@ import usersRoutes from "./routes/usersRoutes";
 import * as AWS from "aws-sdk";
 import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
+import productRoutes from "./routes/productRoutes";
 
 dotenv.config();
 const app = express();
@@ -52,7 +53,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/api", transactionRoutes);
-// app.use("/api", productRoutes);
+app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
 

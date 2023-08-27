@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { MouseEvent, SetStateAction, useEffect, useState } from "react";
 import {
   Button,
   Flex,
@@ -16,58 +16,87 @@ import {
   Text,
   Select,
   Divider,
+  Toast,
+  FormErrorMessage,
+  useBreakpointValue,
 } from "@chakra-ui/react";
-import { useFormik } from "formik";
+import { FormikErrors, useFormik } from "formik";
 import * as Yup from "yup";
 import { useToast } from "@chakra-ui/react";
 import { US_STATES } from "../data/states";
 import { useTheme } from "@chakra-ui/react";
+import useUser from "../hooks/useUser";
+import { ShippingAddress } from "../pages/users/EditProfile";
 
 interface ShippingAddresses {
-  onAddressChange: (addresses: string[]) => void;
+  onAddressChange: (addresses: ShippingAddress[]) => void;
 }
 
 function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
   const [isOpen, setIsOpen] = useState(false);
-  const [addresses, setAddresses] = useState<string[]>([""]);
-  const [currentAddresses, setCurrentAddresses] = useState<string[]>([""]);
+  const [addresses, setAddresses] = useState<ShippingAddress[]>([]);
   const toast = useToast();
+  const { user, isLoading } = useUser();
   const { colors } = useTheme();
-
-  const validationSchema = Yup.object({
-    addresses: Yup.array().of(Yup.string().required("Address is required")),
-    zipCodes: Yup.array().of(Yup.string().required("ZIP Code is required")),
-    states: Yup.array().of(Yup.string().required("State is required")),
+  const svgWidth = useBreakpointValue({
+    base: "2rem",
+    md: "3rem",
   });
+
+  const svgHeight = useBreakpointValue({
+    base: "2rem",
+    md: "3rem",
+  });
+
+  const validationSchema = Yup.array()
+    .of(
+      Yup.object().shape({
+        name: Yup.string().required("Address is required"),
+        zip: Yup.string()
+          .matches(/^\d{5}$/, "Must be exactly 5 digits")
+          .required("ZIP Code is required"),
+        state: Yup.string().required("State is required"),
+      })
+    )
+    .max(4, "Only 4 addresses are allowed.");
 
   const formik = useFormik({
     initialValues: {
-      addresses: currentAddresses,
-      zipCodes: [""],
-      states: [""],
+      addresses: [{ name: "", zip: "", state: "" }],
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      handleAddAddress();
+      const newAddresses = [...addresses, ...values.addresses];
+      setAddresses(newAddresses);
+      formik.setValues({ addresses: [{ name: "", zip: "", state: "" }] });
+      setIsOpen(false);
     },
   });
 
-  const handleAddAddress = () => {
-    const combinedAddresses = formik.values.addresses.map((address, index) => {
-      const zip = formik.values.zipCodes[index] || "";
-      const state = formik.values.states[index] || "";
-      return `${address}, ${zip}, ${state}`;
+  const toggleModal = () => {
+    const filteredAddresses = formik.values.addresses.filter((address) => {
+      return (
+        address.name.length > 0 &&
+        address.state.length > 0 &&
+        address.zip.length > 0
+      );
     });
+    const defaultAddress = { name: "", state: "", zip: "" };
 
-    const newAddresses = [...addresses, ...combinedAddresses];
-    setAddresses(newAddresses);
-    setCurrentAddresses([""]);
-    formik.resetForm();
-    setIsOpen(false);
+    formik.setValues({
+      addresses:
+        filteredAddresses.length > 0 ? filteredAddresses : [defaultAddress],
+    });
+    setIsOpen(!isOpen);
   };
 
   const handleAddAnother = () => {
-    if (currentAddresses.length >= 4) {
+    const { addresses } = formik.values;
+    let userAddressesLength = user?.shippingAddresses?.length || 0;
+
+    let userAllowedLength = userAddressesLength + addresses.length;
+
+    if (userAllowedLength >= 4) {
       toast({
         title: "Limit Reached",
         description: "Only 4 addresses are allowed.",
@@ -77,57 +106,44 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
       });
       return;
     }
-    const combinedAddresses = formik.values.addresses.map((address, index) => {
-      const zip = formik.values.zipCodes[index] || "";
-      const state = formik.values.states[index] || "";
-      return `${address}, ${zip}, ${state}`;
+    formik.setValues({
+      addresses: [
+        ...addresses.filter(
+          (add) =>
+            add.name.length > 0 && add.state.length > 0 && add.zip.length > 0
+        ),
+        { name: "", zip: "", state: "" },
+      ],
     });
-
-    setCurrentAddresses([...combinedAddresses, ""]);
-  };
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    formik.handleSubmit();
-  };
-  const toggleModal = () => {
-    if (isOpen) {
-      const validAddresses: string[] = [];
-      const validZipCodes: string[] = [];
-      const validStates: string[] = [];
-
-      formik.values.addresses.forEach((address, index) => {
-        const addressError =
-          formik.errors.addresses && formik.errors.addresses[index];
-        const zipError =
-          formik.errors.zipCodes && formik.errors.zipCodes[index];
-        const stateError = formik.errors.states && formik.errors.states[index];
-
-        if (!addressError && !zipError && !stateError) {
-          validAddresses.push(address);
-          validZipCodes.push(formik.values.zipCodes[index]);
-          validStates.push(formik.values.states[index]);
-        }
-      });
-
-      setCurrentAddresses([...validAddresses]);
-      if ([...validAddresses].length === 0) {
-        setCurrentAddresses([""]);
-      }
-      formik.setFieldValue("addresses", validAddresses);
-      formik.setFieldValue("zipCodes", validZipCodes);
-      formik.setFieldValue("states", validStates);
-    }
-
-    setIsOpen((prevIsOpen) => !prevIsOpen);
   };
 
   useEffect(() => {
-    console.log("current address");
-    console.log(currentAddresses);
-
     onAddressChange(addresses);
-  }, [currentAddresses]);
+  }, [addresses]);
 
+  function handleButtonClick(): void {
+    setIsOpen(false);
+    if (
+      formik.values.addresses.length > 0 &&
+      formik.values.addresses.every(
+        (address) =>
+          address.name.length > 0 &&
+          address.state.length > 0 &&
+          address.zip.length > 0
+      )
+    ) {
+      onAddressChange(formik.values.addresses);
+    }
+  }
+
+  const handleZipChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (/^\d{0,5}$/.test(e.target.value)) {
+      formik.handleChange(e);
+    }
+  };
   return (
     <>
       <Stack direction={"row"}>
@@ -158,10 +174,19 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
           <ModalHeader>Add Shipping Address</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {currentAddresses.map((currentAddress, index) => (
-              <FormControl py={3} key={index}>
+            {formik.values.addresses.map((_, index) => (
+              <FormControl
+                className="bg-ca5 rounded-md px-2"
+                py={3}
+                my={3}
+                key={index}
+              >
                 <FormLabel>Address {index + 1}</FormLabel>
-                <Stack direction={"row"} align="center" spacing={3}>
+                <Stack
+                  direction={["column", "column", "row", "row"]}
+                  align={["start", "start", "center", "center"]}
+                  spacing={3}
+                >
                   <Stack spacing={2} w={"80%"}>
                     <FormLabel fontSize="sm" mb="1">
                       Street
@@ -174,8 +199,8 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
                       _hover={{
                         border: "3px solid rgba(255, 255, 255, 1)",
                       }}
-                      name={`addresses[${index}]`}
-                      value={formik.values.addresses[index] || ""}
+                      name={`addresses[${index}].name`}
+                      value={formik.values.addresses[index].name || ""}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       placeholder={`Enter address ${index + 1}`}
@@ -187,6 +212,8 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
                       ZIP Code
                     </FormLabel>
                     <Input
+                      type="text"
+                      maxLength={5}
                       border="2px solid rgba(255, 255, 255, 0.85)"
                       _hover={{
                         border: "3px solid rgba(255, 255, 255, 1)",
@@ -194,19 +221,15 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
                       _placeholder={{
                         color: "rgba(0, 0, 0, 0.75)",
                       }}
-                      name={`zipCodes[${index}]`}
-                      value={
-                        (formik.values.zipCodes &&
-                          formik.values.zipCodes[index]) ||
-                        ""
-                      }
-                      onChange={formik.handleChange}
+                      name={`addresses[${index}].zip`}
+                      value={formik.values.addresses[index].zip || ""}
+                      onChange={(e) => handleZipChange(e, index)}
                       onBlur={formik.handleBlur}
                       placeholder="ZIP Code"
                     />
                   </Stack>
 
-                  <Stack spacing={2} minW="73px" w={"32%"}>
+                  <Stack spacing={2} minW="90px" w={"32%"}>
                     <FormLabel fontSize="sm" mb="1">
                       State
                     </FormLabel>
@@ -219,8 +242,8 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
                       _placeholder={{
                         color: "rgba(0, 0, 0, 0.75)",
                       }}
-                      name={`states[${index}]`}
-                      value={formik.values.states[index] || ""}
+                      name={`addresses[${index}].state`}
+                      value={formik.values.addresses[index].state || ""}
                       onChange={(e) => {
                         formik.handleChange(e);
                       }}
@@ -235,33 +258,45 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
                       ))}
                     </Select>
                   </Stack>
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="hover:text-red-500 cursor-pointer"
+                    style={{
+                      width: svgWidth,
+                      height: svgHeight,
+                      alignSelf: "end",
+                    }}
+                    onClick={() => {
+                      const updatedAddresses = formik.values.addresses.filter(
+                        (_, addrIndex) => addrIndex !== index
+                      );
+                      formik.setValues({ addresses: updatedAddresses });
+                    }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    />
+                  </svg>
                 </Stack>
 
-                {formik.touched.addresses && formik.errors.addresses && (
-                  <Text color="red">{formik.errors.addresses[index]}</Text>
-                )}
+                {formik.touched.addresses && formik.errors.addresses ? (
+                  <Text color="red">
+                    {String(formik.errors.addresses[index])}
+                  </Text>
+                ) : null}
               </FormControl>
             ))}
             <Stack py={5} px={1} direction={"row"}>
               <Link onClick={handleAddAnother}>Add Another +</Link>
             </Stack>
 
-            <>
-              <Flex
-                className=" p-3 rounded-md"
-                bgColor={"ca5"}
-                direction="column"
-                mt={4}
-              >
-                <h3 className="py-0.5 leading-8 ">Current Addresses</h3>
-                <Divider />
-                {addresses.map((address, index) => (
-                  <Flex className="py-0.5" key={index} mb={2}>
-                    <p>{address}</p>
-                  </Flex>
-                ))}
-              </Flex>
-            </>
             <Flex justify={"end"}>
               <Button
                 textColor={"white"}
@@ -269,7 +304,7 @@ function ShippingAddresses({ onAddressChange }: ShippingAddresses) {
                 _hover={{ bg: "ca5" }}
                 w="40%"
                 mt={4}
-                onClick={(e) => handleButtonClick(e)}
+                onClick={() => handleButtonClick()}
               >
                 Add Addresses
               </Button>

@@ -16,8 +16,12 @@ import {
   Text,
   Progress,
   Divider,
+  useToast,
+  InputGroup,
+  InputRightElement,
+  filter,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
+import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useFormik } from "formik";
@@ -29,36 +33,41 @@ import { deleteImgFromS3 } from "../../components/util/DeleteFromS3";
 import FileUpload from "../../components/util/UploadFile";
 import { dataURItoBlob } from "../../components/util/URItoBlob";
 
+export type ShippingAddress = {
+  name: string;
+  zip: string;
+  state: string;
+};
+
 export default function UserProfileEdit() {
-  const [userShippingAddress, setShippingAddresses] = useState<string[]>([]);
+  const [userShippingAddress, setShippingAddresses] = useState<
+    ShippingAddress[]
+  >([]);
   const [sellerEnabled, setSellerEnabled] = useState(false);
   const [currentAlert, displayAlert] = useAlert();
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [page, setPage] = useState("first");
-  const { user, isLoading } = useUser();
+  const { user, updateUser, isLoading } = useUser();
   const [closeUser, setCloseUser] = useState(user?.profilePicture !== null);
   const [userImage, setUserImage] = useState<string>(initializeUserImage);
+  const toast = useToast();
+  const [shippingAddressesToDelete, setShippingAddressesToDelete] = useState<
+    ShippingAddress[]
+  >([]);
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
-      password: Yup.string()
-        .min(8, "Password must be at least 8 characters")
-        .required("Password is required"),
-      sellerName: sellerEnabled
-        ? Yup.string().required("Seller name is required")
-        : Yup.string(),
-      name: Yup.string().required("First name is required"),
-      lastName: Yup.string().required("Last name is required"),
+      password: Yup.string().min(8, "Password must be at least 8 characters"),
+      sellerName: sellerEnabled ? Yup.string() : Yup.string(),
+      name: Yup.string(),
+      lastName: Yup.string(),
       age: Yup.number()
         .min(0, "Age must be a positive number")
-        .max(120, "Age must be under 120 years")
-        .required("Age is required"),
-      phoneNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "Phone number must be 10 digits")
-        .required("Phone number is required"),
-      shippingAddresses: Yup.array()
-        .of(Yup.string().required("Address is required"))
-        .required("At least one address is required"),
+        .max(120, "Age must be under 120 years"),
+      phoneNumber: Yup.string().matches(
+        /^[0-9]{10}$/,
+        "Phone number must be 10 digits"
+      ),
     });
   }, [sellerEnabled]);
   const formik = useFormik({
@@ -69,13 +78,12 @@ export default function UserProfileEdit() {
       age: "",
       password: "",
       phoneNumber: "",
-      shippingAddresses: [],
       profilePicture: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        if (userImage) {
+        if (userImage && !userImage.includes("googleuser")) {
           const formData = new FormData();
           let imageBlob;
           if (userImage.startsWith("data:")) {
@@ -108,8 +116,8 @@ export default function UserProfileEdit() {
           {
             ...values,
             isSeller: sellerEnabled,
-            shippingAddresses: userShippingAddress.filter(
-              (v) => v.trim() !== ""
+            shippingAddresses: userShippingAddress.concat(
+              user?.shippingAddresses ?? []
             ),
           },
           {
@@ -194,6 +202,33 @@ export default function UserProfileEdit() {
   const handleSetUserImage = (file: string) => {
     setCloseUser(true);
     setUserImage(file);
+  };
+
+  const handleRemoveAddress = (indx: number) => {
+    const addrToRemove = user?.shippingAddresses?.find(
+      (_, index) => index === indx
+    );
+    console.log(addrToRemove);
+
+    if (addrToRemove) {
+      setShippingAddressesToDelete((prevAddresses) => {
+        const doesExist = prevAddresses.some((address) => {
+          return (
+            address.name === addrToRemove.name &&
+            address.state === addrToRemove.state &&
+            address.zip === addrToRemove.zip
+          );
+        });
+
+        if (!doesExist) {
+          return [...prevAddresses, addrToRemove];
+        }
+
+        return prevAddresses;
+      });
+    } else {
+      console.log("could not find address at index: " + indx);
+    }
   };
 
   return (
@@ -388,7 +423,6 @@ export default function UserProfileEdit() {
                   <Text color="red">{formik.errors.age}</Text>
                 )}
               </FormControl>
-
               <FormControl
                 isInvalid={
                   !!(formik.errors.password && formik.touched.password)
@@ -396,18 +430,28 @@ export default function UserProfileEdit() {
                 id="password"
               >
                 <FormLabel>Password</FormLabel>
-                <Input
-                  name="password"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.password}
-                  placeholder="enter your password"
-                  _placeholder={{ color: "gray.500" }}
-                  type="text"
-                />
-                {formik.errors.password && formik.touched.password && (
-                  <Text color="red">{formik.errors.password}</Text>
-                )}
+                <InputGroup size="md">
+                  <Input
+                    name="password"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.password}
+                    placeholder="enter your password"
+                    _placeholder={{ color: "gray.500" }}
+                    type={showPassword ? "text" : "password"}
+                  />
+                  <InputRightElement width="4.5rem">
+                    <IconButton
+                      size="sm"
+                      className="!bg-ca4"
+                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                    />
+                  </InputRightElement>
+                </InputGroup>
               </FormControl>
 
               <FormControl
@@ -433,6 +477,140 @@ export default function UserProfileEdit() {
 
               <ShippingAddresses onAddressChange={setShippingAddresses} />
               <Divider my={1} />
+              {((userShippingAddress?.length ?? 0) > 0 ||
+                (user?.shippingAddresses?.length ?? 0) > 0) && (
+                <Stack padding={4} spacing={4} className="bg-ca6 rounded-md">
+                  <h3 className="text-ca1">Addresses to add</h3>
+                  {userShippingAddress.map((address, index) => {
+                    return (
+                      <Flex className="w-full bg-ca7 rounded-md p-2 items-center justify-between ">
+                        <p className="text-lg text-ca1">
+                          {address.name}, {address.state}, {address.zip}
+                        </p>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          onClick={() => {
+                            setShippingAddresses((prevAddresses) => {
+                              return prevAddresses.filter(
+                                (_, idx) => idx !== index
+                              );
+                            });
+                          }}
+                          className="w-6 h-6 pb-0.5 justify-between text-ca1 cursor-pointer hover:text-red-500"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
+                        </svg>
+                      </Flex>
+                    );
+                  })}
+                  <Stack>
+                    {user?.shippingAddresses &&
+                      user.shippingAddresses.length >= 1 && (
+                        <>
+                          <Flex
+                            className=" p-3 rounded-md"
+                            bgColor={"ca5"}
+                            direction="column"
+                            mt={4}
+                          >
+                            <h3 className="py-0.5 leading-8 ">
+                              Current Addresses
+                            </h3>
+                            <Divider className="mb-2" />
+                            {user.shippingAddresses &&
+                              user.shippingAddresses.map((address, index) => (
+                                <Flex
+                                  className="py-0.5 bg-ca6 items-center justify-between rounded-md p-2"
+                                  key={index}
+                                  mb={2}
+                                >
+                                  <p className="text-white text-xl py-2">
+                                    {address.name}, {address.state},{" "}
+                                    {address.zip} <br />
+                                  </p>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                    className="w-7 h-7  hover:text-red-500 cursor-pointer"
+                                    onClick={() => {
+                                      handleRemoveAddress(index);
+                                    }}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                  </svg>
+                                </Flex>
+                              ))}
+
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className="w-6 h-6 min-w-[24px] min-h-[24px] mr-0.5 hover:text-red-500 self-end my-2 cursor-pointer"
+                              onClick={async () => {
+                                if (user && user._id) {
+                                  const joinedAddresses =
+                                    userShippingAddress.concat(
+                                      user.shippingAddresses ?? []
+                                    );
+                                  console.log("joined");
+
+                                  console.log(joinedAddresses);
+
+                                  const result = await updateUser({
+                                    ...user,
+                                    shippingAddresses: joinedAddresses,
+                                  });
+
+                                  if (result.status && result.status === 200) {
+                                    toast({
+                                      title: "Success",
+                                      description: "Shipping address deleted",
+                                      status: "success",
+                                      duration: 3000,
+                                      isClosable: true,
+                                    });
+                                  } else {
+                                    toast({
+                                      title: "Error",
+                                      description:
+                                        "Could not delete shipping address",
+                                      status: "error",
+                                      duration: 3000,
+                                      isClosable: true,
+                                    });
+                                  }
+                                }
+                              }}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                              />
+                            </svg>
+                          </Flex>
+                        </>
+                      )}
+                  </Stack>
+                </Stack>
+              )}
 
               <Stack py={2} direction={"row"}>
                 <Button

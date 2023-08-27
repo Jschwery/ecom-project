@@ -6,8 +6,10 @@ import {
   NumberInputStepper,
 } from "@chakra-ui/react";
 import React from "react";
+import { Product } from "../../../typings";
 interface ListedItemProps {
   flexDirection: "flex-col-items" | "flex-row-items";
+  product?: Product;
   images?: string[];
   wrapTextStyle?: React.CSSProperties;
   formikValues?: {
@@ -28,6 +30,14 @@ function ListedItem({
   wrapTextStyle = {},
   formikValues = {},
   customStyles = {},
+  product = {
+    accountId: "",
+    productName: "",
+    productDescription: "",
+    category: "",
+    price: 0,
+    quantity: 0,
+  },
 }: ListedItemProps) {
   const defaultContent = {
     productName: "Product Name",

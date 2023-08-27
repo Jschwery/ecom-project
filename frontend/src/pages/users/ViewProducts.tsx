@@ -45,9 +45,14 @@ function ViewProducts({ showProductsCallback }: AddProductProps) {
             onPageChange={(page: number) => {
               setCurrentPage(page);
               if (user.products) {
-                setProductNames(
-                  user.products.slice((page - 1) * 10, page * 10)
+                const slicedProducts = user.products.slice(
+                  (page - 1) * 10,
+                  page * 10
                 );
+                const namesArray = slicedProducts.map(
+                  (product) => product.productName
+                );
+                setProductNames(namesArray);
               }
             }}
           />

@@ -51,5 +51,7 @@ export default function useCategories() {
     selectedCategory,
     selectedTags,
     handleTagChange,
+    setSelectedTags,
+    setSelectedCategory,
   };
 }

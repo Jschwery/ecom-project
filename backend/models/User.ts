@@ -14,6 +14,7 @@ export interface IUser extends Document {
   googleID?: string;
   productsViewed?: Schema.Types.ObjectId[];
   age?: number;
+  rating?: number;
   sellerName?: string;
   products?: Schema.Types.ObjectId[];
   profilePicture?: string;
@@ -54,7 +55,7 @@ const UserSchema: Schema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
-    productsViewed: {type: String, required: false},
+    productsViewed: { type: String, required: false },
     status: {
       type: String,
       enum: ["active", "suspended", "banned"],
@@ -72,6 +73,7 @@ const UserSchema: Schema = new Schema(
     isVerified: { type: Boolean, required: true, default: false },
     address: { type: String, required: false },
     googleID: { type: String, required: false },
+    rating: { type: Number, required: false },
     age: { type: Number, required: false },
     sellerName: { type: String, required: false },
     products: [

@@ -5,10 +5,12 @@ import { Product } from "../../../typings";
 import useProducts from "../../hooks/useProducts";
 import PictureCarousel from "../../components/DealCarousel";
 import ITag from "./Tag";
+import useUser from "../../hooks/useUser";
 
 function ProductPage() {
   let { productID } = useParams();
   const { getProductById } = useProducts();
+  const { user, isLoading } = useUser();
   const [foundProduct, setFoundProduct] = useState<Product | null>();
 
   useEffect(() => {
@@ -25,11 +27,6 @@ function ProductPage() {
     getProduct();
   }, [productID, getProductById]);
 
-  useEffect(() => {
-    console.log(foundProduct);
-    console.log(foundProduct?.description);
-  }, [foundProduct]);
-
   if (!foundProduct)
     return (
       <div className="min-h-screen flex justify-center items-center">
@@ -43,8 +40,17 @@ function ProductPage() {
 
       <div className="bg-ca1 w-full min-h-screen pt-20">
         <div className="w-full p-4 bg-red-500 flex flex-col md:flex-row">
-          <div className="w-[30%] bg-teal-200">
-            <h2>test</h2>
+          <div className="w-full md:w-[30%] flex items-center flex-col">
+            <h2>Seller</h2>
+            <img
+              className="w-14 h-14 rounded-full"
+              src={user?.profilePicture || "/images/logo2.svg"}
+              alt="user profile"
+            />
+            <div className="flex flex-col items-center">
+              <h4>{user?.name}</h4>
+              <h4>{user?.rating || "Rating: 5⭐"}</h4>
+            </div>
           </div>
           <div className=" w-[70%] mx-auto bg-ca3 p-4 md:p-6 rounded-lg shadow-lg flex flex-col md:flex-row">
             <div className="order-1 mb-4 md:mb-0 md:mr-4 w-full md:w-[40%]">

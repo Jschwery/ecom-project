@@ -14,6 +14,7 @@ export interface User {
   wishlist?: string[];
   isVerified: boolean;
   address?: string;
+  rating?: number;
   googleID?: string;
   age?: number;
   sellerName?: string;
@@ -49,6 +50,8 @@ export type Product = {
   _id?: string;
   name: string;
   description: string;
+  rating?: number;
+  reviews?: string[];
   category: string;
   price: number;
   quantity: number;

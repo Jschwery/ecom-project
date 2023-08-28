@@ -47,11 +47,9 @@ export type MultiValue<T = string> = {
   label: string;
   value: T;
 };
-export function getDivWidth(
-  divRefElement: React.MutableRefObject<HTMLDivElement | null>
-) {
-  if (divRefElement.current) {
-    const width = divRefElement.current.getBoundingClientRect().width;
+export function getDivWidth(div: HTMLDivElement | null): number {
+  if (div) {
+    const width = div.getBoundingClientRect().width;
     return width;
   }
   return 0;
@@ -219,7 +217,7 @@ function AddItem() {
   }
 
   useEffect(() => {
-    const currentWidth = getDivWidth(divRef);
+    const currentWidth = getDivWidth(divRef.current);
 
     if (currentWidth > 500 && flexDirection !== "flex-row-items") {
       setFlexDirection("flex-row-items");

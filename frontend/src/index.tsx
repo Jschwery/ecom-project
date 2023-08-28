@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import UserProfileEdit from "./pages/users/EditProfile";
 import YourItems from "./pages/users/YourItems";
 import AddItem from "./pages/AddItem";
+import ProductPage from "./pages/users/ProductPage";
 
 const root = document.getElementById("root");
 
@@ -60,6 +61,7 @@ ReactDOM.render(
           <Route path="/register" element={<Register />} />
           <Route path="/edit-profile" element={<UserProfileEdit />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/products/:productID" element={<ProductPage />} />
 
           {/* <Route path="/login" element={<LoginPage />} /> */}
         </Routes>

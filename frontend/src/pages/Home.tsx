@@ -1,10 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import NotSignedInNav from "../components/NotSignedIn";
 import SignedInNav from "../components/SignedInNavBar";
+import ListedItem from "../components/util/ListedItem";
+import useProducts from "../hooks/useProducts";
+import useResizable from "../hooks/useResizable";
 import useUser from "../hooks/useUser";
+import { getDivWidth } from "./AddItem";
 
 function App() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading: userLoading } = useUser();
+  const { products, loading: productsLoading, getProducts } = useProducts();
+  const divRef: React.MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement | null>(null);
+  const [flexDirection, setFlexDirection] = useState("");
+  const lastFlexDirection = useRef(flexDirection);
+
+  const breakpoints = [
+    { max: 768, class: "flex-col-items" },
+    { max: 900, class: "flex-row-items" },
+  ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      const currentWidth = getDivWidth(divRef.current);
+      console.log(currentWidth);
+      console.log(lastFlexDirection.current);
+
+      for (let bp of breakpoints) {
+        if (currentWidth <= bp.max) {
+          if (lastFlexDirection.current !== bp.class) {
+            setFlexDirection(bp.class);
+            lastFlexDirection.current = bp.class;
+          }
+          break;
+        }
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const loadingStyles: React.CSSProperties = {
     position: "fixed",
@@ -27,7 +66,7 @@ function App() {
     animation: "spin 1s linear infinite",
   };
 
-  if (isLoading) {
+  if (productsLoading) {
     return (
       <>
         <div className="w-full h-screen flex justify-center items-start p-4">
@@ -50,12 +89,22 @@ function App() {
     <>
       {user ? <SignedInNav /> : <NotSignedInNav />}
       <div className="pt-16 bg-ca3 w-full h-screen">
-        <div className="w-full flex h-1/4 flex-col px-10 py-10 space-y-2 overflow-hidden">
-          <h2>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa
-            reprehenderit debitis eos quibusdam sed tenetur animi itaque
-            voluptatem aperiam officia!
-          </h2>
+        <div className="bg-ca5 flex-col rounded-md p-4 m-4">
+          <h2>Recently Viewed</h2>
+        </div>
+        <div
+          ref={divRef}
+          className="w-full justify-center p-4 flex-wrap flex gap-4 bg-ca7"
+        >
+          {products &&
+            products.map((p) => (
+              <ListedItem
+                key={p._id}
+                images={p.imageUrls}
+                flexDirection={flexDirection}
+                product={p}
+              />
+            ))}
         </div>
       </div>
     </>

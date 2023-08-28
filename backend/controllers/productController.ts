@@ -22,6 +22,18 @@ export const findProductById = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const getProductById = async (req: CustomRequest, res: Response) => {
+  try {
+    const productId: string = req.params.productId;
+
+    const product = await productService.findProductById(productId);
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+
 export const deleteProductById = async (req: CustomRequest, res: Response) => {
   try {
     await productService.deleteProductById(req.params.productId);
@@ -110,3 +122,14 @@ export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
     });
   }
 };
+export const getAllProducts = async (req: CustomRequest, res: Response) => {
+  try {
+      const products = await Product.find();  
+
+      return res.status(200).send(products);
+  } catch (error: any) {
+      return res.status(500).send({ message: "Error fetching products", error: error.message });
+  }
+}
+
+

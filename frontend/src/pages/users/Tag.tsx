@@ -3,7 +3,7 @@ import React from "react";
 
 interface TagProps {
   tagName: string;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 function ITag({ tagName, onClose }: TagProps) {
@@ -11,7 +11,7 @@ function ITag({ tagName, onClose }: TagProps) {
     <HStack spacing={4}>
       <Tag size={"md"} borderRadius="full" variant="solid" sx={{ bg: "ca7" }}>
         <TagLabel>{tagName}</TagLabel>
-        <TagCloseButton onClick={onClose} />
+        {onClose && <TagCloseButton onClick={onClose} />}
       </Tag>
     </HStack>
   );

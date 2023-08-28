@@ -8,11 +8,21 @@ router.use(expressFileUpload());
 
 router.post("/products/details", productController.findProductById);
 
-router.post(
+
+router.get("/products/:productId", productController.getProductById);
+
+  router.post(
   "/products/create",
   extractTokenAndUser,
   productController.createProduct
 );
+
+router.get(
+  "/products",
+  extractTokenAndUser,
+  productController.getAllProducts
+);
+
 router.post(
   "/products/images",
   extractTokenAndUser,

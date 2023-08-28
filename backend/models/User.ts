@@ -12,7 +12,7 @@ export interface IUser extends Document {
   isVerified: boolean;
   address?: string;
   googleID?: string;
-  viewedProducts?: Schema.Types.ObjectId[];
+  productsViewed?: Schema.Types.ObjectId[];
   age?: number;
   sellerName?: string;
   products?: Schema.Types.ObjectId[];
@@ -54,6 +54,7 @@ const UserSchema: Schema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
+    productsViewed: {type: String, required: false},
     status: {
       type: String,
       enum: ["active", "suspended", "banned"],

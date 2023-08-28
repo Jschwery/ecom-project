@@ -8,7 +8,7 @@ import {
 import React from "react";
 import { Product } from "../../../typings";
 interface ListedItemProps {
-  flexDirection: "flex-col-items" | "flex-row-items";
+  flexDirection: string | "flex-col-items" | "flex-row-items";
   product?: Product;
   images?: string[];
   wrapTextStyle?: React.CSSProperties;
@@ -32,8 +32,9 @@ function ListedItem({
   customStyles = {},
   product = {
     accountId: "",
+    _id: "",
     name: "",
-    productDescription: "",
+    description: "",
     category: "",
     price: 0,
     quantity: 0,
@@ -41,7 +42,7 @@ function ListedItem({
 }: ListedItemProps) {
   const defaultContent = {
     name: "Product Name",
-    productDescription: "Product Description",
+    description: "Product Description",
     category: "",
     price: "15.00",
     quantity: "100",
@@ -67,11 +68,14 @@ function ListedItem({
         }
       >
         <img
+          onClick={() =>
+            (window.location.pathname = `/products/${product._id}`)
+          }
           className={`${
             flexDirection === "flex-row-items"
               ? "h-full w-full rounded-md"
               : "w-full h-48 rounded-md"
-          } object-fill p-1`}
+          } object-fill p-1 cursor-pointer`}
           src={images[0] || "/images/logo2.svg"}
           alt="product logo"
         />
@@ -81,11 +85,20 @@ function ListedItem({
         <div className="flex flex-col justify-between px-4 max-w-1/3">
           <div className="flex flex-col space-y-1 pt-2 pb-12 pl-2">
             <h3 className="text-ca1" style={wrapTextStyle}>
-              {content.name ? content.name : "Title"}
+              {product.name
+                ? product.name
+                : content.name
+                ? content.name
+                : "Product Name"}
             </h3>
-            <h2 className="text-ca1" style={wrapTextStyle}>{`${
-              content.price ? "$" + content.price : "$15.00"
-            }`}</h2>
+            <h2 className="text-ca1" style={wrapTextStyle}>
+              {" "}
+              {product.price
+                ? "$" + product.price
+                : content.price
+                ? "$" + content.price
+                : "$15.00"}
+            </h2>
           </div>
         </div>
 

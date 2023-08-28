@@ -48,7 +48,7 @@ export type Product = {
   accountId: string;
   _id?: string;
   name: string;
-  productDescription: string;
+  description: string;
   category: string;
   price: number;
   quantity: number;

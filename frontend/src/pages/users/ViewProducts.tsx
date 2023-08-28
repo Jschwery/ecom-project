@@ -14,27 +14,31 @@ function ViewProducts({ showProductsCallback }: AddProductProps) {
 
   useEffect(() => {
     if (products) {
-      const validProducts = products.filter((product) => product);
-      const slicedProducts = validProducts
-        .filter((product) => product._id)
-        .slice((currentPage - 1) * 4, currentPage * 4);
-      setShownProducts(slicedProducts);
+      const validProducts = products.filter(
+        (product) => product && product._id
+      );
+      const startIdx = (currentPage - 1) * 4;
+      const endIdx = currentPage * 4;
+      setShownProducts(validProducts.slice(startIdx, endIdx));
     }
   }, [products, currentPage]);
 
   useEffect(() => {
-    if (shownProducts) {
-      showProductsCallback(shownProducts.filter((product) => product._id));
+    if (shownProducts.length) {
+      showProductsCallback(shownProducts);
     }
   }, [shownProducts]);
 
-  const totalProducts = products?.length || 0;
+  const totalProducts = products
+    ? products.filter((p) => p && p._id).length
+    : 0;
+
   useEffect(() => {
     console.log("currentpage  " + currentPage);
     console.log(products);
-
     console.log(totalProducts);
   }, [currentPage]);
+
   return (
     <div className="inline-flex">
       {totalProducts > 0 && (

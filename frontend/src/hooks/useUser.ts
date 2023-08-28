@@ -49,7 +49,7 @@ export default function useUser() {
 
   useEffect(() => {
     getUserProducts();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const checkUserStatus = async () => {

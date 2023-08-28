@@ -44,6 +44,25 @@ export const createUser = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const getRecentProducts = async (req: CustomRequest, res: Response) => {
+  try {
+    const user = req.foundUser;
+    if (!user || !user.productsViewed) {
+      return res
+        .status(404)
+        .send({ message: "User not found or user has no products." });
+    }
+    const userProducts = await Promise.all(
+      user.productsViewed.map(async (product) => await Product.findById(product))
+    );
+
+    return res.status(200).send(userProducts);
+  } catch (error: any) {
+    return res.status(500).send({ message: error.message });
+  }
+}
+
+
 export const verifyEmail = async (req: CustomRequest, res: Response) => {
   const token = req.query.token as string;
 

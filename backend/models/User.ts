@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
-  _id: string;
   name: string;
   lastName?: string;
   email: string;
@@ -39,14 +38,6 @@ export interface IUser extends Document {
     state: string;
     zip: string;
   }[];
-  reviews?: [
-    {
-      product: Schema.Types.ObjectId;
-      rating: number;
-      comment: string;
-      date: Date;
-    }
-  ];
 }
 
 const UserSchema: Schema = new Schema(
@@ -117,19 +108,6 @@ const UserSchema: Schema = new Schema(
           type: String,
           required: true,
         },
-      },
-    ],
-
-    reviews: [
-      {
-        product: {
-          type: Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        rating: { type: Number, required: true },
-        comment: { type: String, required: true },
-        date: { type: Date, default: Date.now },
       },
     ],
   },

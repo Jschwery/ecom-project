@@ -483,7 +483,10 @@ export default function UserProfileEdit() {
                   <h3 className="text-ca1">Addresses to add</h3>
                   {userShippingAddress.map((address, index) => {
                     return (
-                      <Flex className="w-full bg-ca7 rounded-md p-2 items-center justify-between ">
+                      <Flex
+                        key={`${address}-${index}`}
+                        className="w-full bg-ca7 rounded-md p-2 items-center justify-between "
+                      >
                         <p className="text-lg text-ca1">
                           {address.name}, {address.state}, {address.zip}
                         </p>

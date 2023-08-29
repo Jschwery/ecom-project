@@ -1,11 +1,41 @@
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Product, User } from "../../typings";
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setUserProducts] = useState<Product[] | null>(null);
+
+  const BASE_URL = "http://localhost:5000";
+
+  const fetchData = async (endpoint: string) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${BASE_URL}${endpoint}`, {
+        withCredentials: true,
+      });
+      console.log(response);
+
+      return response.data;
+    } catch (err: any) {
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const getUserById = useCallback(async (userID: string) => {
+    try {
+      const userFound = await fetchData(`/api/users/${userID}`);
+      console.log("++++++++++++++++");
+
+      console.log(userFound);
+
+      return userFound;
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
 
   const getUserProducts = async () => {
     try {
@@ -68,5 +98,12 @@ export default function useUser() {
     checkUserStatus();
   }, []);
 
-  return { user, updateUser, isLoading, products, setUserProducts };
+  return {
+    user,
+    updateUser,
+    isLoading,
+    products,
+    setUserProducts,
+    getUserById,
+  };
 }

@@ -7,6 +7,26 @@ import useResizable from "../hooks/useResizable";
 import useUser from "../hooks/useUser";
 import { getDivWidth } from "./AddItem";
 
+export const loadingStyles: React.CSSProperties = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  backgroundColor: "rgba(0, 0, 0, 0.7)",
+};
+
+export const spinnerStyles: React.CSSProperties = {
+  border: "8px solid rgba(255, 255, 255, 0.1)",
+  borderTop: "8px solid white",
+  borderRadius: "50%",
+  width: "50px",
+  height: "50px",
+  animation: "spin 1s linear infinite",
+};
 function App() {
   const { user, isLoading: userLoading } = useUser();
   const { products, loading: productsLoading, getProducts } = useProducts();
@@ -44,27 +64,6 @@ function App() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const loadingStyles: React.CSSProperties = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-  };
-
-  const spinnerStyles: React.CSSProperties = {
-    border: "8px solid rgba(255, 255, 255, 0.1)",
-    borderTop: "8px solid white",
-    borderRadius: "50%",
-    width: "50px",
-    height: "50px",
-    animation: "spin 1s linear infinite",
-  };
 
   if (productsLoading) {
     return (

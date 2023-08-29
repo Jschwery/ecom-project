@@ -37,12 +37,6 @@ export interface User {
     state: string;
     zip: string;
   }[];
-  reviews?: {
-    product: string;
-    rating: number;
-    comment: string;
-    date: Date;
-  }[];
 }
 
 export type Product = {
@@ -51,9 +45,12 @@ export type Product = {
   name: string;
   description: string;
   rating?: number;
-  reviews?: string[];
   category: string;
   price: number;
+  reviews?: {
+    review: string;
+    _id?: string;
+  }[];
   quantity: number;
   imageUrls?: string[];
   tags?: string[];

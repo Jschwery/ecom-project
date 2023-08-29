@@ -26,3 +26,14 @@ export async function deleteProductById(
     throw new Error("Product deletion failed");
   }
 }
+export async function updateProduct(
+  productID: string,
+  updates: Partial<IProduct>
+): Promise<Document | null> {
+  try {
+    return await Product.findByIdAndUpdate(productID, updates, { new: true });
+  } catch (error) {
+    console.error("error updating product:", error);
+    throw new Error("Product update failed");
+  }
+}

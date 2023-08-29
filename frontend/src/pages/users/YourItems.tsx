@@ -67,7 +67,10 @@ function YourItems() {
                 ))}
               </div>
               <div style={{ marginTop: "auto" }}>
-                <ViewProducts showProductsCallback={setItems} />
+                <ViewProducts
+                  itemsList={products ?? []}
+                  showItemsCallback={setItems}
+                />
               </div>
             </div>
           </div>

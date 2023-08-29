@@ -8,19 +8,18 @@ router.use(expressFileUpload());
 
 router.post("/products/details", productController.findProductById);
 
-
-router.get("/products/:productId", productController.getProductById);
-
-  router.post(
+router.post(
   "/products/create",
   extractTokenAndUser,
   productController.createProduct
 );
 
-router.get(
-  "/products",
+router.get("/products", extractTokenAndUser, productController.getAllProducts);
+
+router.put(
+  "/products/edit",
   extractTokenAndUser,
-  productController.getAllProducts
+  productController.updateProduct
 );
 
 router.post(
@@ -38,5 +37,7 @@ router.delete(
   extractTokenAndUser,
   productController.deleteProductById
 );
+router.get("/products/owner/:productId", productController.findProductOwner);
+router.get("/products/:productId", productController.getProductById);
 
 export default router;

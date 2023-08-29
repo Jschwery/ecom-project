@@ -53,15 +53,16 @@ export const getRecentProducts = async (req: CustomRequest, res: Response) => {
         .send({ message: "User not found or user has no products." });
     }
     const userProducts = await Promise.all(
-      user.productsViewed.map(async (product) => await Product.findById(product))
+      user.productsViewed.map(
+        async (product) => await Product.findById(product)
+      )
     );
 
     return res.status(200).send(userProducts);
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
   }
-}
-
+};
 
 export const verifyEmail = async (req: CustomRequest, res: Response) => {
   const token = req.query.token as string;
@@ -101,11 +102,21 @@ export const getUserProducts = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export async function getUserByID(req: CustomRequest, res: Response) {
+  try {
+    const user = await User.findById(req.params.userID);
+    console.log("yessssssssssssssssaaaaaaaaaaaa");
+
+    console.log(user);
+
+    return res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 export const updateUser = async (req: CustomRequest, res: Response) => {
   try {
-    console.log(
-      `Received request to update user. Body: ${JSON.stringify(req.body)}`
-    );
     if (req.body.password) {
       const passwordHash = await bcrypt.hash(req.body.password, 10);
       req.body.password = passwordHash;
@@ -209,7 +220,7 @@ export async function checkUser(req: CustomRequest, res: Response) {
     return res.status(401).json({ message: "Not authenticated" });
   }
   try {
-    const user = await User.findOne({ _id: req.foundUser._id }).select(
+    const user = await User.findOne({ _id: req.foundUser.id }).select(
       "-password"
     );
 

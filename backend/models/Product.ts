@@ -1,16 +1,21 @@
 import mongoose, { Schema } from "mongoose";
-import { IUser } from "./User";
 import { Document } from "mongoose";
 
 export interface IProduct extends Document {
-  _id: Schema.Types.ObjectId;
-  sellerID: IUser["_id"];
+  sellerID: Schema.Types.ObjectId[];
   name: string;
   description: string;
   category: string;
   price: number;
   quantity: number;
   imageUrls?: [string];
+  reviews: [
+    {
+      review: string;
+      UserID: Schema.Types.ObjectId;
+    }
+  ];
+
   tags?: [string];
   usersViewed?: Schema.Types.ObjectId[];
   creationDate: Date;
@@ -22,6 +27,12 @@ const ProductSchema: Schema = new Schema({
   description: { type: String, required: true },
   category: { type: String, required: true },
   price: { type: Number, required: true },
+  reviews: [
+    {
+      review: { type: String, required: true },
+      UserID: { type: Schema.Types.ObjectId, required: true },
+    },
+  ],
   quantity: { type: Number, required: true },
   imageUrls: { type: [String], required: false },
   tags: { type: [String], required: false },

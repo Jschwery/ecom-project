@@ -10,12 +10,11 @@ router.use(middleLogger);
 router.use(expressFileUpload());
 
 router.post("/users", userController.createUser);
-
 router.post("/users/images", userController.uploadToS3);
 router.delete("/users/images", userController.deleteFromS3);
 router.get("/users/check", userController.checkUser);
-
 router.put("/users/edit", userController.updateUser);
 router.get("/users/products", userController.getUserProducts);
+router.get("/users/:userID", userController.getUserByID);
 
 export default router;

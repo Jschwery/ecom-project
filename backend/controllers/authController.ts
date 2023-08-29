@@ -10,6 +10,11 @@ export const googleAuthCallback = async (req: CustomRequest, res: Response) => {
     return res.status(400).send("User not found");
   }
   try {
+    console.log(req.user);
+    console.log(
+      "IN CALLBACK ************************************************************************************************"
+    );
+
     const user = req.user as IUser;
     const token = userService.generateVerificationToken(user._id as string);
     res.cookie("googleToken", token, {
@@ -28,10 +33,6 @@ export const googleAuthCallback = async (req: CustomRequest, res: Response) => {
 
 export const handleLogin = async (req: CustomRequest, res: Response) => {
   const user = await User.findOne({ email: req.body.email });
-
-  console.log("in handle login");
-
-  console.log(user);
 
   if (!user) return res.status(400).send("Email or password is incorrect");
 

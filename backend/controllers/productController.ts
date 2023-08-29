@@ -33,6 +33,35 @@ export const getProductById = async (req: CustomRequest, res: Response) => {
   }
 };
 
+export const updateProduct = async (req: CustomRequest, res: Response) => {
+  try {
+    const product = await productService.updateProduct(req.body._id, req.body);
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+export const findProductOwner = async (req: CustomRequest, res: Response) => {
+  try {
+    const productId: string = req.params.productId;
+    console.log("Received productId:", productId);
+
+    const product = await Product.findById(productId)
+      .populate("sellerID")
+      .exec();
+    console.log("Found product:", product);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found!" });
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
 
 export const deleteProductById = async (req: CustomRequest, res: Response) => {
   try {
@@ -124,12 +153,12 @@ export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
 };
 export const getAllProducts = async (req: CustomRequest, res: Response) => {
   try {
-      const products = await Product.find();  
+    const products = await Product.find();
 
-      return res.status(200).send(products);
+    return res.status(200).send(products);
   } catch (error: any) {
-      return res.status(500).send({ message: "Error fetching products", error: error.message });
+    return res
+      .status(500)
+      .send({ message: "Error fetching products", error: error.message });
   }
-}
-
-
+};

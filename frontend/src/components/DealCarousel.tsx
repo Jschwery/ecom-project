@@ -7,11 +7,6 @@ interface Props {
 function PictureCarousel({ images }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    console.log(currentImageIndex);
-    console.log(images);
-  }, [currentImageIndex]);
-
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
   };

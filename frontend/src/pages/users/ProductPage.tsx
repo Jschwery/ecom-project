@@ -209,7 +209,7 @@ function ProductPage() {
                   />
                 )}
               </div>
-              <div className="w-[50%] bg-ca4 rounded-md justify-center py-5">
+              <div className="w-[80%] bg-ca4 rounded-md justify-center py-5">
                 <h3>Write your review:</h3>
                 <Input
                   value={input}

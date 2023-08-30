@@ -57,11 +57,11 @@ app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
 
-User.deleteMany({})
-  .then(() => {
-    console.log("done");
-  })
-  .catch((err) => console.log(err));
+// User.deleteMany({})
+//   .then(() => {
+//     console.log("done");
+//   })
+//   .catch((err) => console.log(err));
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);

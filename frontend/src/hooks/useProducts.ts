@@ -8,7 +8,7 @@ const BASE_URL = "http://localhost:5000";
 export default function useProducts() {
   const [products, setProducts] = useState<Product[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [productOwner, setProductOwner] = useState<any>();
+  const [productOwner, setProductOwner] = useState<User>();
   const [error, setError] = useState<Error | null>(null);
   const toast = useToast();
 
@@ -71,13 +71,17 @@ export default function useProducts() {
 
   const findProductOwner = async (productID: string) => {
     try {
-      const response: User = await axios.get(
-        `/api/products/owner/${productID}`,
+      console.log("find prod owner");
+
+      console.log(productID);
+
+      const response = await axios.get(
+        `http://localhost:5000/api/products/owner/${productID}`,
         {
           withCredentials: true,
         }
       );
-      setProductOwner(response);
+      setProductOwner(response.data);
     } catch (err) {
       console.error(err);
     }

@@ -10,11 +10,6 @@ export const googleAuthCallback = async (req: CustomRequest, res: Response) => {
     return res.status(400).send("User not found");
   }
   try {
-    console.log(req.user);
-    console.log(
-      "IN CALLBACK ************************************************************************************************"
-    );
-
     const user = req.user as IUser;
     const token = userService.generateVerificationToken(user._id as string);
     res.cookie("googleToken", token, {

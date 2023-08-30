@@ -11,16 +11,20 @@ import DetailedItem from "../../components/DetailedItem";
 import ViewProducts from "./ViewProducts";
 import { Button, Input } from "@chakra-ui/react";
 import { loadingStyles, spinnerStyles } from "../Home";
+import ReviewComponent from "./ReviewComponent";
 
 function ProductPage() {
   let { productID } = useParams();
   const { getProductById, updateProduct, findProductOwner, productOwner } =
     useProducts();
-  const { user, getUserById, isLoading } = useUser();
+  const { user, getUserById, isLoading, getAllUserProducts, allProducts } =
+    useUser();
   const [foundProduct, setFoundProduct] = useState<Product | null>();
   const [reviewUsers, setReviewUsers] = useState<any[]>([]);
   const [userImages, setUserImages] = useState<User[]>([]);
   const [input, setInput] = useState("");
+  const [isTruncated, setIsTruncated] = useState(true);
+
   useEffect(() => {
     const getProduct = async () => {
       try {
@@ -28,8 +32,6 @@ function ProductPage() {
           const product: Product = await getProductById(productID);
 
           if (product) {
-            console.log(product);
-
             setFoundProduct(product);
             setReviewUsers(product.reviews ?? []);
           } else {
@@ -44,7 +46,24 @@ function ProductPage() {
     getProduct();
   }, [productID, getProductById]);
 
-  useEffect(() => {}, [foundProduct]);
+  useEffect(() => {
+    findProductOwner(productID || "");
+  }, [productID]);
+
+  useEffect(() => {
+    console.log("the product owner is");
+    if (productOwner) {
+      console.log(productOwner.products);
+    }
+    console.log(productOwner?._id);
+
+    getAllUserProducts(productOwner?._id || "");
+  }, [productOwner]);
+
+  useEffect(() => {
+    console.log("all products");
+    console.log(allProducts);
+  }, [allProducts]);
 
   useEffect(() => {
     if (foundProduct?.reviews) {
@@ -52,10 +71,7 @@ function ProductPage() {
         const fetchedUsers: User[] = [];
         for (let review of foundProduct.reviews || []) {
           if (review._id) {
-            console.log(review._id);
-
             const reviewUser = await getUserById(review._id);
-            console.log(reviewUser);
 
             if (reviewUser) {
               fetchedUsers.push(reviewUser);
@@ -70,7 +86,7 @@ function ProductPage() {
     }
   }, [foundProduct?.reviews, getUserById]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
   };
 
@@ -118,24 +134,59 @@ function ProductPage() {
     <>
       <SignedInNav />
 
-      <div className="bg-ca2 w-full min-h-screen pt-20">
-        <div className="w-full p-4 flex flex-col md:flex-row">
-          <div className=" min-w-[30%] rounded-md md:w-[30%] mx-2 flex items-center flex-col bg-ca4">
+      <div className="bg-ca2 w-full h-screen min-h-screen pt-20">
+        <div className="w-full grow  p-4 flex flex-col md:flex-row bg-red-300">
+          <div className=" min-w-[30%] rounded-md md:w-[30%] mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
             <h2>Seller</h2>
             <img
               className="w-14 h-14 rounded-full"
-              src={"" || "/images/logo2.svg"}
+              src={productOwner?.profilePicture || "/images/logo2.svg"}
               alt="user profile"
             />
-            <div className="flex flex-col items-center">
-              <h4>{user?.name}</h4>
-              <h4>{user?.rating || "Rating: 5⭐"}</h4>
+            <div className="flex flex-col items-center w-[80%]">
+              <h4>{productOwner?.sellerName || productOwner?.name}</h4>
+              <h4>{productOwner?.rating || "Rating: 5⭐"}</h4>
+              <h2>All Seller Items</h2>
 
-              <div className="flex flex-col w-full p-5"></div>
+              <div className="flex flex-col space-y-2 w-full">
+                {allProducts &&
+                  allProducts.map((product, index) => {
+                    return (
+                      <div
+                        onClick={() =>
+                          (window.location.pathname = `/products/${product._id}`)
+                        }
+                        className="flex flex-col cursor-pointer p-2 w-full justify-between bg-ca2 rounded-md my-2 items-center"
+                      >
+                        <div className="flex w-full items-center justify-between">
+                          <div className="flex w-full items-center space-x-5 min-w-0">
+                            <img
+                              className="h-10 w-10 rounded-full"
+                              src={
+                                (product.imageUrls && product.imageUrls[0]) ||
+                                "/images/logo2.svg"
+                              }
+                              alt={product.name}
+                            />
+                            <h3 className="leading-snug mt-0.5 grow overflow-hidden truncate min-w-0">
+                              {product.name}
+                            </h3>
+                          </div>
+                          <h3 className="ml-1 flex-shrink-0">
+                            ${product.price}
+                          </h3>
+                        </div>
+                        <span className="self-start">
+                          {product.rating || "Rating: 5⭐"}
+                        </span>
+                      </div>
+                    );
+                  })}
+              </div>
             </div>
           </div>
-          <div className="flex flex-col md:w-[70%] px-2 my-5 md:my-0">
-            <div className=" w-full bg-ca3 p-4 md:p-6 rounded-lg shadow-black mb-2 pl-3 shadow-sm flex flex-col md:flex-row">
+          <div className="flex flex-col md:w-[70%] px-2 my-5 md:my-0 space-y-3">
+            <div className=" w-full bg-ca3 p-4 md:p-6 rounded-lg shadow-black mb-2 pl-3 shadow-sm flex flex-col md:flex-row ">
               <div className="order-1 mb-4 md:mb-0 md:mr-4 w-full md:w-[40%]">
                 <PictureCarousel images={foundProduct.imageUrls ?? []} />
               </div>
@@ -176,7 +227,7 @@ function ProductPage() {
               </div>
             </div>
 
-            <div className="w-full flex flex-col items-center bg-ca2">
+            <div className="w-full flex flex-col items-center shadow-md shadow-black rounded-md bg-ca2 grow">
               <h1>Product Reviews</h1>
               {reviewUsers &&
                 reviewUsers.map((review, index) => {
@@ -185,41 +236,38 @@ function ProductPage() {
                   );
 
                   return (
-                    <div className="flex items-center w-[75%] my-3 space-x-5 bg-ca4 rounded-md p-3">
-                      <img
-                        className="w-12 h-12 rounded-full"
-                        src={
-                          correspondingUser
-                            ? correspondingUser.profilePicture
-                            : "/path/to/default/image.jpg"
-                        }
-                        alt="Reviewer's profile picture"
-                      />
-                      <h3 className="flex-grow overflow-hidden bg-ca3 rounded-md p-1">
-                        {review.review}
-                      </h3>
-                    </div>
+                    <ReviewComponent
+                      review={review}
+                      correspondingUser={correspondingUser}
+                    />
                   );
                 })}
-              <div style={{ marginTop: "auto" }}>
+
+              <div className="w-full flex flex-col items-center mt-auto p-4 space-y-4">
                 {foundProduct.reviews && (
                   <ViewProducts
                     itemsList={foundProduct.reviews}
                     showItemsCallback={(items) => setReviewUsers(items)}
                   />
                 )}
-              </div>
-              <div className="w-[80%] bg-ca4 rounded-md justify-center py-5">
-                <h3>Write your review:</h3>
-                <Input
-                  value={input}
-                  className="!w-[100px]"
-                  placeholder="Type your review here..."
-                  onChange={handleInputChange}
-                />
-                <Button onClick={input !== "" ? handleSubmitReview : () => {}}>
-                  Submit Review
-                </Button>{" "}
+                <div className="w-[80%] bg-ca4 mt-auto rounded-md space-y-2 justify-center p-5 flex flex-col">
+                  <h3>Write your review:</h3>
+                  <div className="flex justify-between space-x-4">
+                    <textarea
+                      value={input}
+                      className="w-[75%] h-28 bg-ca5 rounded-md text-white resize-none placeholder:text-ca1 focus:bg-ca6 "
+                      placeholder="Type your review here..."
+                      onChange={handleInputChange}
+                    ></textarea>
+
+                    <button
+                      onClick={input !== "" ? handleSubmitReview : () => {}}
+                      className="self-end min-w-[87px] bg-ca6 hover:bg-ca5 text-white rounded-md p-2"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

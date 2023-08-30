@@ -7,7 +7,8 @@ import User from "../models/User";
 import * as AWS from "aws-sdk";
 import { CustomRequest } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import Product from "../models/Product";
+import Product, { IProduct } from "../models/Product";
+import mongoose from "mongoose";
 
 export const createUser = async (req: CustomRequest, res: Response) => {
   let newUser: any;
@@ -105,9 +106,6 @@ export const getUserProducts = async (req: CustomRequest, res: Response) => {
 export async function getUserByID(req: CustomRequest, res: Response) {
   try {
     const user = await User.findById(req.params.userID);
-    console.log("yessssssssssssssssaaaaaaaaaaaa");
-
-    console.log(user);
 
     return res.status(200).json(user);
   } catch (err) {
@@ -232,5 +230,27 @@ export async function checkUser(req: CustomRequest, res: Response) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function getAllUserProduct(req: CustomRequest, res: Response) {
+  try {
+    const userId = req.params.userID;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
+
+    const products: IProduct[] = await Product.find({
+      sellerID: userId,
+    }).exec();
+
+    console.log("in get all products ======================");
+    console.log(products);
+
+    return res.json(products);
+  } catch (err) {
+    console.error("Error retrieving user products:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }

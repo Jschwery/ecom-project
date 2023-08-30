@@ -43,6 +43,11 @@ export const updateProduct = async (req: CustomRequest, res: Response) => {
 };
 
 export const findProductOwner = async (req: CustomRequest, res: Response) => {
+  console.log(req.params);
+  console.log(
+    "in product owner ========================================================"
+  );
+
   try {
     const productId: string = req.params.productId;
     console.log("Received productId:", productId);
@@ -50,13 +55,16 @@ export const findProductOwner = async (req: CustomRequest, res: Response) => {
     const product = await Product.findById(productId)
       .populate("sellerID")
       .exec();
-    console.log("Found product:", product);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found!" });
     }
 
-    res.status(200).json(product);
+    if (!product.sellerID) {
+      return res.status(404).json({ message: "Seller not found!" });
+    }
+    const foundUser = await User.findById(product.sellerID);
+    res.status(200).json(foundUser);
   } catch (error) {
     console.error("Error fetching product:", error);
     res.status(500).send({ message: "Internal Server Error" });

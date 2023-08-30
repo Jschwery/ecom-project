@@ -6,7 +6,7 @@ export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setUserProducts] = useState<Product[] | null>(null);
-
+  const [allProducts, setAllProducts] = useState<Product[] | null>(null);
   const BASE_URL = "http://localhost:5000";
 
   const fetchData = async (endpoint: string) => {
@@ -15,7 +15,6 @@ export default function useUser() {
       const response = await axios.get(`${BASE_URL}${endpoint}`, {
         withCredentials: true,
       });
-      console.log(response);
 
       return response.data;
     } catch (err: any) {
@@ -27,7 +26,7 @@ export default function useUser() {
   const getUserById = useCallback(async (userID: string) => {
     try {
       const userFound = await fetchData(`/api/users/${userID}`);
- 
+
       return userFound;
     } catch (err) {
       console.error(err);
@@ -44,6 +43,21 @@ export default function useUser() {
       );
 
       setUserProducts(productRequest.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getAllUserProducts = async (userID: String) => {
+    try {
+      const productRequest = await axios.get(
+        `http://localhost:5000/api/users/${userID}/products`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setAllProducts(productRequest.data);
     } catch (error) {
       console.error(error);
     }
@@ -102,5 +116,7 @@ export default function useUser() {
     products,
     setUserProducts,
     getUserById,
+    getAllUserProducts,
+    allProducts,
   };
 }

@@ -12,6 +12,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.cart-slide-in {
+  @apply max-w-[435px] fixed top-0 right-[-40vw] w-[40vw] h-[100vh] bg-ca3 transition-all duration-500 overflow-y-auto z-50;
+}
+
+.cart-slide-in.visible {
+  right: 0;
+}
+
+.cart-overlay {
+  @apply cursor-default fixed top-0 !m-0 left-0 w-full h-full bg-black bg-opacity-50 z-40;
+}
+
 *,
 *::before,
 *::after {

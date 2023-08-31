@@ -1,15 +1,19 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Product, User } from "../../typings";
+import { getLocalCart } from "../components/util/CartUtil";
+const BASE_URL = "http://localhost:5000";
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setUserProducts] = useState<Product[] | null>(null);
   const [allProducts, setAllProducts] = useState<Product[] | null>(null);
-  const BASE_URL = "http://localhost:5000";
+  const [localCart, setLocalCart] = useState(() => {
+    return getLocalCart();
+  });
 
-  const fetchData = async (endpoint: string) => {
+  const fetchData = useCallback(async (endpoint: string) => {
     try {
       setIsLoading(true);
       const response = await axios.get(`${BASE_URL}${endpoint}`, {
@@ -22,7 +26,8 @@ export default function useUser() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
   const getUserById = useCallback(async (userID: string) => {
     try {
       const userFound = await fetchData(`/api/users/${userID}`);
@@ -33,7 +38,7 @@ export default function useUser() {
     }
   }, []);
 
-  const getUserProducts = async () => {
+  const getUserProducts = useCallback(async () => {
     try {
       const productRequest = await axios.get(
         "http://localhost:5000/api/users/products",
@@ -46,9 +51,9 @@ export default function useUser() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
-  const getAllUserProducts = async (userID: String) => {
+  const getAllUserProducts = useCallback(async (userID: String) => {
     try {
       const productRequest = await axios.get(
         `http://localhost:5000/api/users/${userID}/products`,
@@ -61,9 +66,44 @@ export default function useUser() {
     } catch (error) {
       console.error(error);
     }
+  }, []);
+
+  const addToLocalCart = (productID: string) => {
+    const existingItemIndex = localCart.findIndex(
+      (item: { product: string }) => item.product === productID
+    );
+
+    let updatedCart;
+
+    if (existingItemIndex !== -1) {
+      const updatedItem = {
+        ...localCart[existingItemIndex],
+        quantity: localCart[existingItemIndex].quantity + 1,
+      };
+
+      updatedCart = [...localCart];
+      updatedCart[existingItemIndex] = updatedItem;
+    } else {
+      const newCartItem = {
+        product: productID,
+        quantity: 1,
+        dateAdded: new Date(),
+      };
+      updatedCart = [...localCart, newCartItem];
+    }
+
+    setLocalCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const updateUser = async (user: User) => {
+  const syncCartWithBackend = useCallback(async () => {
+    if (user) {
+      const mergedCart = [...(user.cart || []), ...localCart];
+      await updateUser({ ...user, cart: mergedCart });
+    }
+  }, []);
+
+  const updateUser = useCallback(async (user: User) => {
     setIsLoading(true);
     try {
       const response = await axios.put(
@@ -86,7 +126,7 @@ export default function useUser() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getUserProducts();
@@ -111,6 +151,9 @@ export default function useUser() {
 
   return {
     user,
+    localCart,
+    addToLocalCart,
+    syncCartWithBackend,
     updateUser,
     isLoading,
     products,

@@ -19,6 +19,8 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { handleSignOut } from "./Logout";
 import useUser from "../hooks/useUser";
 import { lighten } from "polished";
+import { useEffect, useState } from "react";
+import Cart from "../pages/users/Cart";
 
 const Links = ["For You", "Deals", "Just Added", "Discover"];
 type NavLinkProps = {
@@ -49,7 +51,17 @@ const NavLink = ({ children, to }: NavLinkProps) => {
 
 export default function Simple() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { localCart } = useUser();
   const { user, isLoading } = useUser();
+  const [totalCart, setTotalCart] = useState();
+  const [isCartVisible, setCartVisible] = useState(false);
+
+  useEffect(() => {
+    const totalQuantity = (localCart as any[]).reduce((total, item) => {
+      return total + item.quantity;
+    }, 0);
+    setTotalCart(totalQuantity);
+  }, [localCart]);
 
   const handleSettingSelect = (setting: string) => {
     switch (setting.toLowerCase()) {
@@ -66,6 +78,11 @@ export default function Simple() {
         console.log("selection not found");
     }
   };
+
+  useEffect(() => {
+    console.log("the local cart is");
+    console.log(localCart);
+  }, [localCart]);
 
   return (
     <>
@@ -110,7 +127,30 @@ export default function Simple() {
               ))}
             </HStack>
           </HStack>
-          <Flex alignItems={"center"}>
+          <Flex className="space-x-3 cursor-pointer" alignItems={"center"}>
+            <div className="relative">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-6 h-6 relative"
+                onClick={() => {
+                  setCartVisible(!isCartVisible);
+                }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                />
+              </svg>
+              <div className="absolute -top-3 -right-2 rounded-full flex items-center  bg-red-500 p-0.5">
+                <p className="text-white text-xs ">{totalCart}</p>
+              </div>
+            </div>
+            <Cart isCartVisible={isCartVisible} setShowCart={setCartVisible} />
             <Menu>
               <MenuButton
                 as={Button}

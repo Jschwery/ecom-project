@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 
 function ReviewComponent({
   review,
@@ -10,17 +10,18 @@ function ReviewComponent({
   const [isTruncated, setIsTruncated] = useState(true);
   const [showButton, setShowButton] = useState(false);
 
-  const contentRef = useRef<HTMLHeadingElement>(null);
+  const setRef = (node: HTMLDivElement | null) => {
+    if (node) {
+      console.log("Scroll height:", node.scrollHeight);
+      console.log("Client height:", node.clientHeight);
 
-  useEffect(() => {
-    if (contentRef.current) {
-      if (contentRef.current.scrollHeight > contentRef.current.clientHeight) {
+      if (node.scrollHeight > node.clientHeight) {
         setShowButton(true);
       } else {
         setShowButton(false);
       }
     }
-  }, [review.review]);
+  };
 
   return (
     <div className="flex items-center w-[75%] my-3 space-x-5 transition-all duration-500 bg-ca4 rounded-md p-3">
@@ -35,11 +36,11 @@ function ReviewComponent({
       />
       <div className="flex flex-col flex-grow bg-ca3 rounded-md p-1 overflow-hidden">
         <div
-          ref={contentRef}
+          ref={setRef}
           style={{
             transition: "max-height 0.5s ease-in-out",
             overflow: "hidden",
-            maxHeight: isTruncated ? "5.5rem" : "1000px",
+            maxHeight: isTruncated ? "4.7rem" : "1000px",
           }}
         >
           <h3 className={isTruncated ? "line-clamp-3" : ""}>{review.review}</h3>

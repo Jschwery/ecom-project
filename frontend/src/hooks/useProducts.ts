@@ -12,7 +12,7 @@ export default function useProducts() {
   const [error, setError] = useState<Error | null>(null);
   const toast = useToast();
 
-  const fetchData = async (endpoint: string) => {
+  const fetchData = useCallback(async (endpoint: string) => {
     try {
       setLoading(true);
       const response = await axios.get(`${BASE_URL}${endpoint}`, {
@@ -25,9 +25,9 @@ export default function useProducts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const updateProduct = async (product: Product) => {
+  const updateProduct = useCallback(async (product: Product) => {
     setLoading(true);
     console.log(product);
     try {
@@ -58,18 +58,18 @@ export default function useProducts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getProducts = async () => {
+  const getProducts = useCallback(async () => {
     try {
       const productsData = await fetchData("/api/products");
       setProducts(productsData);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
 
-  const findProductOwner = async (productID: string) => {
+  const findProductOwner = useCallback(async (productID: string) => {
     try {
       console.log("find prod owner");
 
@@ -85,7 +85,7 @@ export default function useProducts() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
 
   const getProductById = useCallback(async (productId: string) => {
     try {

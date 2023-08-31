@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import SignedInNav from "../../components/SignedInNavBar";
 import { Product, User } from "../../../typings";
@@ -12,18 +18,26 @@ import ViewProducts from "./ViewProducts";
 import { Button, Input } from "@chakra-ui/react";
 import { loadingStyles, spinnerStyles } from "../Home";
 import ReviewComponent from "./ReviewComponent";
+import axios from "axios";
 
 function ProductPage() {
   let { productID } = useParams();
   const { getProductById, updateProduct, findProductOwner, productOwner } =
     useProducts();
-  const { user, getUserById, isLoading, getAllUserProducts, allProducts } =
-    useUser();
+  const {
+    user,
+    getUserById,
+    isLoading,
+    addToLocalCart,
+    localCart,
+    getAllUserProducts,
+    updateUser,
+    allProducts,
+  } = useUser();
   const [foundProduct, setFoundProduct] = useState<Product | null>();
   const [reviewUsers, setReviewUsers] = useState<any[]>([]);
   const [userImages, setUserImages] = useState<User[]>([]);
   const [input, setInput] = useState("");
-  const [isTruncated, setIsTruncated] = useState(true);
 
   useEffect(() => {
     const getProduct = async () => {
@@ -61,11 +75,6 @@ function ProductPage() {
   }, [productOwner]);
 
   useEffect(() => {
-    console.log("all products");
-    console.log(allProducts);
-  }, [allProducts]);
-
-  useEffect(() => {
     if (foundProduct?.reviews) {
       const fetchReviewUsers = async () => {
         const fetchedUsers: User[] = [];
@@ -85,6 +94,22 @@ function ProductPage() {
       fetchReviewUsers();
     }
   }, [foundProduct?.reviews, getUserById]);
+
+  const renderedReviews = useMemo(() => {
+    return reviewUsers?.map((review, index) => {
+      const correspondingUser: User | undefined = userImages.find(
+        (user) => user._id === review._id
+      );
+
+      return (
+        <ReviewComponent
+          key={index}
+          review={review}
+          correspondingUser={correspondingUser}
+        />
+      );
+    });
+  }, [reviewUsers, userImages]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
@@ -135,7 +160,7 @@ function ProductPage() {
       <SignedInNav />
 
       <div className="bg-ca2 w-full h-screen min-h-screen pt-20">
-        <div className="w-full grow  p-4 flex flex-col md:flex-row bg-red-300">
+        <div className="w-full grow  p-4 flex flex-col md:flex-row bg-ca2">
           <div className=" min-w-[30%] rounded-md md:w-[30%] mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
             <h2>Seller</h2>
             <img
@@ -148,11 +173,12 @@ function ProductPage() {
               <h4>{productOwner?.rating || "Rating: 5⭐"}</h4>
               <h2>All Seller Items</h2>
 
-              <div className="flex flex-col space-y-2 w-full">
+              <div className="flex flex-col w-full ">
                 {allProducts &&
                   allProducts.map((product, index) => {
                     return (
                       <div
+                        key={`${product._id}-${index}`}
                         onClick={() =>
                           (window.location.pathname = `/products/${product._id}`)
                         }
@@ -219,7 +245,20 @@ function ProductPage() {
                         ))}
                       </div>
                     )}
-                    <button className="self-end bg-ca6 hover:bg-ca5 text-white py-2 px-4 rounded-full">
+                    <button
+                      onClick={async () => {
+                        if (foundProduct && foundProduct._id) {
+                          addToLocalCart(foundProduct._id);
+
+                          if (user && user._id) {
+                            await updateUser({ ...user, cart: [...localCart] });
+                          }
+                        } else {
+                          console.error("foundProduct._id is undefined");
+                        }
+                      }}
+                      className="self-end bg-ca6 hover:bg-ca5 text-white py-2 px-4 rounded-full"
+                    >
                       Add to Cart
                     </button>
                   </div>
@@ -229,19 +268,7 @@ function ProductPage() {
 
             <div className="w-full flex flex-col items-center shadow-md shadow-black rounded-md bg-ca2 grow">
               <h1>Product Reviews</h1>
-              {reviewUsers &&
-                reviewUsers.map((review, index) => {
-                  const correspondingUser: User | undefined = userImages.find(
-                    (user) => user._id === review._id
-                  );
-
-                  return (
-                    <ReviewComponent
-                      review={review}
-                      correspondingUser={correspondingUser}
-                    />
-                  );
-                })}
+              {renderedReviews}
 
               <div className="w-full flex flex-col items-center mt-auto p-4 space-y-4">
                 {foundProduct.reviews && (

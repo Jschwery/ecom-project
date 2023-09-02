@@ -12,28 +12,40 @@ function Counter({ initialCount = 1, onCountChange }: CounterProps) {
 
   const handleIncrement = () => {
     let newCount = count + 1;
-    if (newCount <= 0) {
-      newCount = 0;
+    if (Number.isNaN(newCount) || newCount <= 0) {
+      newCount = 1;
+    }
+    if (newCount > 200) {
+      newCount = 200;
     }
     setCount(newCount);
-    if (onCountChange) {
+    if (newCount !== 0 && onCountChange) {
       onCountChange(newCount);
     }
   };
 
   const handleDecrement = () => {
     let newCount = count - 1;
-    if (newCount <= 0) {
-      newCount = 0;
+    if (Number.isNaN(newCount) || newCount <= 0) {
+      newCount = 1;
+    }
+    if (newCount > 200) {
+      newCount = 200;
     }
     setCount(newCount);
-    if (onCountChange) {
+    if (newCount !== 0 && onCountChange) {
       onCountChange(newCount);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
+    let newValue = Number(e.target.value);
+    if (Number.isNaN(newValue) || newValue <= 0) {
+      newValue = 1;
+    }
+    if (newValue > 200) {
+      newValue = 200;
+    }
     setCount(newValue);
     if (onCountChange) {
       onCountChange(newValue);
@@ -41,7 +53,7 @@ function Counter({ initialCount = 1, onCountChange }: CounterProps) {
   };
 
   return (
-    <div className="flex border px-0.5 justify-center items-center">
+    <div className="flex border px-0.5 justify-center items-center w-[100px]">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

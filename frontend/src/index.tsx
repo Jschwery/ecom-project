@@ -12,6 +12,7 @@ import YourItems from "./pages/users/YourItems";
 import AddItem from "./pages/AddItem";
 import ProductPage from "./pages/users/ProductPage";
 import { CartProvider } from "./global/CartProvider";
+import Checkout from "./pages/Checkout";
 
 const root = document.getElementById("root");
 
@@ -60,6 +61,7 @@ ReactDOM.render(
             */}
             <Route path="/your-items" element={<YourItems />} />
             <Route path="/add-item" element={<AddItem />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/register" element={<Register />} />
             <Route path="/edit-profile" element={<UserProfileEdit />} />
             <Route path="/verify-email/:token" element={<VerifyEmail />} />

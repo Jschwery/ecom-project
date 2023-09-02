@@ -13,7 +13,7 @@ body {
 }
 
 .cart-slide-in {
-  @apply max-w-[435px] fixed top-0 right-[-55vw] w-[55vw] h-[100vh] bg-ca2 transition-all duration-500 overflow-y-auto z-50;
+  @apply fixed top-0 right-[-20vw] w-[20vw] md:min-w-[500px] md:max-w-[515px] min-w-[150px] md:right-[-55vw] md:w-[55vw] h-[100vh] bg-ca2 transition-all duration-500 overflow-y-auto z-50;
 }
 
 .cart-slide-in.visible {

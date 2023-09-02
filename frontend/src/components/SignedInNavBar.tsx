@@ -21,6 +21,7 @@ import useUser from "../hooks/useUser";
 import { lighten } from "polished";
 import { useEffect, useState } from "react";
 import Cart from "../pages/users/Cart";
+import { useCart } from "../global/CartProvider";
 
 const Links = ["For You", "Deals", "Just Added", "Discover"];
 type NavLinkProps = {
@@ -51,8 +52,9 @@ const NavLink = ({ children, to }: NavLinkProps) => {
 
 export default function Simple() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { localCart } = useUser();
   const { user, isLoading } = useUser();
+  const { localCart, addToLocalCart } = useCart();
+
   const [totalCart, setTotalCart] = useState();
   const [isCartVisible, setCartVisible] = useState(false);
 
@@ -78,11 +80,6 @@ export default function Simple() {
         console.log("selection not found");
     }
   };
-
-  useEffect(() => {
-    console.log("the local cart is");
-    console.log(localCart);
-  }, [localCart]);
 
   return (
     <>

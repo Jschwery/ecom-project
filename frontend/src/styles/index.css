@@ -13,7 +13,7 @@ body {
 }
 
 .cart-slide-in {
-  @apply max-w-[435px] fixed top-0 right-[-40vw] w-[40vw] h-[100vh] bg-ca3 transition-all duration-500 overflow-y-auto z-50;
+  @apply max-w-[435px] fixed top-0 right-[-55vw] w-[55vw] h-[100vh] bg-ca2 transition-all duration-500 overflow-y-auto z-50;
 }
 
 .cart-slide-in.visible {
@@ -214,6 +214,15 @@ div.react-select__option--is-focused {
 }
 div.chakra-input__right-element {
   @apply !-right-3;
+}
+
+@media (max-width: 610px) {
+  .img-hidden {
+    display: none !important;
+  }
+  .img-show {
+    display: block !important;
+  }
 }
 
 @keyframes spin {

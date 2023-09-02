@@ -19,6 +19,7 @@ import { Button, Input } from "@chakra-ui/react";
 import { loadingStyles, spinnerStyles } from "../Home";
 import ReviewComponent from "./ReviewComponent";
 import axios from "axios";
+import { useCart } from "../../global/CartProvider";
 
 function ProductPage() {
   let { productID } = useParams();
@@ -28,12 +29,11 @@ function ProductPage() {
     user,
     getUserById,
     isLoading,
-    addToLocalCart,
-    localCart,
     getAllUserProducts,
     updateUser,
     allProducts,
   } = useUser();
+  const { addToLocalCart, localCart } = useCart();
   const [foundProduct, setFoundProduct] = useState<Product | null>();
   const [reviewUsers, setReviewUsers] = useState<any[]>([]);
   const [userImages, setUserImages] = useState<User[]>([]);
@@ -65,12 +65,6 @@ function ProductPage() {
   }, [productID]);
 
   useEffect(() => {
-    console.log("the product owner is");
-    if (productOwner) {
-      console.log(productOwner.products);
-    }
-    console.log(productOwner?._id);
-
     getAllUserProducts(productOwner?._id || "");
   }, [productOwner]);
 
@@ -249,10 +243,6 @@ function ProductPage() {
                       onClick={async () => {
                         if (foundProduct && foundProduct._id) {
                           addToLocalCart(foundProduct._id);
-
-                          if (user && user._id) {
-                            await updateUser({ ...user, cart: [...localCart] });
-                          }
                         } else {
                           console.error("foundProduct._id is undefined");
                         }

@@ -12,9 +12,6 @@ function ReviewComponent({
 
   const setRef = (node: HTMLDivElement | null) => {
     if (node) {
-      console.log("Scroll height:", node.scrollHeight);
-      console.log("Client height:", node.clientHeight);
-
       if (node.scrollHeight > node.clientHeight) {
         setShowButton(true);
       } else {

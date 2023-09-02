@@ -11,6 +11,7 @@ import UserProfileEdit from "./pages/users/EditProfile";
 import YourItems from "./pages/users/YourItems";
 import AddItem from "./pages/AddItem";
 import ProductPage from "./pages/users/ProductPage";
+import { CartProvider } from "./global/CartProvider";
 
 const root = document.getElementById("root");
 
@@ -47,25 +48,27 @@ ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <CSSReset />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          {/*
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            {/*
             finish the your items setup
             
 
             */}
-          <Route path="/your-items" element={<YourItems />} />
-          <Route path="/add-item" element={<AddItem />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/edit-profile" element={<UserProfileEdit />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          <Route path="/products/:productID" element={<ProductPage />} />
+            <Route path="/your-items" element={<YourItems />} />
+            <Route path="/add-item" element={<AddItem />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/edit-profile" element={<UserProfileEdit />} />
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
+            <Route path="/products/:productID" element={<ProductPage />} />
 
-          {/* <Route path="/login" element={<LoginPage />} /> */}
-        </Routes>
-      </Router>
+            {/* <Route path="/login" element={<LoginPage />} /> */}
+          </Routes>
+        </Router>
+      </CartProvider>
     </ChakraProvider>
   </React.StrictMode>,
   root

@@ -11,17 +11,17 @@ export const createTransaction = async (req: CustomRequest, res: Response) => {
   }
 };
 
-export function updateTransaction(req: CustomRequest, res: Response) {
-  throw new Error("Function not implemented.");
-}
-export function getBuyerTransaction(req: CustomRequest, res: Response) {
-  throw new Error("Function not implemented.");
-}
+// export function updateTransaction(req: CustomRequest, res: Response) {
+//   throw new Error("Function not implemented.");
+// }
+// export function getBuyerTransaction(req: CustomRequest, res: Response) {
+//   throw new Error("Function not implemented.");
+// }
 
-export function getSellerTransaction(req: CustomRequest, res: Response) {
-  throw new Error("Function not implemented.");
-}
+// export function getSellerTransaction(req: CustomRequest, res: Response) {
+//   throw new Error("Function not implemented.");
+// }
 
-export function getSellerTransaction(req: CustomRequest, res: Response) {
-  throw new Error("Function not implemented.");
-}
+// export function getSellerTransaction(req: CustomRequest, res: Response) {
+//   throw new Error("Function not implemented.");
+// }

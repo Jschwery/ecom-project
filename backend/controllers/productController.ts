@@ -46,11 +46,6 @@ export const updateProduct = async (req: CustomRequest, res: Response) => {
 };
 
 export const findProductOwner = async (req: CustomRequest, res: Response) => {
-  console.log(req.params);
-  console.log(
-    "in product owner ========================================================"
-  );
-
   try {
     const productId: string = req.params.productId;
     console.log("Received productId:", productId);

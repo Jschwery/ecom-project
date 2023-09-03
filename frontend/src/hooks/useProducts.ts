@@ -71,10 +71,6 @@ export default function useProducts() {
 
   const findProductOwner = useCallback(async (productID: string) => {
     try {
-      console.log("find prod owner");
-
-      console.log(productID);
-
       const response = await axios.get(
         `http://localhost:5000/api/products/owner/${productID}`,
         {
@@ -82,6 +78,20 @@ export default function useProducts() {
         }
       );
       setProductOwner(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  const getProductOwner = useCallback(async (productID: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/products/owner/${productID}`,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
     } catch (err) {
       console.error(err);
     }
@@ -103,6 +113,7 @@ export default function useProducts() {
     products,
     getProducts,
     getProductById,
+    getProductOwner,
     updateProduct,
     loading,
     error,

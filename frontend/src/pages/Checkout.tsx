@@ -26,7 +26,7 @@ import { Product } from "../../typings";
 function Checkout() {
   const { localCart, syncCartWithBackend, getCartTotalCost } = useCart();
   const { user } = useUser();
-  const { findProductOwner, getProductById } = useProducts();
+  const { getProductOwner, getProductById } = useProducts();
   const [showAddresses, setShowAddresses] = useState(false);
   const totalItems = localCart.reduce((accum, currItem) => {
     return accum + currItem.quantity;
@@ -74,19 +74,29 @@ function Checkout() {
           );
           return;
         }
-
         const total = cartItem.quantity * productDetail.price;
+
+        const prodOwner = await getProductOwner(cartItem.product);
 
         const dataToSubmit = {
           product: cartItem.product,
-          seller: findProductOwner(cartItem.product),
+          buyer: user?._id,
+          seller: prodOwner._id,
           quantity: cartItem.quantity,
           total,
           status: "pending",
-          transactionDate: Date.now(),
+          transactionDate: new Date(),
         };
+        console.log("data to submit next:");
+        console.log(dataToSubmit);
 
-        return axios.post("http://localhost:5000/transactions", dataToSubmit);
+        return axios.post(
+          "http://localhost:5000/api/transactions",
+          dataToSubmit,
+          {
+            withCredentials: true,
+          }
+        );
       });
 
       await Promise.all(transactionsPromises);

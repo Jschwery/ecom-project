@@ -1,6 +1,7 @@
-import { Input } from "@chakra-ui/react";
+import { Input, useToast } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import useUser from "../hooks/useUser";
+import { CartItem } from "../global/CartProvider";
 
 interface CounterProps {
   initialCount?: number;
@@ -9,6 +10,11 @@ interface CounterProps {
 
 function Counter({ initialCount = 1, onCountChange }: CounterProps) {
   const [count, setCount] = useState(initialCount);
+  const toast = useToast();
+
+  useEffect(() => {
+    setCount(initialCount);
+  }, [initialCount]);
 
   const handleIncrement = () => {
     let newCount = count + 1;
@@ -16,6 +22,15 @@ function Counter({ initialCount = 1, onCountChange }: CounterProps) {
       newCount = 1;
     }
     if (newCount > 200) {
+      toast({
+        title: "Item Cap Reached",
+        description:
+          "You have reached the maximum allowed quantity for this item.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
       newCount = 200;
     }
     setCount(newCount);

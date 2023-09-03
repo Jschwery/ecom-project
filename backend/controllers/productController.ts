@@ -35,7 +35,10 @@ export const getProductById = async (req: CustomRequest, res: Response) => {
 
 export const updateProduct = async (req: CustomRequest, res: Response) => {
   try {
-    const product = await productService.updateProduct(req.body._id, req.body);
+    const product = await productService.updateProduct(
+      req.params.productID,
+      req.body
+    );
     res.status(200).json(product);
   } catch (error) {
     res.status(500).send(error);

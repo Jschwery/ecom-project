@@ -32,7 +32,7 @@ export default function useProducts() {
     console.log(product);
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/products/edit",
+        `http://localhost:5000/api/products/${product._id}`,
         product,
         {
           withCredentials: true,

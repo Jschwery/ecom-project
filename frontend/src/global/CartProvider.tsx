@@ -4,12 +4,14 @@ import React, {
   useState,
   useCallback,
   ReactNode,
+  useEffect,
 } from "react";
 import { getLocalCart } from "../components/util/CartUtil";
 import { Product } from "../../typings";
 import useUser from "../hooks/useUser";
+import useProducts from "../hooks/useProducts";
 
-type CartItem = {
+export type CartItem = {
   product: string;
   quantity: number;
   dateAdded: Date;
@@ -21,6 +23,7 @@ type CartContextType = {
   addToLocalCart: (productId: string, quantity?: number) => void;
   getProductQuantity: (product: Product) => number;
   syncCartWithBackend: () => void;
+  getCartTotalCost: () => Promise<number>;
 };
 
 const defaultContextValue: CartContextType = {
@@ -29,6 +32,7 @@ const defaultContextValue: CartContextType = {
   addToLocalCart: () => {},
   getProductQuantity: () => 1,
   syncCartWithBackend: () => {},
+  getCartTotalCost: async () => 0,
 };
 
 const CartContext = createContext<CartContextType>(defaultContextValue);
@@ -39,6 +43,7 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [localCart, setLocalCart] = useState<CartItem[]>(() => getLocalCart());
+  const { getProductById } = useProducts();
   const { user, updateUser } = useUser();
 
   const addToLocalCart = (productID: string, quantity?: number) => {
@@ -72,7 +77,34 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const getProductQuantity = (product: Product) => {
     const cartItem = localCart.find((item) => item.product === product._id);
+
     return cartItem ? cartItem.quantity : 1;
+  };
+
+  const getCartTotalCost = async () => {
+    if (localCart && localCart.length > 0) {
+      try {
+        const localCartItems: Product[] = await Promise.all(
+          localCart.map((item) => getProductById(item.product))
+        );
+
+        const totalcost = localCartItems.reduce((acc, productDetail) => {
+          const cartItem = localCart.find(
+            (item) => item.product === productDetail._id
+          );
+          if (cartItem) {
+            return acc + cartItem.quantity * productDetail.price;
+          }
+          return acc;
+        }, 0);
+
+        return totalcost;
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
+    }
+    return 0;
   };
 
   const syncCartWithBackend = useCallback(() => {
@@ -90,6 +122,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToLocalCart,
         getProductQuantity,
         syncCartWithBackend,
+        getCartTotalCost,
       }}
     >
       {children}

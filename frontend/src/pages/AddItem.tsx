@@ -153,7 +153,7 @@ function AddItem() {
     console.log(formValues);
 
     return axios.post(
-      "http://localhost:5000/api/products/create",
+      "http://localhost:5000/api/products",
       {
         ...formValues,
         imageUrls: imageUrls,

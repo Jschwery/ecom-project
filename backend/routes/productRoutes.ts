@@ -6,18 +6,12 @@ import expressFileUpload from "express-fileupload";
 const router = express.Router();
 router.use(expressFileUpload());
 
-router.post("/products/details", productController.findProductById);
-
-router.post(
-  "/products/create",
-  extractTokenAndUser,
-  productController.createProduct
-);
+router.post("/products", extractTokenAndUser, productController.createProduct);
 
 router.get("/products", extractTokenAndUser, productController.getAllProducts);
 
 router.put(
-  "/products/edit",
+  "/products/:productID",
   extractTokenAndUser,
   productController.updateProduct
 );

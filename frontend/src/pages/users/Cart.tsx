@@ -6,11 +6,12 @@ import { Product } from "../../../typings";
 import Counter from "../../components/Counter";
 import { Button } from "@chakra-ui/react";
 import { count } from "console";
-import { useCart } from "../../global/CartProvider";
+import { CartItem, useCart } from "../../global/CartProvider";
 
 interface CartProps {
   isCartVisible: boolean;
   setShowCart: (visible: boolean) => void;
+  cartItems: CartItem[];
 }
 
 export default function Cart({ isCartVisible, setShowCart }: CartProps) {

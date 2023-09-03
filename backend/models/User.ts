@@ -9,6 +9,7 @@ export interface IUser extends Document {
   role: string;
   wishlist?: Schema.Types.ObjectId[];
   isVerified: boolean;
+  billingAddress?: string;
   address?: string;
   googleID?: string;
   productsViewed?: Schema.Types.ObjectId[];
@@ -26,7 +27,6 @@ export interface IUser extends Document {
       dateAdded: Date;
     }
   ];
-  orders?: Schema.Types.ObjectId[];
   paymentMethods?: [
     {
       type: string;
@@ -46,6 +46,7 @@ const UserSchema: Schema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
+
     productsViewed: { type: String, required: false },
     status: {
       type: String,
@@ -87,7 +88,6 @@ const UserSchema: Schema = new Schema(
         dateAdded: { type: Date, default: Date.now },
       },
     ],
-    orders: [{ type: Schema.Types.ObjectId, ref: "Order", required: false }],
     paymentMethods: [
       {
         type: { type: String, required: true },
@@ -95,6 +95,22 @@ const UserSchema: Schema = new Schema(
       },
     ],
     shippingAddresses: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        state: {
+          type: String,
+          required: true,
+        },
+        zip: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    billingAddresses: [
       {
         name: {
           type: String,

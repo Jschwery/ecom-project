@@ -147,7 +147,11 @@ export default function Simple() {
                 <p className="text-white text-xs ">{totalCart}</p>
               </div>
             </div>
-            <Cart isCartVisible={isCartVisible} setShowCart={setCartVisible} />
+            <Cart
+              cartItems={localCart}
+              isCartVisible={isCartVisible}
+              setShowCart={setCartVisible}
+            />
             <Menu>
               <MenuButton
                 as={Button}

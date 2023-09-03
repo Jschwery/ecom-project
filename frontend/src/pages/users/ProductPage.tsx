@@ -15,7 +15,7 @@ import useUser from "../../hooks/useUser";
 import useRemove from "../../hooks/useRemove";
 import DetailedItem from "../../components/DetailedItem";
 import ViewProducts from "./ViewProducts";
-import { Button, Input } from "@chakra-ui/react";
+import { Button, Input, Toast, useToast } from "@chakra-ui/react";
 import { loadingStyles, spinnerStyles } from "../Home";
 import ReviewComponent from "./ReviewComponent";
 import axios from "axios";
@@ -38,6 +38,7 @@ function ProductPage() {
   const [reviewUsers, setReviewUsers] = useState<any[]>([]);
   const [userImages, setUserImages] = useState<User[]>([]);
   const [input, setInput] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     const getProduct = async () => {
@@ -242,7 +243,22 @@ function ProductPage() {
                     <button
                       onClick={async () => {
                         if (foundProduct && foundProduct._id) {
-                          addToLocalCart(foundProduct._id);
+                          const productFound = localCart.find(
+                            (product) => product.product === foundProduct._id
+                          );
+                          if (productFound && productFound?.quantity < 200) {
+                            addToLocalCart(foundProduct._id);
+                          } else {
+                            toast({
+                              title: "Item Cap Reached",
+                              description:
+                                "You have reached the maximum allowed quantity for this item.",
+                              status: "warning",
+                              duration: 5000,
+                              isClosable: true,
+                              position: "top",
+                            });
+                          }
                         } else {
                           console.error("foundProduct._id is undefined");
                         }

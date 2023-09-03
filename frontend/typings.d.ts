@@ -32,6 +32,11 @@ export interface User {
     type: string;
     details: string;
   }[];
+  billingAddresses?: {
+    name: string;
+    state: string;
+    zip: string;
+  }[];
   shippingAddresses?: {
     name: string;
     state: string;
@@ -55,4 +60,14 @@ export type Product = {
   imageUrls?: string[];
   tags?: string[];
   creationDate?: Date;
+};
+export type Transaction = {
+  _id?: string;
+  product: string;
+  buyer: string;
+  seller: string;
+  quantity: number;
+  total: number;
+  status: "Pending" | "Fulfilled" | "Canceled";
+  transactionDate?: Date;
 };

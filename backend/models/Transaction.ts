@@ -8,11 +8,13 @@ export interface ITransaction extends Document {
   seller: IUser["_id"];
   quantity: number;
   total: number;
+  status: "Pending" | "Fulfilled" | "Canceled";
   transactionDate: Date;
 }
 
 const TransactionSchema: Schema = new Schema({
   product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+  status: { type: String, required: true },
   buyer: { type: Schema.Types.ObjectId, ref: "User", required: true },
   seller: { type: Schema.Types.ObjectId, ref: "User", required: true },
   quantity: { type: Number, required: true },

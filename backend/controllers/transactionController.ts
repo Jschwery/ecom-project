@@ -10,3 +10,18 @@ export const createTransaction = async (req: CustomRequest, res: Response) => {
     res.status(500).send(error);
   }
 };
+
+export function updateTransaction(req: CustomRequest, res: Response) {
+  throw new Error("Function not implemented.");
+}
+export function getBuyerTransaction(req: CustomRequest, res: Response) {
+  throw new Error("Function not implemented.");
+}
+
+export function getSellerTransaction(req: CustomRequest, res: Response) {
+  throw new Error("Function not implemented.");
+}
+
+export function getSellerTransaction(req: CustomRequest, res: Response) {
+  throw new Error("Function not implemented.");
+}

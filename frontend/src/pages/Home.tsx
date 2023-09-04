@@ -43,8 +43,6 @@ function App() {
   useEffect(() => {
     const handleResize = () => {
       const currentWidth = getDivWidth(divRef.current);
-      console.log(currentWidth);
-      console.log(lastFlexDirection.current);
 
       for (let bp of breakpoints) {
         if (currentWidth <= bp.max) {

@@ -22,7 +22,6 @@ type CartContextType = {
   setLocalCart: (cart: CartItem[]) => void;
   addToLocalCart: (productId: string, quantity?: number) => void;
   getProductQuantity: (product: Product) => number;
-  syncCartWithBackend: () => void;
   getCartTotalCost: () => Promise<number>;
 };
 
@@ -31,7 +30,6 @@ const defaultContextValue: CartContextType = {
   setLocalCart: () => {},
   addToLocalCart: () => {},
   getProductQuantity: () => 1,
-  syncCartWithBackend: () => {},
   getCartTotalCost: async () => 0,
 };
 
@@ -107,13 +105,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return 0;
   };
 
-  const syncCartWithBackend = useCallback(() => {
-    if (user) {
-      const mergedCart = [...(user.cart || []), ...localCart];
-      updateUser({ ...user, cart: mergedCart });
-    }
-  }, [localCart, user]);
-
   return (
     <CartContext.Provider
       value={{
@@ -121,7 +112,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setLocalCart,
         addToLocalCart,
         getProductQuantity,
-        syncCartWithBackend,
         getCartTotalCost,
       }}
     >

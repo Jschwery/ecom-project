@@ -98,6 +98,7 @@ export default function Login() {
       <Flex p={8} flex={1} align={"center"} justify={"center"}>
         <form onSubmit={formik.handleSubmit}>
           <Stack spacing={4} w={"full"} maxW={"md"}>
+            <img src="/images/logo2.svg" alt="" />
             <Heading fontSize={"2xl"}>Sign in to your account</Heading>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>

@@ -24,7 +24,7 @@ export const createUser = async (req: CustomRequest, res: Response) => {
       "Email Verification",
       mailer.createVerificationEmail(verificationLink)
     );
-    res.status(200).send({
+    res.status(201).send({
       message:
         "Registration successful! Please check your email to verify your account.",
     });

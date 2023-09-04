@@ -24,7 +24,7 @@ import useProducts from "../hooks/useProducts";
 import { Product } from "../../typings";
 
 function Checkout() {
-  const { localCart, syncCartWithBackend, getCartTotalCost } = useCart();
+  const { localCart, setLocalCart, getCartTotalCost } = useCart();
   const { user } = useUser();
   const { getProductOwner, getProductById } = useProducts();
   const [showAddresses, setShowAddresses] = useState(false);
@@ -87,8 +87,6 @@ function Checkout() {
           status: "pending",
           transactionDate: new Date(),
         };
-        console.log("data to submit next:");
-        console.log(dataToSubmit);
 
         return axios.post(
           "http://localhost:5000/api/transactions",
@@ -100,7 +98,8 @@ function Checkout() {
       });
 
       await Promise.all(transactionsPromises);
-
+      setLocalCart([]);
+      window.localStorage.clear();
       toast({
         title: "Success",
         description: "Order successfully placed!",
@@ -108,6 +107,7 @@ function Checkout() {
         duration: 5000,
         isClosable: true,
       });
+      window.location.pathname = "/orders";
     } catch (error) {
       console.error("Error processing order:", error);
 

@@ -44,6 +44,7 @@ function Pagination({
         {pageNumbers.map((number) => (
           <button
             key={number}
+            style={{ color: "white" }}
             onClick={() => onPageChange(number)}
             className={`${number === currentPage ? "activePage" : ""}`}
           >

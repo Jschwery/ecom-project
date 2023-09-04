@@ -1,5 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+interface Review {
+  review: string;
+  reviewer: mongoose.Types.ObjectId;
+  rating?: number;
+}
+
 export interface IUser extends Document {
   name: string;
   lastName?: string;
@@ -14,7 +20,7 @@ export interface IUser extends Document {
   googleID?: string;
   productsViewed?: Schema.Types.ObjectId[];
   age?: number;
-  rating?: number;
+  reviews?: Review[];
   sellerName?: string;
   products?: Schema.Types.ObjectId[];
   profilePicture?: string;
@@ -53,6 +59,14 @@ const UserSchema: Schema = new Schema(
       enum: ["active", "suspended", "banned"],
       default: "active",
     },
+    reviews: [
+      {
+        reviewer: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        review: { type: String },
+        rating: { type: Number },
+      },
+    ],
+
     role: {
       type: String,
       required: true,

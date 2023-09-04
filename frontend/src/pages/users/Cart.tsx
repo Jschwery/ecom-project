@@ -15,7 +15,8 @@ interface CartProps {
 }
 
 export default function Cart({ isCartVisible, setShowCart }: CartProps) {
-  const { localCart, addToLocalCart, getProductQuantity } = useCart();
+  const { localCart, addToLocalCart, getProductQuantity, setLocalCart } =
+    useCart();
   const { getProductById } = useProducts();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -90,6 +91,25 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
     }
   };
 
+  function removeItemFromCart(productID: string): void {
+    const currentCart: CartItem[] = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
+
+    const existingItemIndex = currentCart.findIndex(
+      (item: CartItem) => item.product === productID
+    );
+    console.log("existingItemIndex: " + existingItemIndex);
+
+    if (existingItemIndex !== -1) {
+      currentCart.splice(existingItemIndex, 1);
+      localStorage.setItem("cart", JSON.stringify(currentCart));
+      const updatedCart = [...currentCart];
+      updatedCart.splice(existingItemIndex, 1);
+      setLocalCart(updatedCart);
+    }
+  }
+
   return (
     <>
       <div
@@ -104,11 +124,11 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
             {products.map((product: Product, idx: Key | null | undefined) => {
               if (product) {
                 return (
-                  <div className="w-full flex flex-col bg-ca4 rounded-md">
-                    <div
-                      className="w-full flex flex-col justify-between md:flex-row  truncate px-0.5 bg-ca4 p-2 space-y-2 md:space-x-2 rounded-md"
-                      key={idx}
-                    >
+                  <div
+                    key={idx}
+                    className="w-full flex flex-col bg-ca4 rounded-md"
+                  >
+                    <div className="w-full flex flex-col justify-between md:flex-row  truncate px-0.5 bg-ca4 p-2 space-y-2 md:space-x-2 rounded-md">
                       <img
                         className="self-center w-[60%] h-16 md:w-[30%] min-w-[30%]"
                         src={
@@ -179,6 +199,7 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                           strokeWidth="1.5"
                           stroke="currentColor"
                           className="w-6 h-6 hover:scale-105 md:order-1 order-2 mx-1 md:hidden"
+                          onClick={() => removeItemFromCart(product._id || "")}
                         >
                           <path
                             strokeLinecap="round"
@@ -202,6 +223,7 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                         strokeWidth="1.5"
                         stroke="currentColor"
                         className="w-8 h-8 hover:scale-105 mx-3 mb-2"
+                        onClick={() => removeItemFromCart(product._id || "")}
                       >
                         <path
                           strokeLinecap="round"
@@ -218,12 +240,16 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
           </div>
         </div>
         <div className="w-full flex justify-center mb-5 h-11">
-          <Button
-            onClick={handleCartCheckout}
-            className="w-1/2 !text-ca1 !bg-ca8 hover:!bg-ca7"
-          >
-            Checkout
-          </Button>
+          {localCart && localCart.length > 0 ? (
+            <Button
+              onClick={handleCartCheckout}
+              className="w-1/2 !text-ca1 !bg-ca8 hover:!bg-ca7"
+            >
+              Checkout
+            </Button>
+          ) : (
+            <h2>Cart is Empty</h2>
+          )}
         </div>
       </div>
     </>

@@ -20,6 +20,7 @@ import { loadingStyles, spinnerStyles } from "../Home";
 import ReviewComponent from "./ReviewComponent";
 import axios from "axios";
 import { useCart } from "../../global/CartProvider";
+import StarRating from "../../components/StarRating";
 
 function ProductPage() {
   let { productID } = useParams();
@@ -37,8 +38,15 @@ function ProductPage() {
   const [foundProduct, setFoundProduct] = useState<Product | null>();
   const [reviewUsers, setReviewUsers] = useState<any[]>([]);
   const [userImages, setUserImages] = useState<User[]>([]);
+  const [productRating, setProductRating] = useState<number>(-1);
   const [input, setInput] = useState("");
+  const [sellerRating, setSellerRating] = useState<number>();
   const toast = useToast();
+
+  useEffect(() => {
+    console.log("prdrting");
+    console.log(productRating);
+  }, [productRating]);
 
   useEffect(() => {
     const getProduct = async () => {
@@ -66,8 +74,26 @@ function ProductPage() {
   }, [productID]);
 
   useEffect(() => {
-    getAllUserProducts(productOwner?._id || "");
+    if (!productOwner?._id || productOwner._id === "") {
+      return;
+    }
+    getAllUserProducts(productOwner._id);
   }, [productOwner]);
+  useEffect(() => {
+    if (productOwner?.reviews) {
+      const reviews = productOwner.reviews.reduce((acum, review) => {
+        return acum + (review.rating || 0);
+      }, 0);
+
+      const ratedReviewsCount = productOwner.reviews.filter(
+        (review) => review.rating
+      ).length;
+
+      if (ratedReviewsCount > 0) {
+        setSellerRating(reviews / ratedReviewsCount);
+      }
+    }
+  }, [sellerRating]);
 
   useEffect(() => {
     if (foundProduct?.reviews) {
@@ -122,10 +148,18 @@ function ProductPage() {
     if (foundProduct) {
       const updatedReviews = [
         ...(foundProduct.reviews || []),
-        { review: input, _id: user?._id },
+        {
+          review: input,
+          _id: user?._id,
+          rating: productRating != -1 ? productRating + 1 : 1,
+        },
       ];
-      updateProduct({ ...foundProduct, reviews: updatedReviews });
+      updateProduct({
+        ...foundProduct,
+        reviews: updatedReviews,
+      });
       setInput("");
+      setProductRating(-1);
     } else {
       console.error("Product not found!");
     }
@@ -159,13 +193,16 @@ function ProductPage() {
           <div className=" min-w-[30%] rounded-md md:w-[30%] mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
             <h2>Seller</h2>
             <img
-              className="w-14 h-14 rounded-full"
+              onClick={() =>
+                (window.location.pathname = `/seller/${productOwner?._id}`)
+              }
+              className="w-14 h-14 rounded-full cursor-pointer"
               src={productOwner?.profilePicture || "/images/logo2.svg"}
               alt="user profile"
             />
             <div className="flex flex-col items-center w-[80%]">
               <h4>{productOwner?.sellerName || productOwner?.name}</h4>
-              <h4>{productOwner?.rating || "Rating: 5⭐"}</h4>
+              <h4>{sellerRating || "Rating: 5⭐"}</h4>
               <h2>All Seller Items</h2>
 
               <div className="flex flex-col w-full ">
@@ -221,6 +258,41 @@ function ProductPage() {
                     ${foundProduct.price}
                   </span>
                 </div>
+                <div className="flex items-center space-x-1">
+                  <h5>
+                    {foundProduct.reviews &&
+                    foundProduct.reviews.length > 0 &&
+                    foundProduct.reviews.some((review) => review.rating)
+                      ? (
+                          foundProduct.reviews.reduce(
+                            (acum, current) =>
+                              current.rating ? acum + current.rating : acum,
+                            0
+                          ) /
+                          foundProduct.reviews.filter((review) => review.rating)
+                            .length
+                        ).toFixed(2)
+                      : "No reviews yet"}
+                  </h5>
+                  {foundProduct.reviews &&
+                    foundProduct.reviews.some((review) => review.rating) && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="yellow"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="none"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                        />
+                      </svg>
+                    )}
+                </div>
+
                 <p className="text-gray-500 mt-2 md:mt-4">
                   {foundProduct.description}
                 </p>
@@ -246,6 +318,11 @@ function ProductPage() {
                           const productFound = localCart.find(
                             (product) => product.product === foundProduct._id
                           );
+                          if (!productFound) {
+                            addToLocalCart(foundProduct._id, 1);
+                            return;
+                          }
+
                           if (productFound && productFound?.quantity < 200) {
                             addToLocalCart(foundProduct._id);
                           } else {
@@ -284,11 +361,23 @@ function ProductPage() {
                   />
                 )}
                 <div className="w-[80%] bg-ca4 mt-auto rounded-md space-y-2 justify-center p-5 flex flex-col">
-                  <h3>Write your review:</h3>
-                  <div className="flex justify-between space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <h3>Leave a review?</h3>
+                    <StarRating
+                      value={productRating || 0}
+                      onChange={function (value: number | null): void {
+                        if (productRating === value) {
+                          setProductRating((rating) => rating - 1);
+                          return;
+                        }
+                        setProductRating(value || 0);
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between p-4 space-x-4">
                     <textarea
                       value={input}
-                      className="w-[75%] h-28 bg-ca5 rounded-md text-white resize-none placeholder:text-ca1 focus:bg-ca6 "
+                      className="w-[75%] h-28 p-2 bg-ca2 rounded-md text-black border border-ca6 resize-none placeholder:text-ca9 focus:bg-ca1 "
                       placeholder="Type your review here..."
                       onChange={handleInputChange}
                     ></textarea>

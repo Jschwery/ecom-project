@@ -13,6 +13,7 @@ export interface IProduct extends Document {
     {
       review: string;
       UserID: Schema.Types.ObjectId;
+      rating: number;
     }
   ];
 
@@ -31,6 +32,7 @@ const ProductSchema: Schema = new Schema({
     {
       review: { type: String, required: true },
       UserID: { type: Schema.Types.ObjectId, required: true },
+      rating: { type: Number, required: false },
     },
   ],
   quantity: { type: Number, required: true },

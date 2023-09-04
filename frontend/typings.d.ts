@@ -14,13 +14,17 @@ export interface User {
   wishlist?: string[];
   isVerified: boolean;
   address?: string;
-  rating?: number;
   googleID?: string;
   age?: number;
   sellerName?: string;
   products?: Product[];
   profilePicture?: string;
   isSeller?: boolean;
+  reviews?: {
+    review: string;
+    reviewer?: string;
+    rating?: number;
+  }[];
   phoneNumber?: string;
   cart?: {
     product: string;
@@ -55,6 +59,7 @@ export type Product = {
   reviews?: {
     review: string;
     _id?: string;
+    rating?: number;
   }[];
   quantity: number;
   imageUrls?: string[];

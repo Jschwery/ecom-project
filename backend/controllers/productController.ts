@@ -48,7 +48,6 @@ export const updateProduct = async (req: CustomRequest, res: Response) => {
 export const findProductOwner = async (req: CustomRequest, res: Response) => {
   try {
     const productId: string = req.params.productId;
-    console.log("Received productId:", productId);
 
     const product = await Product.findById(productId)
       .populate("sellerID")

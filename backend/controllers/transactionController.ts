@@ -5,23 +5,52 @@ import { CustomRequest } from "../types";
 export const createTransaction = async (req: CustomRequest, res: Response) => {
   try {
     const result = await transactionService.createTransaction(req.body);
-    res.send(result);
+    res.status(201).json(result);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// export function updateTransaction(req: CustomRequest, res: Response) {
-//   throw new Error("Function not implemented.");
-// }
-// export function getBuyerTransaction(req: CustomRequest, res: Response) {
-//   throw new Error("Function not implemented.");
-// }
+export async function updateTransaction(req: CustomRequest, res: Response) {
+  try {
+    const result = await transactionService.updateTransaction(
+      req.params.transactionID,
+      req.body
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
-// export function getSellerTransaction(req: CustomRequest, res: Response) {
-//   throw new Error("Function not implemented.");
-// }
+export async function getBuyerTransaction(req: CustomRequest, res: Response) {
+  try {
+    const result = await transactionService.getBuyerTransaction(
+      req.params.buyerID
+    );
+    if (result && result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({ message: "Transactions not found for the buyer" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
-// export function getSellerTransaction(req: CustomRequest, res: Response) {
-//   throw new Error("Function not implemented.");
-// }
+export async function getSellerTransaction(req: CustomRequest, res: Response) {
+  try {
+    const result = await transactionService.getSellerTransaction(
+      req.params.sellerID
+    );
+    if (result && result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res
+        .status(404)
+        .json({ message: "Transactions not found for the seller" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}

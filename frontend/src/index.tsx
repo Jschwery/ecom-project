@@ -13,6 +13,8 @@ import AddItem from "./pages/AddItem";
 import ProductPage from "./pages/users/ProductPage";
 import { CartProvider } from "./global/CartProvider";
 import Checkout from "./pages/Checkout";
+import Orders from "./pages/users/Orders";
+import SellerPage from "./pages/users/SellerPage";
 
 const root = document.getElementById("root");
 
@@ -66,7 +68,9 @@ ReactDOM.render(
             <Route path="/edit-profile" element={<UserProfileEdit />} />
             <Route path="/verify-email/:token" element={<VerifyEmail />} />
             <Route path="/products/:productID" element={<ProductPage />} />
+            <Route path="/seller/:sellerID" element={<SellerPage />} />
 
+            <Route path="/orders" element={<Orders />} />
             {/* <Route path="/login" element={<LoginPage />} /> */}
           </Routes>
         </Router>

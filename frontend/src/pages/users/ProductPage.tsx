@@ -21,100 +21,26 @@ import ReviewComponent from "./ReviewComponent";
 import axios from "axios";
 import { useCart } from "../../global/CartProvider";
 import StarRating from "../../components/StarRating";
+import useProductData from "../../hooks/useProductData";
 
 function ProductPage() {
   let { productID } = useParams();
-  const { getProductById, updateProduct, findProductOwner, productOwner } =
-    useProducts();
-  const {
-    user,
-    getUserById,
-    isLoading,
-    getAllUserProducts,
-    updateUser,
-    allProducts,
-  } = useUser();
+  const { updateProduct } = useProducts();
+  const { user } = useUser();
   const { addToLocalCart, localCart } = useCart();
-  const [foundProduct, setFoundProduct] = useState<Product | null>();
-  const [reviewUsers, setReviewUsers] = useState<any[]>([]);
-  const [userImages, setUserImages] = useState<User[]>([]);
+  const {
+    foundProduct,
+    reviewUsers,
+    userImages,
+    sellerRating,
+    setReviewUsers,
+    isLoading,
+    allProducts,
+    productOwner,
+  } = useProductData(productID || "");
   const [productRating, setProductRating] = useState<number>(-1);
   const [input, setInput] = useState("");
-  const [sellerRating, setSellerRating] = useState<number>();
   const toast = useToast();
-
-  useEffect(() => {
-    console.log("prdrting");
-    console.log(productRating);
-  }, [productRating]);
-
-  useEffect(() => {
-    const getProduct = async () => {
-      try {
-        if (productID) {
-          const product: Product = await getProductById(productID);
-
-          if (product) {
-            setFoundProduct(product);
-            setReviewUsers(product.reviews ?? []);
-          } else {
-            console.warn("Product not found or is undefined");
-          }
-        }
-      } catch (e: any) {
-        console.error(e);
-      }
-    };
-
-    getProduct();
-  }, [productID, getProductById]);
-
-  useEffect(() => {
-    findProductOwner(productID || "");
-  }, [productID]);
-
-  useEffect(() => {
-    if (!productOwner?._id || productOwner._id === "") {
-      return;
-    }
-    getAllUserProducts(productOwner._id);
-  }, [productOwner]);
-  useEffect(() => {
-    if (productOwner?.reviews) {
-      const reviews = productOwner.reviews.reduce((acum, review) => {
-        return acum + (review.rating || 0);
-      }, 0);
-
-      const ratedReviewsCount = productOwner.reviews.filter(
-        (review) => review.rating
-      ).length;
-
-      if (ratedReviewsCount > 0) {
-        setSellerRating(reviews / ratedReviewsCount);
-      }
-    }
-  }, [sellerRating]);
-
-  useEffect(() => {
-    if (foundProduct?.reviews) {
-      const fetchReviewUsers = async () => {
-        const fetchedUsers: User[] = [];
-        for (let review of foundProduct.reviews || []) {
-          if (review._id) {
-            const reviewUser = await getUserById(review._id);
-
-            if (reviewUser) {
-              fetchedUsers.push(reviewUser);
-            }
-          }
-        }
-
-        setUserImages(fetchedUsers);
-      };
-
-      fetchReviewUsers();
-    }
-  }, [foundProduct?.reviews, getUserById]);
 
   const renderedReviews = useMemo(() => {
     return reviewUsers?.map((review, index) => {
@@ -202,7 +128,25 @@ function ProductPage() {
             />
             <div className="flex flex-col items-center w-[80%]">
               <h4>{productOwner?.sellerName || productOwner?.name}</h4>
-              <h4>{sellerRating || "Rating: 5⭐"}</h4>
+              <div className="flex items-center space-x-0.5">
+                <h4>{sellerRating || "No seller ratings"}</h4>
+                {sellerRating && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="yellow"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="none"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                    />
+                  </svg>
+                )}
+              </div>
               <h2>All Seller Items</h2>
 
               <div className="flex flex-col w-full ">
@@ -361,7 +305,7 @@ function ProductPage() {
                   />
                 )}
                 <div className="w-[80%] bg-ca4 mt-auto rounded-md space-y-2 justify-center p-5 flex flex-col">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 pl-4">
                     <h3>Leave a review?</h3>
                     <StarRating
                       value={productRating || 0}

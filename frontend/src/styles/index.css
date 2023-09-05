@@ -11,6 +11,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+div::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+div::-webkit-scrollbar-track {
+  @apply bg-ca1 rounded-md;
+}
+
+div::-webkit-scrollbar-thumb {
+  @apply bg-ca4;
+  border-radius: 6px;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+  @apply bg-ca6;
+}
+
+.scrollable-hidden-scrollbar::-webkit-scrollbar {
+  width: 0.2em !important;
+}
+
+.scrollable-hidden-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent !important;
+}
+.scrollable-hidden-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: transparent transparent !important;
+}
+
 .cart-slide-in {
   @apply fixed top-0 right-[-30vw] w-[30vw] md:min-w-[425px] md:max-w-[515px] min-w-[150px] md:right-[-55vw] md:w-[55vw] h-[100vh] opacity-0  bg-ca2 transition-all duration-500 overflow-y-auto z-50;
 }

@@ -66,6 +66,9 @@ export default function useUser() {
   }, []);
 
   const updateUser = useCallback(async (user: User) => {
+    console.log("here is the user: ");
+    console.log(user);
+
     setIsLoading(true);
     try {
       const response = await axios.put(
@@ -78,6 +81,33 @@ export default function useUser() {
 
       if (response.status >= 200 && response.status < 300) {
         setUser(response.data);
+        return { status: response.status, error: null };
+      } else {
+        return { status: response.status, error: "Unexpected response code." };
+      }
+    } catch (err: any) {
+      console.error(err);
+      return { status: null, error: err.message };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const updateOtherUser = useCallback(async (user: User) => {
+    console.log("here is the user: ");
+    console.log(user);
+
+    setIsLoading(true);
+    try {
+      const response = await axios.put(
+        "http://localhost:5000/api/users/edit",
+        user,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status >= 200 && response.status < 300) {
         return { status: response.status, error: null };
       } else {
         return { status: response.status, error: "Unexpected response code." };
@@ -113,7 +143,7 @@ export default function useUser() {
 
   return {
     user,
-
+    setIsLoading,
     updateUser,
     isLoading,
     products,
@@ -121,5 +151,6 @@ export default function useUser() {
     getUserById,
     getAllUserProducts,
     allProducts,
+    updateOtherUser,
   };
 }

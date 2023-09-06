@@ -20,6 +20,7 @@ import {
   InputGroup,
   InputRightElement,
   filter,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import axios from "axios";
@@ -39,14 +40,20 @@ export type ShippingAddress = {
   state: string;
 };
 
-export default function UserProfileEdit() {
+interface UserProfileEditProps {
+  pageStart?: "first" | "second";
+}
+
+export default function UserProfileEdit({
+  pageStart = "first",
+}: UserProfileEditProps) {
   const [userShippingAddress, setShippingAddresses] = useState<
     ShippingAddress[]
   >([]);
   const [sellerEnabled, setSellerEnabled] = useState(false);
   const [currentAlert, displayAlert] = useAlert();
   const [showPassword, setShowPassword] = useState(false);
-  const [page, setPage] = useState("first");
+  const [page, setPage] = useState(pageStart);
   const { user, updateUser, isLoading } = useUser();
   const [closeUser, setCloseUser] = useState(user?.profilePicture !== null);
   const [userImage, setUserImage] = useState<string>(initializeUserImage);
@@ -55,10 +62,16 @@ export default function UserProfileEdit() {
     ShippingAddress[]
   >([]);
 
+  useEffect(() => {
+    setPage(pageStart);
+  }, [pageStart]);
+
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
       password: Yup.string().min(8, "Password must be at least 8 characters"),
-      sellerName: sellerEnabled ? Yup.string() : Yup.string(),
+      sellerName: sellerEnabled
+        ? Yup.string().required("Seller name is required.")
+        : Yup.string().notRequired(),
       name: Yup.string(),
       lastName: Yup.string(),
       age: Yup.number()
@@ -204,12 +217,29 @@ export default function UserProfileEdit() {
     setUserImage(file);
   };
 
-  const handleRemoveAddress = (indx: number) => {
-    const addrToRemove = user?.shippingAddresses?.find(
-      (_, index) => index === indx
-    );
-    console.log(addrToRemove);
+  const handleContinue = async () => {
+    const errors = await formik.validateForm();
+    console.log("the errors");
+    console.log(errors);
 
+    if (Object.keys(errors).length === 0) {
+      setPage("second");
+    }
+  };
+
+  const handleRemoveAddress = (indx: number) => {
+    const addrToRemove = user?.shippingAddresses?.[indx];
+    if (!addrToRemove) return;
+
+    if (shippingAddressesToDelete.includes(addrToRemove)) {
+      const filteredAddress = shippingAddressesToDelete.filter(
+        (addr) =>
+          addr.name !== addrToRemove.name && addr.zip !== addrToRemove.zip
+      );
+
+      setShippingAddressesToDelete([...filteredAddress]);
+      return;
+    }
     if (addrToRemove) {
       setShippingAddressesToDelete((prevAddresses) => {
         const doesExist = prevAddresses.some((address) => {
@@ -301,9 +331,7 @@ export default function UserProfileEdit() {
             </FormControl>
 
             <FormControl
-              isInvalid={
-                !!(formik.errors.sellerName && formik.touched.sellerName)
-              }
+              isInvalid={sellerEnabled && !!formik.errors.sellerName}
               className={
                 sellerEnabled
                   ? "custom-form-control-enabled"
@@ -322,9 +350,7 @@ export default function UserProfileEdit() {
                 _placeholder={{ color: "gray.500" }}
                 type="text"
               />
-              {formik.errors.sellerName && formik.touched.sellerName ? (
-                <Text color="red">{formik.errors.sellerName}</Text>
-              ) : null}
+              <FormErrorMessage>{formik.errors.sellerName}</FormErrorMessage>
             </FormControl>
 
             <FormControl
@@ -378,13 +404,12 @@ export default function UserProfileEdit() {
                 Cancel
               </Button>
               <Button
-                onClick={() => setPage("second")}
+                onClick={handleContinue}
                 bg={"ca7"}
                 color={"white"}
                 w="full"
-                _hover={{
-                  bg: "ca6",
-                }}
+                _hover={{ bg: "ca6" }}
+                disabled={!formik.isValid || !formik.touched.sellerName}
               >
                 Continue
               </Button>
@@ -479,63 +504,74 @@ export default function UserProfileEdit() {
               <Divider my={1} />
               {((userShippingAddress?.length ?? 0) > 0 ||
                 (user?.shippingAddresses?.length ?? 0) > 0) && (
-                <Stack padding={4} spacing={4} className="bg-ca6 rounded-md">
-                  <h3 className="text-ca1">Addresses to add</h3>
+                <Stack spacing={4} padding={2} className="bg-ca3 rounded-md">
+                  {userShippingAddress.length > 0 && (
+                    <h3 className="text-ca9 p-4">Addresses to add</h3>
+                  )}
                   {userShippingAddress.map((address, index) => {
                     return (
-                      <Flex
-                        key={`${address}-${index}`}
-                        className="w-full bg-ca7 rounded-md p-2 items-center justify-between "
-                      >
-                        <p className="text-lg text-ca1">
-                          {address.name}, {address.state}, {address.zip}
-                        </p>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          onClick={() => {
-                            setShippingAddresses((prevAddresses) => {
-                              return prevAddresses.filter(
-                                (_, idx) => idx !== index
-                              );
-                            });
-                          }}
-                          className="w-6 h-6 pb-0.5 justify-between text-ca1 cursor-pointer hover:text-red-500"
+                      <div className="flex w-full px-4">
+                        <Flex
+                          key={`${address}-${index}`}
+                          className=" w-full bg-ca2 shadow-md rounded-md p-2 items-center justify-between "
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                          />
-                        </svg>
-                      </Flex>
+                          <p className="text-lg text-ca9">
+                            {address.name}, {address.state}, {address.zip}
+                          </p>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            onClick={() => {
+                              setShippingAddresses((prevAddresses) => {
+                                return prevAddresses.filter(
+                                  (_, idx) => idx !== index
+                                );
+                              });
+                            }}
+                            className="w-6 h-6 pb-0.5 justify-between text-ca9 cursor-pointer hover:text-red-500"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                            />
+                          </svg>
+                        </Flex>
+                      </div>
                     );
                   })}
-                  <Stack>
+                  <Stack className="">
                     {user?.shippingAddresses &&
                       user.shippingAddresses.length >= 1 && (
                         <>
                           <Flex
-                            className=" p-3 rounded-md"
-                            bgColor={"ca5"}
+                            className="w-full p-3 rounded-md"
+                            bgColor={"ca3"}
                             direction="column"
-                            mt={4}
+                            mt={userShippingAddress.length > 0 ? 4 : 0}
                           >
-                            <h3 className="py-0.5 leading-8 ">
+                            <h3 className="py-0.5 leading-8 text-ca9">
                               Current Addresses
                             </h3>
                             <Divider className="mb-2" />
                             {user.shippingAddresses &&
                               user.shippingAddresses.map((address, index) => (
                                 <Flex
-                                  className="py-0.5 bg-ca6 items-center justify-between rounded-md p-2"
+                                  className={`py-0.5 bg-ca2 shadow-md  items-center justify-between rounded-md p-2 ${
+                                    shippingAddressesToDelete.some(
+                                      (currentAddress) =>
+                                        currentAddress.name === address.name
+                                    )
+                                      ? "border border-red-500"
+                                      : ""
+                                  }`}
                                   key={index}
                                   mb={2}
                                 >
-                                  <p className="text-white text-xl py-2">
+                                  <p className="text-ca9 text-xl py-2">
                                     {address.name}, {address.state},{" "}
                                     {address.zip} <br />
                                   </p>
@@ -572,13 +608,22 @@ export default function UserProfileEdit() {
                                     userShippingAddress.concat(
                                       user.shippingAddresses ?? []
                                     );
-                                  console.log("joined");
 
-                                  console.log(joinedAddresses);
+                                  const refinedAddresses =
+                                    joinedAddresses.filter(
+                                      (currentAddress) =>
+                                        !shippingAddressesToDelete.some(
+                                          (address) =>
+                                            address.name === currentAddress.name
+                                        )
+                                    );
+
+                                  console.log("heres the refined addresses");
+                                  console.log(refinedAddresses);
 
                                   const result = await updateUser({
                                     ...user,
-                                    shippingAddresses: joinedAddresses,
+                                    shippingAddresses: refinedAddresses,
                                   });
 
                                   if (result.status && result.status === 200) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Ref, forwardRef, useEffect, useState } from "react";
 import Pagination from "../../components/util/Pagination";
 
 interface ViewItemsProps {
@@ -6,42 +6,48 @@ interface ViewItemsProps {
   itemsList: any[];
 }
 
-function ViewItems({ showItemsCallback, itemsList }: ViewItemsProps) {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [shownItems, setShownItems] = useState<any[]>([]);
+const ViewItems = forwardRef(
+  (props: ViewItemsProps, ref?: React.Ref<HTMLDivElement>) => {
+    const { showItemsCallback, itemsList } = props;
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [shownItems, setShownItems] = useState<any[]>([]);
+    const validItems = React.useMemo(
+      () => itemsList.filter((item) => item && item._id),
+      [itemsList]
+    );
 
-  useEffect(() => {
-    if (itemsList) {
-      const validItems = itemsList.filter((item) => item && item._id);
+    useEffect(() => {
+      if (validItems.length) {
+        const startIdx = (currentPage - 1) * 4;
+        const endIdx = currentPage * 4;
+        setShownItems(validItems.slice(startIdx, endIdx));
+      }
+    }, [validItems, currentPage]);
 
-      const startIdx = (currentPage - 1) * 4;
-      const endIdx = currentPage * 4;
-      setShownItems(validItems.slice(startIdx, endIdx));
-    }
-  }, [itemsList, currentPage]);
+    useEffect(() => {
+      if (shownItems.length) {
+        showItemsCallback(shownItems);
+      }
+    }, [shownItems]);
 
-  useEffect(() => {
-    if (shownItems.length) {
-      showItemsCallback(shownItems);
-    }
-  }, [shownItems]);
+    const totalItems = validItems.length;
 
-  const totalItems = itemsList ? itemsList.filter((p) => p && p._id).length : 0;
+    const handlePageChange = (page: number) => {
+      setCurrentPage(page);
+    };
 
-  return (
-    <div className="inline-flex">
-      {totalItems > 0 && (
-        <Pagination
-          totalItems={totalItems}
-          itemsPerPage={4}
-          currentPage={currentPage}
-          onPageChange={(page: number) => {
-            setCurrentPage(page);
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
+    return (
+      <div ref={ref} className="inline-flex">
+        {totalItems > 0 && (
+          <Pagination
+            totalItems={totalItems}
+            itemsPerPage={4}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        )}
+      </div>
+    );
+  }
+);
 export default ViewItems;

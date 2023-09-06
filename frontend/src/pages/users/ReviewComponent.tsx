@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-function ReviewComponent({
+export default function ReviewComponent({
   review,
   correspondingUser,
 }: {
@@ -9,9 +9,11 @@ function ReviewComponent({
 }) {
   const [isTruncated, setIsTruncated] = useState(true);
   const [showButton, setShowButton] = useState(false);
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
-  const setRef = (node: HTMLDivElement | null) => {
-    if (node) {
+  const checkScrollableContent = () => {
+    if (contentRef.current) {
+      const node = contentRef.current;
       if (node.scrollHeight > node.clientHeight) {
         setShowButton(true);
       } else {
@@ -19,6 +21,14 @@ function ReviewComponent({
       }
     }
   };
+
+  const handleToggleContent = () => {
+    setIsTruncated((prevState) => !prevState);
+  };
+
+  useLayoutEffect(() => {
+    checkScrollableContent();
+  }, [review.review]);
 
   return (
     <div className="flex flex-col items-center w-[75%] my-3 space-x-5 transition-all duration-500 bg-ca4 rounded-md p-3">
@@ -34,11 +44,11 @@ function ReviewComponent({
         />
         <div className="flex flex-col flex-grow bg-ca3 rounded-md p-1 overflow-hidden">
           <div
-            ref={setRef}
+            ref={contentRef}
             style={{
               transition: "max-height 0.5s ease-in-out",
               overflow: "hidden",
-              maxHeight: isTruncated ? "4.7rem" : "1000px",
+              maxHeight: isTruncated ? "5.5rem" : "1000px",
             }}
           >
             <h3 className={isTruncated ? "line-clamp-3" : ""}>
@@ -47,7 +57,7 @@ function ReviewComponent({
           </div>
           {showButton && (
             <button
-              onClick={() => setIsTruncated(!isTruncated)}
+              onClick={handleToggleContent}
               className="mt-2 text-sm text-blue-500 hover:underline self-end"
             >
               {isTruncated ? "Read more" : "Show less"}
@@ -81,5 +91,3 @@ function ReviewComponent({
     </div>
   );
 }
-
-export default ReviewComponent;

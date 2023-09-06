@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 
 function RecentlyViewed() {
-  useEffect(() => {
-    //get all the products
-  }, []);
+  useEffect(() => {}, []);
 
   return <div>RecentlyViewed</div>;
 }

@@ -3,11 +3,6 @@ import { useEffect, useState } from "react";
 function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   const [items, setItems] = useState<any[]>([]);
 
-  useEffect(() => {
-    console.log("items");
-    console.log(items);
-  }, [items]);
-
   const removeItem = async (itemToRemove: any) => {
     try {
       await fetch(

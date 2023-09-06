@@ -170,9 +170,12 @@ export default function Simple() {
                 <MenuItem onClick={() => handleSettingSelect("editprofile")}>
                   Edit Profile
                 </MenuItem>
-                <MenuItem onClick={() => handleSettingSelect("youritems")}>
-                  Your Items
-                </MenuItem>
+                {user && user.isSeller && (
+                  <MenuItem onClick={() => handleSettingSelect("youritems")}>
+                    Your Items
+                  </MenuItem>
+                )}
+
                 <MenuDivider />
                 <MenuItem onClick={() => handleSettingSelect("signout")}>
                   Sign Out

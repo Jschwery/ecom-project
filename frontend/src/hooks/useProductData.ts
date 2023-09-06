@@ -43,9 +43,6 @@ export default function useProductData(productID: string) {
     const findProducts = async () => {
       try {
         if (productOwner) {
-          console.log("the product owner is");
-          console.log(productOwner);
-
           setIsLoading(true);
           await getAllUserProducts(productOwner?._id);
         }

@@ -65,6 +65,20 @@ export default function useUser() {
     }
   }, []);
 
+  const returnUserProducts = useCallback(async (userID: String) => {
+    try {
+      const productRequest = await axios.get(
+        `http://localhost:5000/api/users/${userID}/products`,
+        {
+          withCredentials: true,
+        }
+      );
+      return productRequest;
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   const updateUser = useCallback(async (user: User) => {
     console.log("here is the user: ");
     console.log(user);
@@ -152,5 +166,6 @@ export default function useUser() {
     getAllUserProducts,
     allProducts,
     updateOtherUser,
+    returnUserProducts,
   };
 }

@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useParams } from "react-router-dom";
@@ -25,7 +26,7 @@ import useProductData from "../../hooks/useProductData";
 
 function ProductPage() {
   let { productID } = useParams();
-  const { updateProduct } = useProducts();
+  const { updateProduct, getProductById } = useProducts();
   const { user } = useUser();
   const { addToLocalCart, localCart } = useCart();
   const {
@@ -41,6 +42,7 @@ function ProductPage() {
   const [productRating, setProductRating] = useState<number>(-1);
   const [input, setInput] = useState("");
   const toast = useToast();
+  const pageRef = useRef<any>(null);
 
   const renderedReviews = useMemo(() => {
     return reviewUsers?.map((review, index) => {
@@ -86,6 +88,7 @@ function ProductPage() {
       });
       setInput("");
       setProductRating(-1);
+      window.location.pathname = `/products/${foundProduct._id}`;
     } else {
       console.error("Product not found!");
     }
@@ -152,6 +155,18 @@ function ProductPage() {
               <div className="flex flex-col w-full ">
                 {allProducts &&
                   allProducts.map((product, index) => {
+                    const reviewTotal =
+                      product?.reviews?.reduce((sum, review) => {
+                        return sum + (review.rating || 0);
+                      }, 0) || 0;
+
+                    const ratedReviewsCount =
+                      product?.reviews?.filter((review) => review.rating)
+                        .length || 0;
+                    const averageRating = (
+                      reviewTotal / ratedReviewsCount || 1
+                    ).toFixed(2);
+
                     return (
                       <div
                         key={`${product._id}-${index}`}
@@ -163,23 +178,50 @@ function ProductPage() {
                         <div className="flex w-full items-center justify-between">
                           <div className="flex w-full items-center space-x-5 min-w-0">
                             <img
-                              className="h-10 w-10 rounded-full"
+                              className="h-10 w-10 rounded-full min-w-[2.5rem]"
                               src={
                                 (product.imageUrls && product.imageUrls[0]) ||
                                 "/images/logo2.svg"
                               }
                               alt={product.name}
                             />
-                            <h3 className="leading-snug mt-0.5 grow overflow-hidden truncate min-w-0">
+                            <h4
+                              className="leading-snug mt-0.5 grow overflow-hidden truncate min-w-0"
+                              title={product.name}
+                            >
                               {product.name}
-                            </h3>
+                            </h4>
                           </div>
-                          <h3 className="ml-1 flex-shrink-0">
+                          <h5 className="ml-1 flex-shrink-0">
                             ${product.price}
-                          </h3>
+                          </h5>
                         </div>
                         <span className="self-start">
-                          {product.rating || "Rating: 5⭐"}
+                          {(
+                            <div className="flex items-center">
+                              <h4>
+                                {Number(averageRating) !== 1
+                                  ? averageRating
+                                  : "No ratings"}
+                              </h4>
+                              {Number(averageRating) !== 1 && (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="yellow"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="none"
+                                  className="w-6 h-6"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                          ) || "No ratings"}
                         </span>
                       </div>
                     );
@@ -193,12 +235,16 @@ function ProductPage() {
                 <PictureCarousel images={foundProduct.imageUrls ?? []} />
               </div>
 
-              <div className="order-2 md:order-1 w-full md:w-[60%]">
-                <div className="flex flex-col md:flex-row justify-between items-start mb-4">
-                  <h1 className="text-gray-800 font-bold text-2xl md:text-3xl">
+              <div className="px-3 md:px-0 order-2 md:order-1 w-[95%] md:w-[60%]">
+                <div className="flex flex-col md:flex-row overflow-hidden truncate justify-between items-start mb-4">
+                  <h1
+                    className="text-gray-800 md:px-2 font-bold overflow-hidden truncate min-w-0 text-2xl md:text-3xl md:max-w-xl"
+                    title={foundProduct.name}
+                  >
                     {foundProduct.name}
                   </h1>
-                  <span className="text-ca8 text-lg md:text-xl">
+
+                  <span className=" text-ca8 text-lg md:text-xl">
                     ${foundProduct.price}
                   </span>
                 </div>
@@ -295,7 +341,13 @@ function ProductPage() {
 
             <div className="w-full flex flex-col items-center shadow-md shadow-black rounded-md bg-ca2 grow">
               <h1>Product Reviews</h1>
-              {renderedReviews}
+              {renderedReviews.length > 0 ? (
+                renderedReviews
+              ) : (
+                <div className="flex flex-col items-center justify-center  my-auto">
+                  <h2>No reviews found</h2>
+                </div>
+              )}
 
               <div className="w-full flex flex-col items-center mt-auto p-4 space-y-4">
                 {foundProduct.reviews && (

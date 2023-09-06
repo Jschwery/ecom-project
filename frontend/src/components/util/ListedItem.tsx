@@ -11,6 +11,7 @@ interface ListedItemProps {
   flexDirection: string | "flex-col-items" | "flex-row-items";
   product?: Product;
   images?: string[];
+  showScrollbar?: boolean;
   wrapTextStyle?: React.CSSProperties;
   formikValues?: {
     name?: string;
@@ -30,6 +31,7 @@ function ListedItem({
   wrapTextStyle = {},
   formikValues = {},
   customStyles = {},
+  showScrollbar,
   product = {
     accountId: "",
     _id: "",
@@ -58,7 +60,9 @@ function ListedItem({
               customStyles.flexRow || ""
             } flex  h-52 w-full bg-ca6 items-stretch`
           : "flex flex-col h-96 w-80 space-y-4 justify-between items-stretch"
-      } rounded-md bg-ca6 max-w-[900px] overflow-auto`}
+      } rounded-md bg-ca6 max-w-[900px]  ${
+        showScrollbar ? "overflow-y-auto" : ""
+      }`}
     >
       <div
         className={

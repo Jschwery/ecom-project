@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import useUser from "../../hooks/useUser";
 import { User } from "../../../typings";
@@ -27,12 +33,21 @@ function SellerPage() {
   const [renderedReviews, setRenderedReviews] = useState<JSX.Element[] | null>(
     null
   );
+  const viewProductsRef = useRef<any>(null);
 
   useEffect(() => {
     if (productOwner && productOwner.reviews && !reviews) {
       setReviews(productOwner?.reviews);
     }
   }, [productOwner]);
+
+  useEffect(() => {
+    if (reviews && viewProductsRef.current) {
+      setTimeout(() => {
+        viewProductsRef.current.scrollIntoView({ behavior: "smooth" });
+      }, 525);
+    }
+  }, [reviews]);
 
   useEffect(() => {
     const fetchReviewUsers = async () => {
@@ -291,17 +306,21 @@ function SellerPage() {
               })}
           </div>
         </div>
-        <div className="w-full flex flex-col items-center py-16">
+        <div className="w-full flex flex-col items-center py-16 space-y-5">
           <h1>Seller Reviews</h1>
-          <div className="flex flex-col">
-            <h2>hello</h2>
+          <div className="flex flex-col w-full items-center">
             <>
               {renderedReviews}
               {productOwner && productOwner.reviews && (
-                <ViewProducts
-                  itemsList={productOwner.reviews}
-                  showItemsCallback={(items) => setReviews(items)}
-                />
+                <div>
+                  <ViewProducts
+                    ref={viewProductsRef}
+                    itemsList={productOwner.reviews}
+                    showItemsCallback={(items) => {
+                      setReviews(items);
+                    }}
+                  />
+                </div>
               )}
             </>
           </div>

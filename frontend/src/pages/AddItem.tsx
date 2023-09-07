@@ -439,7 +439,7 @@ function AddItem() {
                         className="inline-flex"
                         spacing={2}
                         minW="73px"
-                        w={"50%"}
+                        w={"65%"}
                       >
                         <FormLabel fontSize="sm" mb="1">
                           Categories
@@ -470,7 +470,7 @@ function AddItem() {
                         value={selectedTags}
                       />
                     </Stack>
-                    <Flex justify={"end"}>
+                    <Flex paddingY={2} justify={"end"}>
                       <Button
                         onClick={handleAddTags}
                         textColor={"white"}

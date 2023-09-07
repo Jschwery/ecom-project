@@ -32,6 +32,11 @@ import * as Yup from "yup";
 import FileUpload from "./util/UploadFile";
 import { dataURItoBlob } from "./util/URItoBlob";
 import axios from "axios";
+import useUser from "../hooks/useUser";
+import useCategories from "../hooks/useCategories";
+import Dropdown from "react-dropdown";
+import { TagsStarterMap } from "../data/tags";
+import Creatable from "react-select/creatable";
 
 interface DetailedItemProps {
   removeItemByIndex: (index: number) => void;
@@ -47,21 +52,26 @@ function DetailedItem({
   const [toBeRemoved, setToBeRemoved] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
+  const { user } = useUser();
   const { colors } = useTheme();
   const [images, setImages] = useState<string[]>(product.imageUrls || []);
   const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(
     null
   );
+
+  const {
+    categories,
+    tags,
+    selectCategory,
+    selectedCategory,
+    selectedTags,
+    handleTagChange,
+    setSelectedTags,
+    setSelectedCategory,
+  } = useCategories();
+
   const hoverExitDelay = 250;
   let timeoutId: NodeJS.Timeout | null = null;
-  // useEffect(() => {
-  //   setImages(product.imageUrls || []);
-  // }, [images]);
-
-  useEffect(() => {
-    console.log("the product");
-    console.log(product);
-  }, [product]);
 
   const uploadImageToS3 = async (images: string[]): Promise<string[]> => {
     const uploadedImageUrls: string[] = [];
@@ -100,28 +110,28 @@ function DetailedItem({
 
     return uploadedImageUrls;
   };
-  // const submitForm = async (formValues: Product, imageUrls: string[]) => {
-  //   if (imageUrls && imageUrls.length > 0) {
-  //     formValues.imageUrls = imageUrls;
-  //   }
-  //   console.log("form values after");
-  //   console.log(formValues);
+  const submitForm = async (formValues: Product, imageUrls: string[]) => {
+    if (imageUrls && imageUrls.length > 0) {
+      formValues.imageUrls = imageUrls;
+    }
+    console.log("form values after");
+    console.log(formValues);
 
-  //   return axios.put(
-  //     "http://localhost:5000/api/products",
-  //     {
-  //       ...formValues,
-  //       imageUrls: imageUrls,
-  //       sellerID: user?._id,
-  //       tags: selectedTags.map((tag) => tag.value),
-  //       category: selectedCategory,
-  //     },
-  //     {
-  //       headers: { "Content-Type": "application/json" },
-  //       withCredentials: true,
-  //     }
-  //   );
-  // };
+    return axios.put(
+      "http://localhost:5000/api/products",
+      {
+        ...formValues,
+        imageUrls: imageUrls,
+        sellerID: user?._id,
+        tags: selectedTags.map((tag) => tag.value),
+        category: selectedCategory,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      }
+    );
+  };
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Product name is required"),
@@ -144,10 +154,13 @@ function DetailedItem({
       let uploadedImageUrls: string[] = [];
 
       if (images && images.length > 0) {
-        uploadedImageUrls = await uploadImageToS3(images);
+        uploadedImageUrls = await uploadImageToS3(
+          images.filter((image) => image.startsWith("http://"))
+        );
+        console.log(uploadedImageUrls);
       }
 
-      // const response = await submitForm(values, uploadedImageUrls);
+      const response = await submitForm(values, uploadedImageUrls);
 
       // if (response.status >= 200 && response.status < 300) {
       //   formik.resetForm();
@@ -207,6 +220,11 @@ function DetailedItem({
     toggleModal();
   }
 
+  useEffect(() => {
+    console.log("imgs");
+    console.log(images);
+  }, [images]);
+
   return (
     <div className="flex flex-col bg-ca1 shadow p-4 rounded-md md:w-[70%] lg:w-[60%] xl:w-[50%] mx-auto">
       <div className="flex justify-between">
@@ -242,7 +260,7 @@ function DetailedItem({
           <ModalHeader>Edit Product</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ul className="flex space-x-2 relative py-5">
+            <ul className="flex space-x-2 relative pb-5">
               {images.map((image, index) => {
                 return (
                   <li
@@ -280,103 +298,130 @@ function DetailedItem({
                 );
               })}
             </ul>
-            <FileUpload
-              fileCallback={(fileString: string) => {
-                setImages((oldImages) => [...oldImages, fileString]);
-              }}
-            />
+            <Stack spacing={3}>
+              <Flex>
+                <FileUpload
+                  fileCallback={(fileString: string) => {
+                    setImages((oldImages) => [...oldImages, fileString]);
+                  }}
+                />
+                <div className="w-full">
+                  <FormLabel fontSize="sm" mb="1">
+                    Categories
+                  </FormLabel>
+                  <Dropdown
+                    options={categories}
+                    onChange={(option) => {
+                      selectCategory(option.value as keyof TagsStarterMap);
+                    }}
+                    value={selectedCategory}
+                    placeholder="Select an option"
+                  />
 
-            <FormControl
-              id="name"
-              isRequired
-              isInvalid={!!(formik.errors.name && formik.touched.name)}
-            >
-              <FormLabel color={"ca9"}>Product Name</FormLabel>
-              <Input
-                type="text"
-                name="name"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.name}
-              />
-            </FormControl>
-
-            <FormControl
-              id="description"
-              isRequired
-              isInvalid={
-                !!(formik.errors.description && formik.touched.description)
-              }
-            >
-              <FormLabel color={"ca9"}>Product Description</FormLabel>
-              <Textarea
-                name="description"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.description}
-              />
-            </FormControl>
-
-            <FormControl
-              id="category"
-              isRequired
-              isInvalid={!!(formik.errors.category && formik.touched.category)}
-            >
-              <FormLabel color={"ca9"}>Product Category</FormLabel>
-              <Input
-                type="text"
-                name="category"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.category}
-              />
-            </FormControl>
-
-            <Box mb="4">
-              <FormControl
-                isInvalid={!!(formik.touched.price && formik.errors.price)}
-              >
-                <FormLabel>Price</FormLabel>
-                <NumberInput
-                  name="price"
-                  onBlur={formik.handleBlur}
-                  onChange={(value) => formik.setFieldValue("price", value)}
-                  precision={2}
-                  step={0.2}
-                  value={formik.values.price}
+                  <Creatable
+                    styles={{
+                      control: (baseStyles, state) => ({
+                        ...baseStyles,
+                        backgroundColor: colors.ca5,
+                      }),
+                    }}
+                    isMulti
+                    classNamePrefix={"react-select"}
+                    options={tags}
+                    onChange={handleTagChange as any}
+                    value={selectedTags}
+                  />
+                </div>
+              </Flex>
+              <Flex>
+                <FormControl
+                  id="name"
+                  isRequired
+                  isInvalid={!!(formik.errors.name && formik.touched.name)}
+                  marginRight={2}
                 >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-            </Box>
+                  <FormLabel color={"ca9"}>Product Name</FormLabel>
+                  <Input
+                    type="text"
+                    name="name"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.name}
+                  />
+                  <FormErrorMessage>{formik.errors.name}</FormErrorMessage>
+                </FormControl>
 
-            <Box mb="4">
+                <Box mb="4">
+                  <FormControl
+                    isInvalid={!!(formik.touched.price && formik.errors.price)}
+                    isRequired
+                  >
+                    <FormLabel>Price</FormLabel>
+                    <NumberInput
+                      name="price"
+                      onBlur={formik.handleBlur}
+                      onChange={(value) => formik.setFieldValue("price", value)}
+                      precision={2}
+                      step={0.2}
+                      value={formik.values.price}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <FormErrorMessage>{formik.errors.price}</FormErrorMessage>
+                  </FormControl>
+                </Box>
+              </Flex>
               <FormControl
+                id="description"
+                isRequired
                 isInvalid={
-                  !!(formik.touched.quantity && formik.errors.quantity)
+                  !!(formik.errors.description && formik.touched.description)
                 }
               >
-                <FormLabel>Quantity</FormLabel>
-                <NumberInput
+                <FormLabel color={"ca9"}>Product Description</FormLabel>
+                <Textarea
+                  name="description"
+                  onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  onChange={(value) => formik.setFieldValue("quantity", value)}
-                  value={formik.values.quantity}
-                >
-                  <NumberInputField />
-                </NumberInput>
+                  value={formik.values.description}
+                  resize="none"
+                  className="!h-4"
+                />
+                <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
               </FormControl>
-            </Box>
 
+              <Box mb="4">
+                <FormControl
+                  isInvalid={
+                    !!(formik.touched.quantity && formik.errors.quantity)
+                  }
+                  isRequired
+                >
+                  <FormLabel>Quantity</FormLabel>
+                  <NumberInput
+                    name="quantity"
+                    onBlur={formik.handleBlur}
+                    onChange={(value) =>
+                      formik.setFieldValue("quantity", value)
+                    }
+                    value={formik.values.quantity}
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                  <FormErrorMessage>{formik.errors.quantity}</FormErrorMessage>
+                </FormControl>
+              </Box>
+            </Stack>
             <Flex justify={"end"}>
               <Button
                 textColor={"white"}
                 bg="ca6"
                 _hover={{ bg: "ca5" }}
-                w="40%"
+                w="auto"
                 mt={4}
                 type="submit"
               >

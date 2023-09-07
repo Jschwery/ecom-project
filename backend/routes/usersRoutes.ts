@@ -6,8 +6,8 @@ import { middleLogger } from "../middlewares/logger";
 
 const router = express.Router();
 router.use(extractTokenAndUser);
-router.use(middleLogger);
 router.use(expressFileUpload());
+router.use(middleLogger);
 
 router.post("/users", userController.createUser);
 router.post("/users/images", userController.uploadToS3);

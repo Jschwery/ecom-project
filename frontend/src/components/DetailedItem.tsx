@@ -37,6 +37,7 @@ import useCategories from "../hooks/useCategories";
 import Dropdown from "react-dropdown";
 import { TagsStarterMap } from "../data/tags";
 import Creatable from "react-select/creatable";
+import { MultiValue } from "../pages/AddItem";
 
 interface DetailedItemProps {
   removeItemByIndex: (index: number) => void;
@@ -114,8 +115,6 @@ function DetailedItem({
     if (imageUrls && imageUrls.length > 0) {
       formValues.imageUrls = imageUrls;
     }
-    console.log("form values after");
-    console.log(formValues);
 
     return axios.put(
       "http://localhost:5000/api/products",
@@ -132,6 +131,14 @@ function DetailedItem({
       }
     );
   };
+
+  useEffect(() => {
+    const convertedTags = product.tags
+      ? product.tags.map((tag) => ({ value: tag, label: tag }))
+      : [];
+    setSelectedTags(convertedTags);
+    setSelectedCategory(product.category);
+  }, [product]);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Product name is required"),
@@ -155,18 +162,18 @@ function DetailedItem({
 
       if (images && images.length > 0) {
         uploadedImageUrls = await uploadImageToS3(
-          images.filter((image) => image.startsWith("http://"))
+          images.filter((image) => !image.startsWith("http://"))
         );
-        console.log(uploadedImageUrls);
+        setImages((images) => [...images, ...uploadedImageUrls]);
       }
 
       const response = await submitForm(values, uploadedImageUrls);
 
-      // if (response.status >= 200 && response.status < 300) {
-      //   formik.resetForm();
-      //   console.log("200 response OK");
-      //   window.location.pathname = "/";
-      // }
+      if (response.status >= 200 && response.status < 300) {
+        formik.resetForm();
+        console.log("200 response OK");
+        window.location.pathname = "/";
+      }
     } catch (error: any) {
       console.error("An error occurred during submission:", error);
       if (error.response && error.response.status === 400) {
@@ -255,7 +262,7 @@ function DetailedItem({
         <ModalOverlay />
         <ModalContent
           bg={`linear-gradient(to bottom, ${colors.ca4}, ${colors.ca2})`}
-          maxWidth="65%"
+          className="!max-w-[90%] md:!max-w-[75%] lg:!max-w-[65%] xl:!max-w-[55%]"
         >
           <ModalHeader>Edit Product</ModalHeader>
           <ModalCloseButton />
@@ -305,10 +312,7 @@ function DetailedItem({
                     setImages((oldImages) => [...oldImages, fileString]);
                   }}
                 />
-                <div className="w-full">
-                  <FormLabel fontSize="sm" mb="1">
-                    Categories
-                  </FormLabel>
+                <div className="w-full ml-2 bg-red-300">
                   <Dropdown
                     options={categories}
                     onChange={(option) => {

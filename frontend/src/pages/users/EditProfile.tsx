@@ -83,6 +83,78 @@ export default function UserProfileEdit({
       ),
     });
   }, [sellerEnabled]);
+
+  const uploadImageToS3 = async (image: string): Promise<string> => {
+    const formData = new FormData();
+    let imageBlob;
+
+    if (image.startsWith("data:")) {
+      imageBlob = dataURItoBlob(image);
+    } else {
+      imageBlob = image;
+    }
+
+    formData.append("productImage", imageBlob);
+
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    };
+
+    const response = await axios.post(
+      "http://localhost:5000/api/products/images",
+      formData,
+      config
+    );
+
+    if (response.status === 200) {
+      return response.data.url;
+    } else {
+      throw new Error("Failed to upload image.");
+    }
+  };
+
+  const submitProfileData = async (formData?: any, profilePic?: string) => {
+    console.log("prifle pic");
+    console.log(profilePic);
+
+    console.log("formadata");
+    console.log(formData);
+
+    try {
+      const response = await axios.put(
+        "http://localhost:5000/api/users/edit",
+        {
+          ...formData,
+          profilePicture: profilePic ? profilePic : null,
+          isSeller: sellerEnabled,
+          shippingAddresses: userShippingAddress.concat(
+            user?.shippingAddresses ?? []
+          ),
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (user?.profilePicture && !userImage) {
+        handleProfileChange();
+      }
+
+      if (response.status >= 200 && response.status < 300) {
+        displayAlert(AlertType.SUCCESS);
+        formik.resetForm();
+        window.location.pathname = "/";
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
   const formik = useFormik({
     initialValues: {
       sellerName: "",
@@ -97,53 +169,10 @@ export default function UserProfileEdit({
     onSubmit: async (values) => {
       try {
         if (userImage && !userImage.includes("googleuser")) {
-          const formData = new FormData();
-          let imageBlob;
-          if (userImage.startsWith("data:")) {
-            imageBlob = dataURItoBlob(userImage);
-          } else {
-            imageBlob = userImage;
-          }
-          formData.append("profilePicture", imageBlob);
-
-          const config = {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-            withCredentials: true,
-          };
-
-          const s3Response = await axios.post(
-            "http://localhost:5000/api/users/images",
-            formData,
-            config
-          );
-
-          if (s3Response.status === 200) {
-            values.profilePicture = s3Response.data.url;
-          }
-        }
-
-        const response = await axios.put(
-          "http://localhost:5000/api/users/edit",
-          {
-            ...values,
-            isSeller: sellerEnabled,
-            shippingAddresses: userShippingAddress.concat(
-              user?.shippingAddresses ?? []
-            ),
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-        if (response.status >= 200 && response.status < 300) {
-          displayAlert(AlertType.SUCCESS);
-          formik.resetForm();
-          window.location.pathname = "/";
+          const s3Response = await uploadImageToS3(userImage);
+          submitProfileData(values, s3Response);
+        } else {
+          submitProfileData(values);
         }
       } catch (error) {
         console.error("An error occurred:", error);
@@ -161,6 +190,12 @@ export default function UserProfileEdit({
     }
   }
 
+  const handlePictureChange = () => {
+    if (user?.profilePicture !== undefined) {
+      setUserImage("");
+    }
+  };
+
   function handleProfileChange() {
     if (user?.profilePicture !== undefined) {
       if (!user.profilePicture.includes("googleuser")) {
@@ -174,6 +209,9 @@ export default function UserProfileEdit({
       }
     }
     setUserImage("");
+    if (user) {
+      updateUser({ ...user, profilePicture: "" });
+    }
     setCloseUser(false);
   }
 
@@ -302,7 +340,7 @@ export default function UserProfileEdit({
               <Stack direction={["column", "row"]} spacing={6}>
                 <Center>
                   <Avatar size="xl" src={userImage}>
-                    {closeUser && (
+                    {closeUser && userImage && (
                       <AvatarBadge
                         as={IconButton}
                         size="sm"
@@ -310,7 +348,7 @@ export default function UserProfileEdit({
                         top="-10px"
                         colorScheme="red"
                         aria-label="remove Image"
-                        onClick={handleProfileChange}
+                        onClick={handlePictureChange}
                         icon={<SmallCloseIcon />}
                       />
                     )}

@@ -120,7 +120,7 @@ function ProductPage() {
       <div className="bg-ca2 w-full h-screen min-h-screen pt-20">
         <div className="w-full grow  p-4 flex flex-col md:flex-row bg-ca2">
           <div className=" min-w-[30%] rounded-md md:w-[30%] mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
-            <h2>Seller</h2>
+            <h2 className="pt-2">Seller</h2>
             <img
               onClick={() =>
                 (window.location.pathname = `/seller/${productOwner?._id}`)
@@ -150,9 +150,9 @@ function ProductPage() {
                   </svg>
                 )}
               </div>
-              <h2>All Seller Items</h2>
+              <h2 className="py-2">All Seller Items</h2>
 
-              <div className="flex flex-col w-full ">
+              <div className="flex flex-col w-full max-h-[400px] overflow-y-auto scrollable-darker-scrollbar">
                 {allProducts &&
                   allProducts.map((product, index) => {
                     const reviewTotal =
@@ -173,7 +173,7 @@ function ProductPage() {
                         onClick={() =>
                           (window.location.pathname = `/products/${product._id}`)
                         }
-                        className="flex flex-col cursor-pointer p-2 w-full justify-between bg-ca2 rounded-md my-2 items-center"
+                        className="flex flex-col cursor-pointer p-2 w-full justify-between  bg-ca2 rounded-md mb-3 items-center"
                       >
                         <div className="flex w-full items-center justify-between">
                           <div className="flex w-full items-center space-x-5 min-w-0">

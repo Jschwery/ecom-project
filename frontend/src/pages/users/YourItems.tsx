@@ -13,6 +13,7 @@ import DetailedItem from "../../components/DetailedItem";
 import useRemove from "../../hooks/useRemove";
 import { ref } from "yup";
 import ViewProducts from "./ViewProducts";
+import { deleteImgFromS3 } from "../../components/util/DeleteFromS3";
 
 function YourItems() {
   const { user, products, getAllUserProducts } = useUser();
@@ -22,6 +23,7 @@ function YourItems() {
     () => (window.location.pathname = "/your-items")
   );
   const [validItems, setValidItems] = useState<any[]>();
+  const viewProductsRef = useRef<any>(null);
 
   useEffect(() => {
     const itemReset = async () => {
@@ -39,41 +41,86 @@ function YourItems() {
     itemReset();
   }, [items]);
 
+  useEffect(() => {
+    if (viewProductsRef.current) {
+      setTimeout(() => {
+        viewProductsRef.current.scrollIntoView({ behavior: "smooth" });
+      }, 525);
+    }
+  }, [items]);
+
   return user && user.isSeller ? (
     <>
       <SignedInNav />
 
-      <div className="pt-16 w-full h-screen">
-        <Button
-          onClick={() => {
-            setNotOpen(!open);
-          }}
-        >
-          Hello
-        </Button>
+      <div className="pt-16 w-full h-screen overflow-y-auto bg-ca2">
         <div className="flex h-full w-full bg-ca2">
           <div
-            className={`bg-slate-50 transition-all duration-500 ${
-              open ? "w-1/12" : "w-3/12"
+            className={`bg-slate-50 mx-3 rounded my-10 px-5shadow-md transition-all duration-500 ${
+              open ? "w-2/12" : "w-4/12"
             }`}
           >
-            {user && user.isSeller}
+            {user && user.isSeller && (
+              <div className="w-full flex flex-col p-4">
+                {!open && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6 cursor-pointer ml-auto"
+                    onClick={() => {
+                      setNotOpen(!open);
+                    }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                    />
+                  </svg>
+                )}
+                {open && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6 cursor-pointer ml-auto"
+                    onClick={() => {
+                      setNotOpen(!open);
+                    }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                    />
+                  </svg>
+                )}
+                <h2>Orders</h2>
+              </div>
+            )}
           </div>
           <div
             ref={divRef}
-            className={`flex flex-col p-5 justify-between  items-center h-full bg-ca2 transition-all duration-500 ${
-              open ? "w-11/12" : "w-9/12"
+            className={`flex flex-col p-5 justify-between py-6 items-center h-full bg-ca2 transition-all duration-500 ${
+              open ? "w-10/12" : "w-8/12"
             }`}
           >
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <h2>Your items</h2>
-              <p
-                onClick={() => (window.location.pathname = "/add-item")}
-                className="cursor cursor-pointer"
-              >
-                Add another?
-              </p>
-              <div className="w-full space-y-4">
+            <div className="flex flex-col justify-center items-center 0 mt-2 w-full h-full">
+              <div className="flex flex-col items-center pb-2">
+                <h2>Your items</h2>
+                <p
+                  onClick={() => (window.location.pathname = "/add-item")}
+                  className="cursor cursor-pointer"
+                >
+                  Add another?
+                </p>
+              </div>
+              <div className="w-full space-y-4 my-3">
                 {validItems &&
                   validItems.map((product, index) => (
                     <DetailedItem
@@ -84,10 +131,11 @@ function YourItems() {
                     />
                   ))}
               </div>
-              <div style={{ marginTop: "auto" }}>
+              <div className="pb-3" style={{ marginTop: "auto" }}>
                 <ViewProducts
                   itemsList={products ?? []}
                   showItemsCallback={setItems}
+                  ref={viewProductsRef}
                 />
               </div>
             </div>

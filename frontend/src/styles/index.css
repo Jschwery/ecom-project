@@ -41,6 +41,18 @@ div::-webkit-scrollbar-thumb:hover {
   scrollbar-color: transparent transparent !important;
 }
 
+.scrollable-darker-scrollbar::-webkit-scrollbar {
+  width: 0.4em !important;
+}
+
+.scrollable-darker-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-ca6 hover:bg-ca7;
+}
+
+.scrollable-darker-scrollbar {
+  scrollbar-width: thin !important;
+}
+
 .cart-slide-in {
   @apply fixed top-0 right-[-30vw] w-[30vw] md:min-w-[425px] md:max-w-[515px] min-w-[150px] md:right-[-55vw] md:w-[55vw] h-[100vh] opacity-0  bg-ca2 transition-all duration-500 overflow-y-auto z-50;
 }

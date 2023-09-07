@@ -149,8 +149,6 @@ function AddItem() {
     if (imageUrls && imageUrls.length > 0) {
       formValues.imageUrls = imageUrls;
     }
-    console.log("form values after");
-    console.log(formValues);
 
     return axios.post(
       "http://localhost:5000/api/products",

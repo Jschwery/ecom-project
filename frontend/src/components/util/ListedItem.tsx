@@ -5,7 +5,7 @@ import {
   NumberInputField,
   NumberInputStepper,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Product } from "../../../typings";
 interface ListedItemProps {
   flexDirection: string | "flex-col-items" | "flex-row-items";
@@ -51,6 +51,11 @@ function ListedItem({
   };
 
   const content = { ...defaultContent, ...formikValues };
+
+  useEffect(() => {
+    console.log("the images");
+    console.log(images);
+  }, [images]);
 
   return (
     <div

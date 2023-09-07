@@ -55,6 +55,7 @@ export type Product = {
   description: string;
   rating?: number;
   category: string;
+  weight?: number;
   price: number;
   reviews?: {
     review: string;

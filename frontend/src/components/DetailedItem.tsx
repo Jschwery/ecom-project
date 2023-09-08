@@ -255,7 +255,7 @@ function DetailedItem({
   }
 
   return (
-    <div className="flex flex-col bg-ca1 shadow px-4 py-2 rounded-md md:w-[70%] lg:w-[60%] xl:w-[50%] mx-auto">
+    <div className="flex flex-col bg-ca3 shadow px-4 py-2 rounded-md md:w-[70%] lg:w-[60%] xl:w-[50%] mx-auto">
       <div className="flex justify-between">
         <h2>{product.name}</h2>
         <svg

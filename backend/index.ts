@@ -14,6 +14,7 @@ import * as AWS from "aws-sdk";
 import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
 import productRoutes from "./routes/productRoutes";
+import { Counter } from "./models/Transaction";
 
 dotenv.config();
 const app = express();
@@ -30,8 +31,15 @@ app.use(express.json());
 
 mongoose
   .connect(process.env.MONGODB_URL!)
-  .then(() => {
+  .then(async () => {
     console.log("Database connected!");
+
+    const existingCounter = await Counter.findById("transaction");
+    if (!existingCounter) {
+      const transactionCounter = new Counter({ _id: "transaction", seq: 0 });
+      await transactionCounter.save();
+      console.log("Counter initialized!");
+    }
   })
   .catch((err) => console.log(err));
 
@@ -56,12 +64,6 @@ app.use("/api", transactionRoutes);
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
-
-// User.deleteMany({})
-//   .then(() => {
-//     console.log("done");
-//   })
-//   .catch((err) => console.log(err));
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);

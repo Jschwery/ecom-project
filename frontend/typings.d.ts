@@ -72,6 +72,7 @@ export type Transaction = {
   product: string;
   buyer: string;
   seller: string;
+  orderNumber: Number;
   quantity: number;
   total: number;
   status: "Pending" | "Fulfilled" | "Canceled";

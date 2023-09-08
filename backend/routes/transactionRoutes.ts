@@ -17,9 +17,9 @@ router.post(
 //   "/transactions/buyer/:buyerID",
 //   transactionController.getBuyerTransaction
 // );
-// router.get(
-//   "/transactions/seller/:sellerID",
-//   transactionController.getSellerTransaction
-// );
+router.get(
+  "/transactions/seller/:sellerID",
+  transactionController.getSellerTransaction
+);
 
 export default router;

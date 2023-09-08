@@ -1,6 +1,10 @@
 import Transaction, { ITransaction } from "../models/Transaction";
+import mongoose from "mongoose";
 
 export const createTransaction = async (transactionInfo: ITransaction) => {
+  console.log("heres transaction info: ");
+  console.log(transactionInfo);
+
   const transaction = new Transaction(transactionInfo);
   return await transaction.save();
 };
@@ -29,8 +33,15 @@ export async function getBuyerTransaction(buyerID: string) {
 }
 
 export async function getSellerTransaction(sellerID: string) {
+  const ObjectId = mongoose.Types.ObjectId;
+  console.log("here in sellertransaction");
+  console.log(sellerID);
+
   try {
-    const transactions = await Transaction.find({ sellerID: sellerID });
+    const transactions = await Transaction.find({
+      sellerID: new ObjectId(sellerID),
+    });
+
     return transactions;
   } catch (err) {
     console.error(err);

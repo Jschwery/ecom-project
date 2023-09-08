@@ -80,8 +80,8 @@ function Checkout() {
 
         const dataToSubmit = {
           product: cartItem.product,
-          buyer: user?._id,
-          seller: prodOwner._id,
+          buyerID: user?._id,
+          sellerID: prodOwner._id,
           quantity: cartItem.quantity,
           total,
           status: "pending",

@@ -245,9 +245,6 @@ export async function getAllUserProduct(req: CustomRequest, res: Response) {
       sellerID: userId,
     }).exec();
 
-    console.log("in get all products ======================");
-    console.log(products);
-
     return res.json(products);
   } catch (err) {
     console.error("Error retrieving user products:", err);

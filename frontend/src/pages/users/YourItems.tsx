@@ -14,6 +14,7 @@ import useRemove from "../../hooks/useRemove";
 import { ref } from "yup";
 import ViewProducts from "./ViewProducts";
 import { deleteImgFromS3 } from "../../components/util/DeleteFromS3";
+import Orders from "../../components/Orders";
 
 function YourItems() {
   const { user, products, getAllUserProducts } = useUser();
@@ -53,15 +54,15 @@ function YourItems() {
     <>
       <SignedInNav />
 
-      <div className="pt-16 w-full h-screen overflow-y-auto bg-ca2">
-        <div className="flex h-full w-full bg-ca2">
+      <div className="pt-16 w-full h-screen  bg-ca2">
+        <div className="flex h-full w-full p-5 bg-ca2">
           <div
-            className={`bg-slate-50 mx-3 rounded my-10 px-5shadow-md transition-all duration-500 ${
+            className={`bg-ca3 mx-3 rounded  px-5 shadow-md shadow-black transition-all duration-500 ${
               open ? "w-2/12" : "w-4/12"
             }`}
           >
             {user && user.isSeller && (
-              <div className="w-full flex flex-col p-4">
+              <div className="w-full flex flex-col py-4 ">
                 {!open && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -100,38 +101,39 @@ function YourItems() {
                     />
                   </svg>
                 )}
-                <h2>Orders</h2>
+                <div className="flex flex-col items-center">
+                  <h2>Orders</h2>
+                  <Orders />
+                </div>
               </div>
             )}
           </div>
           <div
             ref={divRef}
-            className={`flex flex-col p-5 justify-between py-6 items-center h-full bg-ca2 transition-all duration-500 ${
+            className={`flex flex-col justify-between items-center shadow-md shadow-black overflow-y-auto rounded-md bg-ca1 transition-all duration-500 ${
               open ? "w-10/12" : "w-8/12"
             }`}
           >
-            <div className="flex flex-col justify-center items-center 0 mt-2 w-full h-full">
-              <div className="flex flex-col items-center pb-2">
-                <h2>Your items</h2>
-                <p
-                  onClick={() => (window.location.pathname = "/add-item")}
-                  className="cursor cursor-pointer"
-                >
-                  Add another?
-                </p>
-              </div>
-              <div className="w-full space-y-4 my-3">
-                {validItems &&
-                  validItems.map((product, index) => (
-                    <DetailedItem
-                      key={`${product._id}-${index}`}
-                      product={product}
-                      removeItemByIndex={removeItemByIndex}
-                      index={index}
-                    />
-                  ))}
-              </div>
-              <div className="pb-3" style={{ marginTop: "auto" }}>
+            <h2>Your items</h2>
+            <p
+              onClick={() => (window.location.pathname = "/add-item")}
+              className="cursor cursor-pointer"
+            >
+              Add another?
+            </p>
+            <div className="w-full space-y-4 my-3">
+              {validItems &&
+                validItems.map((product, index) => (
+                  <DetailedItem
+                    key={`${product._id}-${index}`}
+                    product={product}
+                    removeItemByIndex={removeItemByIndex}
+                    index={index}
+                  />
+                ))}
+            </div>
+            <div className="pb-3" style={{ marginTop: "auto" }}>
+              <div className="w-full px-2  bg-ca4 rounded-md">
                 <ViewProducts
                   itemsList={products ?? []}
                   showItemsCallback={setItems}

@@ -261,6 +261,15 @@ div.Dropdown-control {
   color: white;
 }
 
+.edit-delete-hidden {
+  top: -100%;
+  transition: top 0.5s ease-out;
+}
+.edit-delete-shown {
+  top: 2px;
+  transition: top 0.5s ease-out;
+}
+
 div.flex-col-items {
   @apply !flex !flex-col;
 }

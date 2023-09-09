@@ -41,7 +41,7 @@ import useCategories from "../hooks/useCategories";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import ListedItem from "../components/util/ListedItem";
-import ITag from "./users/Tag";
+import ITag from "../components/util/Tag";
 
 export type MultiValue<T = string> = {
   label: string;
@@ -156,6 +156,7 @@ function AddItem() {
         ...formValues,
         imageUrls: imageUrls,
         sellerID: user?._id,
+        weight: formik.values.weight,
         tags: selectedTags.map((tag) => tag.value),
         category: selectedCategory,
       },
@@ -175,7 +176,9 @@ function AddItem() {
     price: Yup.number()
       .positive("Price must be a positive value")
       .required("Price value is required"),
-
+    weight: Yup.number()
+      .positive("Weight must be a positive value")
+      .required("Weight value is required"),
     quantity: Yup.number()
       .positive("Quantity must be a positive value")
       .required("Quantity is required"),
@@ -185,6 +188,7 @@ function AddItem() {
       name: "",
       description: "",
       price: 0,
+      weight: 0,
       quantity: 0,
       category: "",
     },
@@ -310,11 +314,11 @@ function AddItem() {
 
               <Box mb="4">
                 <FormControl
+                  id="price"
+                  isRequired
                   isInvalid={!!(formik.touched.price && formik.errors.price)}
                 >
-                  <FormLabel>
-                    Price <span className="text-red-500">*</span>
-                  </FormLabel>
+                  <FormLabel>Price</FormLabel>
                   <NumberInput
                     name="price"
                     onBlur={formik.handleBlur}
@@ -332,24 +336,48 @@ function AddItem() {
                 </FormControl>
               </Box>
               <Box mb="4">
-                <FormControl
-                  isInvalid={
-                    !!(formik.touched.quantity && formik.errors.quantity)
-                  }
-                >
-                  <FormLabel>
-                    Quanity <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <NumberInput
-                    onBlur={formik.handleBlur}
-                    onChange={(value) =>
-                      formik.setFieldValue("quantity", value)
+                <Flex>
+                  <FormControl
+                    id="quantity"
+                    isRequired
+                    isInvalid={
+                      !!(formik.errors.quantity && formik.touched.quantity)
                     }
+                    className="mr-2"
                   >
-                    <NumberInputField />
-                  </NumberInput>
-                  <FormErrorMessage>{formik.errors.quantity}</FormErrorMessage>
-                </FormControl>
+                    <FormLabel>Quantity</FormLabel>
+                    <NumberInput
+                      onBlur={formik.handleBlur}
+                      onChange={(value) =>
+                        formik.setFieldValue("quantity", value)
+                      }
+                    >
+                      <NumberInputField />
+                    </NumberInput>
+                    <FormErrorMessage>
+                      {formik.errors.quantity}
+                    </FormErrorMessage>
+                  </FormControl>
+                  <FormControl
+                    isInvalid={
+                      !!(formik.touched.weight && formik.errors.weight)
+                    }
+                    isRequired
+                  >
+                    <FormLabel>Weight (lbs)</FormLabel>
+                    <NumberInput
+                      name="weight"
+                      onBlur={formik.handleBlur}
+                      onChange={(value) =>
+                        formik.setFieldValue("weight", value)
+                      }
+                      value={formik.values.weight}
+                    >
+                      <NumberInputField />
+                    </NumberInput>
+                    <FormErrorMessage>{formik.errors.weight}</FormErrorMessage>
+                  </FormControl>
+                </Flex>
               </Box>
 
               <FileUpload

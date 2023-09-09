@@ -14,6 +14,7 @@ import ProductPage from "./pages/users/ProductPage";
 import { CartProvider } from "./global/CartProvider";
 import Checkout from "./pages/Checkout";
 import SellerPage from "./pages/users/SellerPage";
+import FullfillOrder from "./pages/users/FullfillOrder";
 
 const root = document.getElementById("root");
 
@@ -68,6 +69,7 @@ ReactDOM.render(
             <Route path="/verify-email/:token" element={<VerifyEmail />} />
             <Route path="/products/:productID" element={<ProductPage />} />
             <Route path="/seller/:sellerID" element={<SellerPage />} />
+            <Route path="/orders/:orderID" element={<FullfillOrder />} />
 
             {/* <Route path="/login" element={<LoginPage />} /> */}
           </Routes>

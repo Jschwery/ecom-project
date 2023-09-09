@@ -11,7 +11,7 @@ import SignedInNav from "../../components/SignedInNavBar";
 import { Product, User } from "../../../typings";
 import useProducts from "../../hooks/useProducts";
 import PictureCarousel from "../../components/DealCarousel";
-import ITag from "./Tag";
+import ITag from "../../components/util/Tag";
 import useUser from "../../hooks/useUser";
 import useRemove from "../../hooks/useRemove";
 import DetailedItem from "../../components/DetailedItem";

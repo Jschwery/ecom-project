@@ -75,6 +75,12 @@ export type Transaction = {
   orderNumber: Number;
   quantity: number;
   total: number;
-  status: "Pending" | "Fulfilled" | "Canceled";
+  status:
+    | "Pending"
+    | "Fulfilled"
+    | "Canceled"
+    | "pending"
+    | "fulfilled"
+    | "canceled";
   transactionDate?: Date;
 };

@@ -173,6 +173,9 @@ function DetailedItem({
       .required("Quantity is required"),
     category: Yup.string().required("Category is required"),
     imageUrls: Yup.array().of(Yup.string()),
+    weight: Yup.number()
+      .positive("Weight must be a positive value")
+      .required("Weight value is required"),
   });
 
   const handleSubmit = async (values: any) => {
@@ -213,6 +216,7 @@ function DetailedItem({
       description: product.description,
       price: product.price,
       quantity: product.quantity,
+      weight: product.weight,
       category: product.category,
       imageUrls: product.imageUrls || [],
     },
@@ -255,7 +259,7 @@ function DetailedItem({
   }
 
   return (
-    <div className="flex flex-col bg-ca3 shadow px-4 py-2 rounded-md md:w-[70%] lg:w-[60%] xl:w-[50%] mx-auto">
+    <div className="flex flex-col bg-ca3 shadow px-4 py-2 rounded-md w-[90%] md:w-[80%] lg:w-[75%] xl:w-[65%] mx-auto">
       <div className="flex justify-between">
         <h2>{product.name}</h2>
         <svg
@@ -264,7 +268,7 @@ function DetailedItem({
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="w-6 h-6 cursor-pointer"
+          className="w-6 h-6 cursor-pointer hover:scale-110 duration-300 "
           onClick={() => handleItemEdit()}
         >
           <path
@@ -432,27 +436,51 @@ function DetailedItem({
                 </FormControl>
 
                 <Box mb="4">
-                  <FormControl
-                    isInvalid={
-                      !!(formik.touched.quantity && formik.errors.quantity)
-                    }
-                    isRequired
-                  >
-                    <FormLabel>Quantity</FormLabel>
-                    <NumberInput
-                      name="quantity"
-                      onBlur={formik.handleBlur}
-                      onChange={(value) =>
-                        formik.setFieldValue("quantity", value)
+                  <Flex>
+                    <FormControl
+                      isInvalid={
+                        !!(formik.touched.quantity && formik.errors.quantity)
                       }
-                      value={formik.values.quantity}
+                      isRequired
+                      className="mr-2"
                     >
-                      <NumberInputField />
-                    </NumberInput>
-                    <FormErrorMessage>
-                      {formik.errors.quantity}
-                    </FormErrorMessage>
-                  </FormControl>
+                      <FormLabel>Quantity</FormLabel>
+                      <NumberInput
+                        name="quantity"
+                        onBlur={formik.handleBlur}
+                        onChange={(value) =>
+                          formik.setFieldValue("quantity", value)
+                        }
+                        value={formik.values.quantity}
+                      >
+                        <NumberInputField />
+                      </NumberInput>
+                      <FormErrorMessage>
+                        {formik.errors.quantity}
+                      </FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isInvalid={
+                        !!(formik.touched.weight && formik.errors.weight)
+                      }
+                      isRequired
+                    >
+                      <FormLabel>Weight (lbs)</FormLabel>
+                      <NumberInput
+                        name="weight"
+                        onBlur={formik.handleBlur}
+                        onChange={(value) =>
+                          formik.setFieldValue("weight", value)
+                        }
+                        value={formik.values.weight}
+                      >
+                        <NumberInputField />
+                      </NumberInput>
+                      <FormErrorMessage>
+                        {formik.errors.weight}
+                      </FormErrorMessage>
+                    </FormControl>
+                  </Flex>
                 </Box>
               </Stack>
               <Flex justify={"end"}>
@@ -481,7 +509,7 @@ function DetailedItem({
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6 cursor-pointer"
+              className="w-6 h-6 cursor-pointer "
               onClick={() => {
                 setToBeRemoved(false);
               }}
@@ -499,7 +527,7 @@ function DetailedItem({
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6 cursor-pointer"
+              className="w-6 h-6 cursor-pointer hover:text-red-500 duration-300 scale-110"
               onClick={handleRemoval}
             >
               <path
@@ -516,7 +544,7 @@ function DetailedItem({
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-6 h-6 cursor-pointer"
+            className="w-6 h-6 cursor-pointer hover:text-red-500 duration-300 scale-110"
             onClick={() => setToBeRemoved(true)}
           >
             <path

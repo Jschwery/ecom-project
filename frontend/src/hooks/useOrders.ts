@@ -27,5 +27,47 @@ export const useOrders = () => {
     getOrders();
   }, [user]);
 
-  return { orders };
+  const getOrderById = async (orderID: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/transactions/order/${orderID}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const updateOrder = async (
+    itemToUpdate: Transaction
+  ): Promise<Transaction> => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/transactions/${itemToUpdate._id}`,
+        {
+          ...itemToUpdate,
+          status: "Fulfilled",
+        },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+
+        return response.data;
+      } else {
+        throw new Error("Failed to update the order");
+      }
+    } catch (error) {
+      console.error("Failed to cancel the order");
+      throw error;
+    }
+  };
+
+  return { orders, setOrders, updateOrder, getOrderById };
 };

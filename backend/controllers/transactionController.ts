@@ -1,6 +1,7 @@
 import { Response } from "express";
 import * as transactionService from "../services/transactionService";
 import { CustomRequest } from "../types";
+import Transaction from "../models/Transaction";
 
 export const createTransaction = async (req: CustomRequest, res: Response) => {
   try {
@@ -61,5 +62,21 @@ export async function getSellerTransaction(req: CustomRequest, res: Response) {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function getOrderTransaction(req: CustomRequest, res: Response) {
+  const orderID = req.params.orderID;
+  try {
+    const transactionFound = await Transaction.findById(orderID);
+    if (transactionFound) {
+      res.status(200).json(transactionFound);
+    } else {
+      res
+        .status(404)
+        .json({ message: "Transactions not found for the seller" });
+    }
+  } catch (error) {
+    console.error(error);
   }
 }

@@ -9,10 +9,10 @@ router.post(
   extractTokenAndUser,
   transactionController.createTransaction
 );
-// router.put(
-//   "/transactions/:transactionID",
-//   transactionController.updateTransaction
-// );
+router.put(
+  "/transactions/:transactionID",
+  transactionController.updateTransaction
+);
 // router.get(
 //   "/transactions/buyer/:buyerID",
 //   transactionController.getBuyerTransaction
@@ -20,6 +20,11 @@ router.post(
 router.get(
   "/transactions/seller/:sellerID",
   transactionController.getSellerTransaction
+);
+
+router.get(
+  "/transactions/order/:orderID",
+  transactionController.getOrderTransaction
 );
 
 export default router;

@@ -57,8 +57,8 @@ function YourItems() {
       <div className="pt-16 w-full h-screen  bg-ca2">
         <div className="flex h-full w-full p-5 bg-ca2">
           <div
-            className={`bg-ca3 mx-3 rounded  px-5 shadow-md shadow-black transition-all duration-500 ${
-              open ? "w-2/12" : "w-4/12"
+            className={`bg-ca3 mx-3 rounded min-w-[150px] px-5 shadow-md shadow-black transition-all duration-500 ${
+              open ? "w-3/12" : "w-5/12"
             }`}
           >
             {user && user.isSeller && (
@@ -101,9 +101,11 @@ function YourItems() {
                     />
                   </svg>
                 )}
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col  space-y-4 items-center">
                   <h2>Orders</h2>
-                  <Orders />
+                  <div className="w-full max-h-[715px] overflow-y-auto">
+                    <Orders isEnlarged={open} />
+                  </div>
                 </div>
               </div>
             )}
@@ -111,7 +113,7 @@ function YourItems() {
           <div
             ref={divRef}
             className={`flex flex-col justify-between items-center shadow-md shadow-black overflow-y-auto rounded-md bg-ca1 transition-all duration-500 ${
-              open ? "w-10/12" : "w-8/12"
+              open ? "w-9/12" : "w-7/12"
             }`}
           >
             <h2>Your items</h2>

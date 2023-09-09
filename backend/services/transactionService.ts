@@ -16,7 +16,8 @@ export async function updateTransaction(
   try {
     const transactionUpdate = await Transaction.findByIdAndUpdate(
       transactionID,
-      transactionInfo
+      transactionInfo,
+      { new: true }
     );
     return transactionUpdate;
   } catch (err) {
@@ -34,8 +35,6 @@ export async function getBuyerTransaction(buyerID: string) {
 
 export async function getSellerTransaction(sellerID: string) {
   const ObjectId = mongoose.Types.ObjectId;
-  console.log("here in sellertransaction");
-  console.log(sellerID);
 
   try {
     const transactions = await Transaction.find({

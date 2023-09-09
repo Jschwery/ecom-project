@@ -103,7 +103,7 @@ function YourItems() {
                 )}
                 <div className="flex flex-col  space-y-4 items-center">
                   <h2>Orders</h2>
-                  <div className="w-full max-h-[715px] overflow-y-auto">
+                  <div className="w-full max-h-[65vh] overflow-y-auto">
                     <Orders isEnlarged={open} />
                   </div>
                 </div>

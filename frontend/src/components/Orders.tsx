@@ -22,34 +22,35 @@ function Orders({ isEnlarged }: OrderProps) {
   useEffect(() => {
     async function fetchProductDetails() {
       let updatedProducts: { [key: string]: any } = {};
-      if (orders) {
-        if (Array.isArray(orders)) {
-          for (let order of orders) {
-            const product = await getProductById(order.product);
-            updatedProducts[order.product] = product;
+
+      if (orders && Array.isArray(orders)) {
+        for (let order of orders) {
+          if (Array.isArray(order.productAndCount)) {
+            for (let productInfo of order.productAndCount) {
+              const product = await getProductById(productInfo.productID);
+              updatedProducts[productInfo.productID] = product;
+            }
           }
         }
+        setProducts(updatedProducts);
       }
-
-      setProducts(updatedProducts);
     }
 
     fetchProductDetails();
-  }, [orders, getProductById]);
+  }, [orders]);
 
   const makeOrder = (order: Transaction, key: string) => {
-    const product = products[order.product];
-
     if (order.status === "Canceled" || order.status === "canceled") {
       return null;
     }
+
     return (
       <div
         onClick={() => (window.location.pathname = `/orders/${order._id}`)}
         key={key}
         onMouseEnter={() => setHoveredItem(order._id || "")}
         onMouseLeave={() => setHoveredItem(null)}
-        className={`flex relative cursor-pointer w-full bg-ca2  overflow-hidden rounded-md flex-col ${
+        className={`flex relative cursor-pointer w-full bg-ca2 overflow-hidden rounded-md flex-col ${
           !isEnlarged ? "p-4 space-y-3" : "p-4 space-y-1"
         }`}
       >
@@ -73,11 +74,11 @@ function Orders({ isEnlarged }: OrderProps) {
                 if (updatedOrder) {
                   setOrders((orders) => {
                     if (orders && orders.length > 0) {
-                      return orders.map((order) => {
-                        if (order._id === updatedOrder._id) {
+                      return orders.map((ord) => {
+                        if (ord._id === updatedOrder._id) {
                           return updatedOrder;
                         }
-                        return order;
+                        return ord;
                       });
                     }
                   });
@@ -95,22 +96,27 @@ function Orders({ isEnlarged }: OrderProps) {
             }}
           />
         </div>
-        <div className="flex space-x-1 justify-between w-full items-center">
-          <h4
-            className={`min-w-0 truncate ${
-              !isEnlarged ? "text-xl" : "text-lg"
-            }`}
-            title={product?.name}
-          >
-            {product?.name || "Loading..."}
-          </h4>
-          <p className="text-sm whitespace-nowrap">
-            Order {Number(order.orderNumber)}
-          </p>
-        </div>
-        <p className={`${!isEnlarged ? "text-lg" : "text-sm"}`}>
-          Qty: {order.quantity}
-        </p>
+
+        {order?.productAndCount?.map((productInfo) => {
+          const product = products?.[productInfo.productID];
+          return (
+            <div
+              key={productInfo.productID}
+              className="flex space-x-1 justify-between w-full items-center"
+            >
+              <h4
+                className={`min-w-0 truncate ${
+                  !isEnlarged ? "text-xl" : "text-lg"
+                }`}
+                title={product?.name}
+              >
+                {product?.name || "Loading..."} (Qty: {productInfo.productCount}
+                )
+              </h4>
+            </div>
+          );
+        })}
+
         <p className={`${!isEnlarged ? "text-lg" : "text-sm"}`}>
           Total: ${order.total.toFixed(2)}
         </p>

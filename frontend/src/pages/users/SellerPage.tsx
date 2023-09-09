@@ -153,7 +153,7 @@ function SellerPage() {
           <div className="flex flex-col items-center bg-ca3 rounded-l-md mx-auto w-full md:space-y-2 md:w-1/2">
             <img
               className="h-24 w-24 my-2 rounded-full"
-              src={productOwner?.profilePicture}
+              src={productOwner?.profilePicture || "/images/logo2.svg"}
               alt={productOwner?.name}
             />
             <div className="flex flex-col items-center space-y-5">
@@ -309,20 +309,24 @@ function SellerPage() {
         <div className="w-full flex flex-col items-center py-16 space-y-5">
           <h1>Seller Reviews</h1>
           <div className="flex flex-col w-full items-center">
-            <>
-              {renderedReviews}
-              {productOwner && productOwner.reviews && (
-                <div>
-                  <ViewProducts
-                    ref={viewProductsRef}
-                    itemsList={productOwner.reviews}
-                    showItemsCallback={(items) => {
-                      setReviews(items);
-                    }}
-                  />
-                </div>
-              )}
-            </>
+            {productOwner?.reviews && productOwner.reviews.length > 0 ? (
+              <>
+                {renderedReviews}
+                {productOwner && productOwner.reviews && (
+                  <div>
+                    <ViewProducts
+                      ref={viewProductsRef}
+                      itemsList={productOwner.reviews}
+                      showItemsCallback={(items) => {
+                        setReviews(items);
+                      }}
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <h3>No reviews found</h3>
+            )}
           </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ export default function useUser() {
   const getUserById = useCallback(async (userID: string) => {
     try {
       const userFound = await fetchData(`/api/users/${userID}`);
-
+      
       return userFound;
     } catch (err) {
       console.error(err);

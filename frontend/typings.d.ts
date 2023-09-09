@@ -69,9 +69,12 @@ export type Product = {
 };
 export type Transaction = {
   _id?: string;
-  product: string;
-  buyer: string;
-  seller: string;
+  productAndCount:{
+    productID: string,
+    productCount: number
+  }[];
+  buyerID: string;
+  sellerID: string;
   orderNumber: Number;
   quantity: number;
   total: number;

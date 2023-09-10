@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useOrders } from "../../hooks/useOrders";
 import { Product, Transaction, User } from "../../../typings";
 import useUser from "../../hooks/useUser";
-import { Divider } from "@chakra-ui/react";
+import { Divider, useToast } from "@chakra-ui/react";
 import useProducts from "../../hooks/useProducts";
 import { useFulfill } from "../../hooks/useFulfill";
 
@@ -56,6 +56,10 @@ const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
 
 function FullfillOrder() {
   const { products, order, buyer } = useFulfill();
+  const { updateOrder } = useOrders();
+  const { updateProduct, getProductById } = useProducts();
+  const { getUserById, atomicUserUpdate, user } = useUser();
+  const toast = useToast();
 
   const productsRef = useRef(products);
   const memoizedProducts = useMemo(() => {
@@ -75,10 +79,76 @@ function FullfillOrder() {
     );
   }, [memoizedProducts]);
 
+  const handleProductUpdate = async (product: Product) => {
+    console.log(product);
+    try {
+      const foundProduct = await getProductById(product._id as string);
+      console.log("the found product: ");
+      console.log(foundProduct);
+
+      const updatedProduct = await updateProduct({
+        ...product,
+        quantity: foundProduct.quantity - product.quantity,
+      });
+
+      if (updatedProduct && order) {
+        await updateOrder({ ...order, status: "Fulfilled" });
+        window.location.pathname = "/your-items";
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFundsUpdate = async () => {
+    if (order && order._id && user) {
+      const buyerDetails: User = await getUserById(order._id);
+
+      if (!buyerDetails) {
+        console.error("Could not fetch the buyer details");
+        return;
+      }
+      const buyer: User = {
+        ...buyerDetails,
+        cashBalance: (buyerDetails.cashBalance || 0) - total,
+      };
+
+      const seller: User = {
+        ...user,
+        cashBalance: (user.cashBalance || 0) + total,
+      };
+
+      try {
+        await atomicUserUpdate(buyer, seller);
+      } catch (err: any) {
+        console.error(err);
+        if (err.message.includes("Insufficient funds")) {
+          toast({
+            title: "Transaction Failed",
+            description: "Buyer did not have sufficent funds",
+            status: "warning",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
+        }
+      }
+    }
+  };
+
   const handleFullFillOrder = async () => {
-    //going to need to find the product and subract the quanity from the product
-    //going to add the total to the cash balance of the user
-    //going to need to mark the items as fulfilled
+    const updatePromises: any = [];
+
+    memoizedProducts.forEach((product) => {
+      const updatePromise = handleProductUpdate(product);
+      updatePromises.push(updatePromise);
+    });
+
+    try {
+      await Promise.all(updatePromises);
+    } catch (error) {
+      console.error("One or more product updates failed:", error);
+    }
   };
 
   return (

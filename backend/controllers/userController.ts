@@ -113,6 +113,35 @@ export async function getUserByID(req: CustomRequest, res: Response) {
   }
 }
 
+export async function atomicUpdate(req: CustomRequest, res: Response) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { buyer, seller, total } = req.body;
+
+    if ((buyer.cashBalance || 0) < total) {
+      throw new Error("Insufficient funds");
+    }
+
+    await User.findByIdAndUpdate(buyer._id, buyer, { session });
+    await User.findByIdAndUpdate(seller._id, seller, { session });
+
+    await session.commitTransaction();
+    res.status(200).send("Transaction successful");
+  } catch (err: any) {
+    await session.abortTransaction();
+    console.error(err);
+    if (err.message === "Insufficient funds") {
+      res.status(400).send("Insufficient funds");
+    } else {
+      res.status(500).send("Internal server error");
+    }
+  } finally {
+    session.endSession();
+  }
+}
+
 export const updateUser = async (req: CustomRequest, res: Response) => {
   try {
     if (req.body.password) {

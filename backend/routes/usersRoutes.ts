@@ -14,6 +14,7 @@ router.post("/users/images", userController.uploadToS3);
 router.delete("/users/images", userController.deleteFromS3);
 router.get("/users/check", userController.checkUser);
 router.put("/users/edit", userController.updateUser);
+router.put("/users/edit/atomic", userController.updateUser);
 router.get("/users/products", userController.getUserProducts);
 router.get("/users/:userID/products", userController.getAllUserProduct);
 

@@ -21,7 +21,7 @@ import useUser from "../hooks/useUser";
 import { colors } from "../styles/colors";
 import axios from "axios";
 import useProducts from "../hooks/useProducts";
-import { Product } from "../../typings";
+import { Product, User } from "../../typings";
 
 function Checkout() {
   const { localCart, setLocalCart, getCartTotalCost } = useCart();
@@ -62,7 +62,11 @@ function Checkout() {
         localCart.map((item) => getProductById(item.product))
       );
 
-      const transactionsPromises = localCart.map(async (cartItem) => {
+      let productAndCountItems = [];
+      let totalAmount = 0;
+      let uniqueSellers = new Set<User["_id"]>();
+
+      for (const cartItem of localCart) {
         const productDetail = localCartItems.find(
           (product) => product._id === cartItem.product
         );
@@ -72,32 +76,38 @@ function Checkout() {
             "Couldn't find product details for item:",
             cartItem.product
           );
-          return;
+          continue;
         }
+
         const total = cartItem.quantity * productDetail.price;
+        totalAmount += total;
 
-        const prodOwner = await getProductOwner(cartItem.product);
+        const prodOwner: User = await getProductOwner(cartItem.product);
+        uniqueSellers.add(prodOwner._id);
 
-        const dataToSubmit = {
-          product: cartItem.product,
-          buyerID: user?._id,
-          sellerID: prodOwner._id,
-          quantity: cartItem.quantity,
-          total,
-          status: "pending",
-          transactionDate: new Date(),
-        };
+        productAndCountItems.push({
+          productID: cartItem.product,
+          productCount: cartItem.quantity,
+        });
+      }
 
-        return axios.post(
-          "http://localhost:5000/api/transactions",
-          dataToSubmit,
-          {
-            withCredentials: true,
-          }
-        );
+      const dataToSubmit = {
+        productAndCount: productAndCountItems,
+        buyerID: user?._id,
+        sellerID: Array.from(uniqueSellers),
+        quantity: productAndCountItems.length,
+        total: totalAmount,
+        status: "pending",
+        transactionDate: new Date(),
+      };
+
+      console.log("the data to submit");
+      console.log(dataToSubmit);
+
+      await axios.post("http://localhost:5000/api/transactions", dataToSubmit, {
+        withCredentials: true,
       });
 
-      await Promise.all(transactionsPromises);
       setLocalCart([]);
       window.localStorage.clear();
       toast({

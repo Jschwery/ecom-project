@@ -25,6 +25,7 @@ export interface IUser extends Document {
   products?: Schema.Types.ObjectId[];
   profilePicture?: string;
   isSeller?: boolean;
+  cashBalance?: number;
   phoneNumber?: string;
   cart?: [
     {
@@ -52,6 +53,7 @@ const UserSchema: Schema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
+    cashBalance: { type: Number, required: false },
 
     productsViewed: { type: String, required: false },
     status: {

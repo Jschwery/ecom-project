@@ -30,14 +30,12 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
     products.forEach((product) => {
       const quantity = getProductQuantity(product);
 
-      if (!productCounts[product._id || ""]) {
-        setProductCounts((prev) => ({
-          ...prev,
-          [product._id || ""]: product.price * quantity,
-        }));
-      }
+      setProductCounts((prev) => ({
+        ...prev,
+        [product._id || ""]: product.price * quantity,
+      }));
     });
-  }, [products]);
+  }, [products, localCart]);
 
   useEffect(() => {
     let totalPrice = 0;
@@ -49,7 +47,7 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
         setCountPrice(totalPrice);
       }
     });
-  }, [productCounts, products]);
+  }, [productCounts, products, localCart]);
 
   useEffect(() => {
     Promise.all(localCart.map((item: any) => getProductById(item.product)))
@@ -95,6 +93,8 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
     const currentCart: CartItem[] = JSON.parse(
       localStorage.getItem("cart") || "[]"
     );
+    console.log("the current cart is ");
+    console.log(currentCart);
 
     const existingItemIndex = currentCart.findIndex(
       (item: CartItem) => item.product === productID
@@ -105,7 +105,6 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
       currentCart.splice(existingItemIndex, 1);
       localStorage.setItem("cart", JSON.stringify(currentCart));
       const updatedCart = [...currentCart];
-      updatedCart.splice(existingItemIndex, 1);
       setLocalCart(updatedCart);
     }
   }
@@ -209,7 +208,7 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                         </svg>
                       </div>
                     </div>
-                    <div className="hidden md:flex w-full justify-between items-end">
+                    <div className="hidden  md:flex w-full justify-between items-end">
                       <div className="flex-col px-2 pb-2">
                         <h4>Total:</h4>
                         <h4 className="text-ca9 font-semibold">

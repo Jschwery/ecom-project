@@ -3,9 +3,12 @@ import { IProduct } from "./Product";
 import { IUser } from "./User";
 
 export interface ITransaction extends Document {
-  product: IProduct["_id"];
+  productAndCount: {
+    productID: Schema.Types.ObjectId;
+    productCount: number;
+  }[];
   buyerID: IUser["_id"];
-  sellerID: IUser["_id"];
+  sellerID: IUser["_id"][];
   quantity: number;
   orderNumber: number;
   total: number;
@@ -20,10 +23,22 @@ const CounterSchema = new Schema({
 export const Counter = mongoose.model("Counter", CounterSchema);
 
 const TransactionSchema: Schema = new Schema({
-  product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+  productAndCount: [
+    {
+      productID: {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
+      productCount: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
   status: { type: String, required: true },
   buyerID: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  sellerID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  sellerID: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
   quantity: { type: Number, required: true },
   orderNumber: { type: Number, unique: true },
   total: { type: Number, required: true },

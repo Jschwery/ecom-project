@@ -12,12 +12,13 @@ export interface User {
   status?: "active" | "suspended" | "banned";
   role: string;
   wishlist?: string[];
+  cashBalance?: number;
   isVerified: boolean;
   address?: string;
   googleID?: string;
   age?: number;
   sellerName?: string;
-  products?: Product[];
+  products?: string[];
   profilePicture?: string;
   isSeller?: boolean;
   reviews?: {
@@ -69,12 +70,12 @@ export type Product = {
 };
 export type Transaction = {
   _id?: string;
-  productAndCount:{
-    productID: string,
-    productCount: number
+  productAndCount: {
+    productID: string;
+    productCount: number;
   }[];
   buyerID: string;
-  sellerID: string;
+  sellerID: string[];
   orderNumber: Number;
   quantity: number;
   total: number;

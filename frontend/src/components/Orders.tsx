@@ -20,11 +20,17 @@ function Orders({ isEnlarged }: OrderProps) {
   const toast = useToast();
 
   useEffect(() => {
+    console.log("users");
+    console.log(orders);
+
     async function fetchProductDetails() {
       let updatedProducts: { [key: string]: any } = {};
 
       if (orders && Array.isArray(orders)) {
         for (let order of orders) {
+          console.log("order");
+          console.log(order);
+
           if (Array.isArray(order.productAndCount)) {
             for (let productInfo of order.productAndCount) {
               const product = await getProductById(productInfo.productID);

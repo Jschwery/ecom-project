@@ -8,8 +8,16 @@ interface EditDeleteProps {
 function EditDelete({ deleteCallback, itemEditDelete }: EditDeleteProps) {
   const [canDelete, setCanDelete] = useState(true);
 
-  const handleToggleDelete = () => {
+  const handleToggleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setCanDelete((prevState) => !prevState);
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (itemEditDelete) {
+      deleteCallback(itemEditDelete);
+    }
   };
 
   return (
@@ -39,7 +47,7 @@ function EditDelete({ deleteCallback, itemEditDelete }: EditDeleteProps) {
         className={`min-w-0 hover:text-red-500 ${
           canDelete ? "w-0 opacity-0" : "w-6 opacity-100"
         } transition-all duration-300`}
-        onClick={() => deleteCallback(itemEditDelete)}
+        onClick={handleDelete}
       >
         <path
           strokeLinecap="round"

@@ -117,12 +117,6 @@ export default function UserProfileEdit({
   };
 
   const submitProfileData = async (formData?: any, profilePic?: string) => {
-    console.log("prifle pic");
-    console.log(profilePic);
-
-    console.log("formadata");
-    console.log(formData);
-
     try {
       const response = await axios.put(
         "http://localhost:5000/api/users/edit",
@@ -168,11 +162,15 @@ export default function UserProfileEdit({
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        if (userImage && !userImage.includes("googleuser")) {
+        if (
+          userImage &&
+          userImage.length > 1 &&
+          !userImage.includes("googleuser")
+        ) {
           const s3Response = await uploadImageToS3(userImage);
           submitProfileData(values, s3Response);
         } else {
-          submitProfileData(values);
+          submitProfileData(values, userImage);
         }
       } catch (error) {
         console.error("An error occurred:", error);
@@ -304,7 +302,6 @@ export default function UserProfileEdit({
       <form
         className="flex justify-center items-center w-full"
         onSubmit={(event) => {
-          console.log("Form submit event triggered");
           event.preventDefault();
 
           if (Object.keys(formik.errors).length > 0) {

@@ -17,6 +17,12 @@ export interface IUser extends Document {
   isVerified: boolean;
   billingAddress?: string;
   address?: string;
+  recentlyViewed?: [
+    {
+      recentProduct: Schema.Types.ObjectId[];
+      timeViewed: Date;
+    }
+  ];
   googleID?: string;
   productsViewed?: Schema.Types.ObjectId[];
   age?: number;
@@ -25,7 +31,7 @@ export interface IUser extends Document {
   products?: Schema.Types.ObjectId[];
   profilePicture?: string;
   isSeller?: boolean;
-  cashBalance?: number;
+  cashBalance: number;
   phoneNumber?: string;
   cart?: [
     {
@@ -53,7 +59,21 @@ const UserSchema: Schema = new Schema(
     lastName: { type: String, required: false },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
-    cashBalance: { type: Number, required: false },
+    cashBalance: { type: Number, required: true, default: 1000 },
+    recentlyViewed: [
+      {
+        product: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        timeViewed: {
+          type: Date,
+          default: Date.now,
+          required: true,
+        },
+      },
+    ],
 
     productsViewed: { type: String, required: false },
     status: {

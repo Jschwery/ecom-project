@@ -97,7 +97,7 @@ function Checkout() {
         sellerID: Array.from(uniqueSellers),
         quantity: productAndCountItems.length,
         total: totalAmount,
-        status: "pending",
+        status: "Pending",
         transactionDate: new Date(),
       };
 

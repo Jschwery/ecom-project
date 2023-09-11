@@ -5,7 +5,7 @@ import SignedInNav from "../../components/SignedInNavBar";
 import axios from "axios";
 import { Button } from "@chakra-ui/react";
 import FileUpload from "../../components/util/UploadFile";
-import { Product } from "../../../typings";
+import { Product, Transaction } from "../../../typings";
 import ListedItem from "../../components/util/ListedItem";
 import useResizable from "../../hooks/useResizable";
 import { getDivWidth } from "../AddItem";
@@ -15,6 +15,7 @@ import { ref } from "yup";
 import ViewProducts from "./ViewProducts";
 import { deleteImgFromS3 } from "../../components/util/DeleteFromS3";
 import Orders from "../../components/Orders";
+import FilterComponent from "../../components/util/FilterUtil";
 
 function YourItems() {
   const { user, products, getAllUserProducts } = useUser();
@@ -25,6 +26,8 @@ function YourItems() {
   );
   const [validItems, setValidItems] = useState<any[]>();
   const viewProductsRef = useRef<any>(null);
+  const [returnedOrders, setReturnedOrders] = useState<Transaction[] | null>();
+  const [filteredData, setFilteredData] = useState<any>();
 
   useEffect(() => {
     const itemReset = async () => {
@@ -49,6 +52,10 @@ function YourItems() {
       }, 525);
     }
   }, [items]);
+
+  useEffect(() => {
+    setFilteredData(returnedOrders);
+  }, [returnedOrders]);
 
   return user && user.isSeller ? (
     <>
@@ -101,10 +108,22 @@ function YourItems() {
                     />
                   </svg>
                 )}
-                <div className="flex flex-col  space-y-4 items-center">
+                <div className="flex flex-col space-y-4 items-center">
                   <h2>Orders</h2>
+                  <div className="flex items-center">
+                    <FilterComponent
+                      data={returnedOrders || []}
+                      onFilter={setFilteredData}
+                    />
+                  </div>
                   <div className="w-full max-h-[65vh] overflow-y-auto">
-                    <Orders isEnlarged={open} />
+                    <Orders
+                      isEnlarged={open}
+                      filteredOrders={filteredData}
+                      getOrders={(orders: Transaction[]) =>
+                        setReturnedOrders(orders)
+                      }
+                    />
                   </div>
                 </div>
               </div>

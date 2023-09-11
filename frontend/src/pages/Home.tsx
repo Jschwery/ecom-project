@@ -6,6 +6,7 @@ import useProducts from "../hooks/useProducts";
 import useResizable from "../hooks/useResizable";
 import useUser from "../hooks/useUser";
 import { getDivWidth } from "./AddItem";
+import { Product } from "../../typings";
 
 export const loadingStyles: React.CSSProperties = {
   position: "fixed",
@@ -29,7 +30,13 @@ export const spinnerStyles: React.CSSProperties = {
 };
 function App() {
   const { user, isLoading: userLoading } = useUser();
-  const { products, loading: productsLoading, getProducts } = useProducts();
+  const {
+    products,
+    loading: productsLoading,
+    getProducts,
+    getProductById,
+  } = useProducts();
+  const [recentProducts, setRecentProduct] = useState<Product[]>();
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
   const [flexDirection, setFlexDirection] = useState("");
@@ -63,6 +70,26 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("the recent products");
+    console.log(recentProducts);
+  }, [recentProducts]);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      if (user && user.recentlyViewed) {
+        const fetchedProducts = await Promise.all(
+          user.recentlyViewed.map(
+            async (id) => await getProductById(id.recentProduct)
+          )
+        );
+        setRecentProduct(fetchedProducts);
+      }
+    }
+
+    fetchProducts();
+  }, [user]);
+
   if (productsLoading) {
     return (
       <>
@@ -86,8 +113,22 @@ function App() {
     <>
       {user ? <SignedInNav /> : <NotSignedInNav />}
       <div className="pt-16 bg-ca3 w-full h-screen">
-        <div className="bg-ca5 flex-col rounded-md p-4 m-4">
-          <h2>Recently Viewed</h2>
+        <div className="bg-ca4 flex-col rounded-md p-4 m-4 ">
+          <h2 className="py-2 px-2">Recently Viewed</h2>
+          <div className="flex space-x-2 overflow-x-auto py-3 px-2">
+            {/* {recentProducts &&
+              recentProducts.map((product) => (
+                <img
+                  key={product._id}
+                  className="w-20 h-20 cursor-pointer hover:scale-110 rounded-full bg-ca3 p-1"
+                  src={
+                    (product.imageUrls && product.imageUrls[0]) ||
+                    "/images/logo2.svg"
+                  }
+                  alt="Product Image"
+                />
+              ))} */}
+          </div>
         </div>
         <div
           ref={divRef}

@@ -15,6 +15,10 @@ export interface User {
   cashBalance?: number;
   isVerified: boolean;
   address?: string;
+  recentlyViewed?: {
+    recentProduct: string;
+    timeViewed: Date;
+  }[];
   googleID?: string;
   age?: number;
   sellerName?: string;

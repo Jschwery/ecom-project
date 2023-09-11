@@ -261,6 +261,10 @@ div.Dropdown-control {
   color: white;
 }
 
+select.select-filter {
+  @apply !bg-ca4;
+}
+
 .edit-delete-hidden {
   top: -100%;
   transition: top 0.5s ease-out;
@@ -268,6 +272,10 @@ div.Dropdown-control {
 .edit-delete-shown {
   top: 2px;
   transition: top 0.5s ease-out;
+}
+
+.select-option:hover {
+  @apply !bg-ca5;
 }
 
 div.flex-col-items {

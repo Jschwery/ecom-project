@@ -6,6 +6,9 @@ import useUser from "../../hooks/useUser";
 import { Divider, useToast } from "@chakra-ui/react";
 import useProducts from "../../hooks/useProducts";
 import { useFulfill } from "../../hooks/useFulfill";
+interface ProductProps {
+  product: Product;
+}
 
 function calculateSubtotal(product: Product) {
   const preTaxTotal = product.price * (product.quantity || 0);
@@ -13,8 +16,20 @@ function calculateSubtotal(product: Product) {
   return preTaxTotal + tax;
 }
 
-interface ProductProps {
-  product: Product;
+function formatDateAndTime(dateString: string | Date): string {
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
 const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
@@ -80,11 +95,12 @@ function FullfillOrder() {
   }, [memoizedProducts]);
 
   const handleProductUpdate = async (product: Product) => {
-    console.log(product);
     try {
       const foundProduct = await getProductById(product._id as string);
-      console.log("the found product: ");
-      console.log(foundProduct);
+
+      if (foundProduct.quantity - product.quantity <= 0) {
+        throw new Error("Insufficient product quantity");
+      }
 
       const updatedProduct = await updateProduct({
         ...product,
@@ -92,22 +108,37 @@ function FullfillOrder() {
       });
 
       if (updatedProduct && order) {
-        await updateOrder({ ...order, status: "Fulfilled" });
+        await updateOrder({
+          ...order,
+          status: "Fulfilled",
+          transactionDate: new Date(),
+        });
         window.location.pathname = "/your-items";
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      if (err.message === "Insufficient product quantity") {
+        toast({
+          title: "Product Out of Stock",
+          description: "Please restock the product.",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+      }
     }
   };
 
-  const handleFundsUpdate = async () => {
+  const handleFundsUpdate = async (product: Product) => {
     if (order && order._id && user) {
-      const buyerDetails: User = await getUserById(order._id);
+      const buyerDetails: User = await getUserById(order.buyerID);
 
       if (!buyerDetails) {
         console.error("Could not fetch the buyer details");
         return;
       }
+
       const buyer: User = {
         ...buyerDetails,
         cashBalance: (buyerDetails.cashBalance || 0) - total,
@@ -131,6 +162,23 @@ function FullfillOrder() {
             isClosable: true,
             position: "top",
           });
+          return;
+        }
+      }
+
+      try {
+        await handleProductUpdate(product);
+      } catch (err: any) {
+        console.error(err);
+        if (err.message === "Insufficient product quantity") {
+          toast({
+            title: "Product Out of Stock",
+            description: "Please restock the product.",
+            status: "warning",
+            duration: 5000,
+            isClosable: true,
+            position: "top",
+          });
         }
       }
     }
@@ -140,7 +188,7 @@ function FullfillOrder() {
     const updatePromises: any = [];
 
     memoizedProducts.forEach((product) => {
-      const updatePromise = handleProductUpdate(product);
+      const updatePromise = handleFundsUpdate(product);
       updatePromises.push(updatePromise);
     });
 
@@ -150,11 +198,32 @@ function FullfillOrder() {
       console.error("One or more product updates failed:", error);
     }
   };
-
   return (
     <div className="w-full h-screen bg-ca2 p-6">
-      <div className="flex items-center rounded-md flex-col min-w-[350px] max-w-[600px] w-2/3 mx-auto bg-ca3">
+      <div
+        className={`flex items-center rounded-md flex-col min-w-[350px] max-w-[600px] w-2/3 mx-auto bg-ca3 ${
+          order?.status === "Fulfilled"
+            ? "border border-dashed border-green-600"
+            : order?.status === "Canceled"
+            ? "border border-dashed border-red-600"
+            : ""
+        }`}
+      >
         <div className="flex flex-col min-w-[300px] items-start ">
+          {order?.status === "Fulfilled" ? (
+            <>
+              <div className="flex flex-col ml-auto ">
+                <h3 className="py-2">Fulfilled</h3>
+                <h5>
+                  {order.transactionDate
+                    ? formatDateAndTime(order.transactionDate)
+                    : "N/A"}
+                </h5>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
           <h1 className="mb-5">Fulfill Order</h1>
           <div className="flex min-w-[300px] items-center space-x-4">
             <h4>Order #</h4>
@@ -191,28 +260,50 @@ function FullfillOrder() {
           ))}
           <Divider className="my-2" />
 
+          {/*only allow to do the delete/cancel item on the items that are currently pending*/}
+
           <div className="flex justify-between mb-3 min-w-[300px] items-center space-x-4">
             <div className="flex items-center space-x-2">
               <h4>Total</h4>
               <h4>${total.toFixed(2)}</h4>
             </div>
-            <div title="Create Shipping Label">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="w-6 h-6 cursor-pointer hover:scale-110 duration-200"
-                onClick={() => handleFullFillOrder()}
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M7.875 14.25l1.214 1.942a2.25 2.25 0 001.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 011.872 1.002l.164.246a2.25 2.25 0 001.872 1.002h2.092a2.25 2.25 0 001.872-1.002l.164-.246A2.25 2.25 0 0116.954 9h4.636M2.41 9a2.25 2.25 0 00-.16.832V12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 01.382-.632l3.285-3.832a2.25 2.25 0 011.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0021.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 002.25 2.25z"
-                />
-              </svg>
-            </div>
+            {order?.status === "Pending" ? (
+              <div title="Fullfill order">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6 cursor-pointer hover:scale-110 duration-200"
+                  onClick={() => handleFullFillOrder()}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7.875 14.25l1.214 1.942a2.25 2.25 0 001.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 011.872 1.002l.164.246a2.25 2.25 0 001.872 1.002h2.092a2.25 2.25 0 001.872-1.002l.164-.246A2.25 2.25 0 0116.954 9h4.636M2.41 9a2.25 2.25 0 00-.16.832V12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 01.382-.632l3.285-3.832a2.25 2.25 0 011.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0021.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 002.25 2.25z"
+                  />
+                </svg>
+              </div>
+            ) : (
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6 cursor-pointer scale-110"
+                  onClick={() => (window.location.pathname = "your-items")}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       </div>

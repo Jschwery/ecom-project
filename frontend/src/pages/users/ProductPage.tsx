@@ -26,8 +26,8 @@ import useProductData from "../../hooks/useProductData";
 
 function ProductPage() {
   let { productID } = useParams();
-  const { updateProduct, getProductById } = useProducts();
-  const { user } = useUser();
+  const { updateProduct } = useProducts();
+  const { user, updateOtherUser } = useUser();
   const { addToLocalCart, localCart } = useCart();
   const {
     foundProduct,
@@ -59,6 +59,36 @@ function ProductPage() {
       );
     });
   }, [reviewUsers, userImages]);
+
+  useEffect(() => {
+    const updateRecentView = async () => {
+      try {
+        if (user && productID) {
+          const alreadyViewed = user.recentlyViewed?.some(
+            (viewed) => viewed.recentProduct === productID
+          );
+
+          if (!alreadyViewed) {
+            const newView = {
+              recentProduct: productID,
+              timeViewed: new Date(),
+            };
+
+            const updatedUser: User = {
+              ...user,
+              recentlyViewed: [...(user.recentlyViewed || []), newView],
+            };
+
+            await updateOtherUser(updatedUser);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    updateRecentView();
+  }, [user, productID]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);

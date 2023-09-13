@@ -2,7 +2,16 @@ import "react-dom";
 
 declare module "*.jpeg";
 declare module "*.png";
-
+declare global {
+  interface NodeRequire {
+    context: (
+      directory: string,
+      useSubdirectories?: boolean,
+      regExp?: RegExp,
+      mode?: "sync" | "eager" | "weak" | "lazy" | "lazy-once" | Function
+    ) => any;
+  }
+}
 export interface User {
   _id: string;
   name: string;
@@ -16,7 +25,7 @@ export interface User {
   isVerified: boolean;
   address?: string;
   recentlyViewed?: {
-    recentProduct: string;
+    product: string;
     timeViewed: Date;
   }[];
   googleID?: string;
@@ -59,6 +68,7 @@ export type Product = {
   name: string;
   description: string;
   rating?: number;
+  specialOffer?: boolean;
   category: string;
   weight?: number;
   price: number;

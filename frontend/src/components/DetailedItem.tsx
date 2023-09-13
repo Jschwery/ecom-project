@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Product } from "../../typings";
 import {
   Box,
   Button,
+  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -78,6 +79,7 @@ function DetailedItem({
   const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(
     null
   );
+  const [isChecked, setIsChecked] = useState(product.specialOffer);
 
   const {
     categories,
@@ -92,6 +94,12 @@ function DetailedItem({
 
   const hoverExitDelay = 250;
   let timeoutId: NodeJS.Timeout | null = null;
+
+  useEffect(() => {
+    setIsChecked(product.specialOffer);
+    console.log("checked?????");
+    console.log(isChecked);
+  }, [product.specialOffer]);
 
   const uploadImageToS3 = async (images: string[]): Promise<string[]> => {
     const uploadedImageUrls: string[] = [];
@@ -198,7 +206,10 @@ function DetailedItem({
       if (imagesToDelete && imagesToDelete.length > 0) {
         handleProductImageDelete([...imagesToDelete]);
       }
-      const response = await submitForm(values, uploadedImageUrls);
+      const response = await submitForm(
+        { ...values, specialOffer: isChecked },
+        uploadedImageUrls
+      );
 
       if (response.status >= 200 && response.status < 300) {
         formik.resetForm();
@@ -256,6 +267,10 @@ function DetailedItem({
 
   function handleItemEdit(): void {
     toggleModal();
+  }
+
+  function handleCheckChange(event: ChangeEvent<HTMLInputElement>): void {
+    setIsChecked(event.target.checked);
   }
 
   return (
@@ -368,6 +383,14 @@ function DetailedItem({
                     />
                   </div>
                 </Flex>
+                <div className="flex space-x-3 my-2">
+                  <h4>Include in promotions?</h4>
+                  <Checkbox
+                    onChange={handleCheckChange}
+                    colorScheme="green"
+                    isChecked={isChecked}
+                  />
+                </div>
                 <Flex>
                   <FormControl
                     id="name"

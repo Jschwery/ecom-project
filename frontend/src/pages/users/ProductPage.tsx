@@ -65,12 +65,14 @@ function ProductPage() {
       try {
         if (user && productID) {
           const alreadyViewed = user.recentlyViewed?.some(
-            (viewed) => viewed.recentProduct === productID
+            (viewed) => viewed.product === productID
           );
+          console.log("the user recently viewed");
+          console.log(user.recentlyViewed);
 
           if (!alreadyViewed) {
             const newView = {
-              recentProduct: productID,
+              product: productID,
               timeViewed: new Date(),
             };
 
@@ -80,6 +82,33 @@ function ProductPage() {
             };
 
             await updateOtherUser(updatedUser);
+          } else {
+            const index = user.recentlyViewed?.findIndex(
+              (rev) => rev.product === productID
+            );
+            if (
+              typeof index === "number" &&
+              index !== -1 &&
+              user.recentlyViewed
+            ) {
+              const updatedItem = {
+                ...user.recentlyViewed[index],
+                timeViewed: new Date(),
+              };
+
+              const updatedRecentViews = [...user.recentlyViewed];
+              updatedRecentViews[index] = updatedItem;
+
+              console.log("the updated reviews are");
+              console.log(updatedRecentViews);
+
+              const updatedUserWithTime: User = {
+                ...user,
+                recentlyViewed: updatedRecentViews,
+              };
+
+              await updateOtherUser(updatedUserWithTime);
+            }
           }
         }
       } catch (err) {
@@ -148,8 +177,8 @@ function ProductPage() {
       <SignedInNav />
 
       <div className="bg-ca2 w-full h-screen min-h-screen pt-20">
-        <div className="w-full grow  p-4 flex flex-col md:flex-row bg-ca2">
-          <div className=" min-w-[30%] rounded-md md:w-[30%] mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
+        <div className="w-full grow p-4 flex flex-col md:flex-row bg-ca2">
+          <div className="w-[80%] mx-auto min-w-[30%] rounded-md md:w-[30%] md:mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
             <h2 className="pt-2">Seller</h2>
             <img
               onClick={() =>
@@ -259,16 +288,15 @@ function ProductPage() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col md:w-[70%] px-2 my-5 md:my-0 space-y-3">
-            <div className=" w-full bg-ca3 p-4 md:p-6 rounded-lg shadow-black mb-2 pl-3 shadow-sm flex flex-col md:flex-row ">
-              <div className="order-1 mb-4 md:mb-0 md:mr-4 w-full md:w-[40%]">
+          <div className="flex flex-col w-full md:w-[70%] px-2 my-5 md:my-0 space-y-3">
+            <div className=" w-[80%]  md:w-full mx-auto md:mx-0  bg-ca3 p-4 md:p-6 rounded-lg shadow-black mb-2 pl-3 shadow-sm flex flex-col md:flex-row ">
+              <div className="order-1 min-h-[250px] p-2 md:min-h-0 overflow-hidden flex items-center grow mb-4 md:mb-0  px-4 w-full md:w-[40%] min-w-[300px]">
                 <PictureCarousel images={foundProduct.imageUrls ?? []} />
               </div>
-
-              <div className="px-3 md:px-0 order-2 md:order-1 w-[95%] md:w-[60%]">
-                <div className="flex flex-col md:flex-row overflow-hidden truncate justify-between items-start mb-4">
+              <div className="px-3 md:px-0 order-2 md:order-1 w-[95%] md:w-[60%] min-w-0 truncate overflow-hidden">
+                <div className="flex flex-col md:flex-row overflow-hidden min-w-0 truncate justify-between items-start mb-4">
                   <h1
-                    className="text-gray-800 md:px-2 font-bold overflow-hidden truncate min-w-0 text-2xl md:text-3xl md:max-w-xl"
+                    className="text-gray-800 md:px-2 font-bold overflow-hidden truncate min-w-0 text-2xl md:text-3xl md:max-w-xs"
                     title={foundProduct.name}
                   >
                     {foundProduct.name}
@@ -316,7 +344,7 @@ function ProductPage() {
                 <p className="text-gray-500 mt-2 md:mt-4">
                   {foundProduct.description}
                 </p>
-                <div className="flex flex-col w-f">
+                <div className="flex flex-col truncate min-w-0 overflow-hidden">
                   <span className="text-ca8 font-semibold">
                     Category: {foundProduct.category}
                   </span>
@@ -324,9 +352,9 @@ function ProductPage() {
                   <span className="text-ca6 font-semibold">
                     Quantity available: {foundProduct.quantity}
                   </span>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between flex-wrap">
                     {foundProduct.tags && (
-                      <div className="flex flex-wrap mt-4">
+                      <div className="flex items-center space-x-1 flex-wrap mt-4">
                         {foundProduct.tags.map((tag, idx) => (
                           <ITag key={idx} tagName={tag} />
                         ))}
@@ -360,7 +388,8 @@ function ProductPage() {
                           console.error("foundProduct._id is undefined");
                         }
                       }}
-                      className="self-end bg-ca6 hover:bg-ca5 text-white py-2 px-4 rounded-full"
+                      className="self-end line-clamp-1 !min-w-[113px] bg-ca6 hover:bg-ca5 text-white py-2
+                       px-4 rounded-full whitespace-nowrap overflow-hidden text-overflow-ellipsis ml-auto"
                     >
                       Add to Cart
                     </button>
@@ -369,7 +398,7 @@ function ProductPage() {
               </div>
             </div>
 
-            <div className="w-full flex flex-col items-center shadow-md shadow-black rounded-md bg-ca2 grow">
+            <div className="w-[80%]  md:w-full mx-auto md:mx-0 flex flex-col items-center shadow-md shadow-black rounded-md bg-ca2 grow">
               <h1>Product Reviews</h1>
               {renderedReviews.length > 0 ? (
                 renderedReviews
@@ -400,17 +429,17 @@ function ProductPage() {
                       }}
                     />
                   </div>
-                  <div className="flex justify-between p-4 space-x-4">
+                  <div className="flex flex-col space-y-2 justify-between px-4 pt-2 space-x-4">
                     <textarea
                       value={input}
-                      className="w-[75%] h-28 p-2 bg-ca2 rounded-md text-black border border-ca6 resize-none placeholder:text-ca9 focus:bg-ca1 "
+                      className="w-full h-28 p-2 bg-ca2 rounded-md text-black border border-ca6 resize-none placeholder:text-ca9 focus:bg-ca1 "
                       placeholder="Type your review here..."
                       onChange={handleInputChange}
                     ></textarea>
 
                     <button
                       onClick={input !== "" ? handleSubmitReview : () => {}}
-                      className="self-end min-w-[87px] bg-ca6 hover:bg-ca5 text-white rounded-md p-2"
+                      className="self-end min-w-[87px] !mt-4 bg-ca6 hover:bg-ca5 text-white rounded-md p-2"
                     >
                       Submit
                     </button>

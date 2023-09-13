@@ -9,7 +9,13 @@ interface TagProps {
 function ITag({ tagName, onClose }: TagProps) {
   return (
     <HStack spacing={4}>
-      <Tag size={"md"} borderRadius="full" variant="solid" sx={{ bg: "ca7" }}>
+      <Tag
+        mb={1}
+        size={"md"}
+        borderRadius="full"
+        variant="solid"
+        sx={{ bg: "ca7" }}
+      >
         <TagLabel>{tagName}</TagLabel>
         {onClose && <TagCloseButton onClick={onClose} />}
       </Tag>

@@ -33,7 +33,7 @@ export const TAGS_STARTER = {
     "Petite Size",
     "Sustainable Fabric",
   ],
-  Electronics: [
+  Technology: [
     "Smartphone",
     "Laptop",
     "Home Appliances",
@@ -168,7 +168,7 @@ export const TAGS_STARTER = {
 export interface TagsStarterMap {
   General: string[];
   ClothingFashion: string[];
-  Electronics: string[];
+  Technology: string[];
   BeautyPersonalCare: string[];
   HomeLiving: string[];
   BooksMusicEntertainment: string[];

@@ -50,7 +50,9 @@ export default function useUser() {
     }
   }, []);
 
-  const getAllUserProducts = useCallback(async (userID: String) => {
+  const getAllUserProducts = async (userID: String) => {
+    console.log("getAllUserProducts called with userID:", userID);
+
     try {
       const productRequest = await axios.get(
         `http://localhost:5000/api/users/${userID}/products`,
@@ -59,11 +61,13 @@ export default function useUser() {
         }
       );
 
+      console.log("Received products from server:", productRequest.data);
+
       setAllProducts(productRequest.data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching user products:", error);
     }
-  }, []);
+  };
 
   const returnUserProducts = useCallback(async (userID: String) => {
     try {
@@ -80,9 +84,6 @@ export default function useUser() {
   }, []);
 
   const updateUser = useCallback(async (user: User) => {
-    console.log("here is the user: ");
-    console.log(user);
-
     setIsLoading(true);
     try {
       const response = await axios.put(

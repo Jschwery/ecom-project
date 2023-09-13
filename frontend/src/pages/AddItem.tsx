@@ -24,6 +24,7 @@ import {
   Text,
   Textarea,
   useTheme,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
@@ -65,7 +66,7 @@ function AddItem() {
   const [isOpen, setIsOpen] = useState(false);
   const { colors } = useTheme();
   const { isResizing, dividerRef, handleMouseDown, newWidth } = useResizable();
-
+  const toast = useToast();
   const divRef = useRef<HTMLDivElement | null>(null);
 
   const [flexDirection, setFlexDirection] = useState<
@@ -381,9 +382,19 @@ function AddItem() {
               </Box>
 
               <FileUpload
-                fileCallback={(fileString: string) =>
-                  setImages((oldImages) => [...oldImages, fileString])
-                }
+                fileCallback={(fileString: string) => {
+                  if (images.length >= 5) {
+                    toast({
+                      title: "Upload Error",
+                      description: "Only 5 images can be uploaded.",
+                      status: "error",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  } else {
+                    setImages((oldImages) => [...oldImages, fileString]);
+                  }
+                }}
               />
               {isReadyToSubmit() && (
                 <Box className="w-full flex flex-col space-y-6 py-2 px-2 bg-ca4 rounded">

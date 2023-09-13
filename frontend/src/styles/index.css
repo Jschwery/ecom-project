@@ -278,6 +278,24 @@ select.select-filter {
   @apply !bg-ca5;
 }
 
+.add-product {
+  position: relative;
+}
+
+.add-product::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid slategray;
+}
+
 div.flex-col-items {
   @apply !flex !flex-col;
 }

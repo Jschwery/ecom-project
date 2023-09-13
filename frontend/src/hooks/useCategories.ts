@@ -9,13 +9,7 @@ export default function useCategories() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTags, setSelectedTags] = useState<MultiValue[]>([]);
   const tagsStarter: TagsStarterMap = TAGS_STARTER;
-  function isArrayOfMultiValue(value: any): value is ReadonlyArray<MultiValue> {
-    return Array.isArray(value);
-  }
 
-  function isMultiValue(value: any): value is MultiValue {
-    return value && typeof value === "object" && "value" in value;
-  }
   const selectCategory = (category: keyof TagsStarterMap) => {
     setSelectedCategory(category);
     const newTags = tagsStarter[category];

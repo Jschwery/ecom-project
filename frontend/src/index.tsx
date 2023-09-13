@@ -15,6 +15,7 @@ import { CartProvider } from "./global/CartProvider";
 import Checkout from "./pages/Checkout";
 import SellerPage from "./pages/users/SellerPage";
 import FullfillOrder from "./pages/users/FullfillOrder";
+import Deals from "./pages/Deals";
 
 const root = document.getElementById("root");
 
@@ -70,6 +71,28 @@ ReactDOM.render(
             <Route path="/products/:productID" element={<ProductPage />} />
             <Route path="/seller/:sellerID" element={<SellerPage />} />
             <Route path="/orders/:orderID" element={<FullfillOrder />} />
+            <Route
+              path="/category/:categoryName/special-offer"
+              element={<Deals />}
+            />
+            <Route path="/category/:categoryName" element={<FullfillOrder />} />
+            {/*
+              when clicking one of the items it will redirect to the category
+              then the route will use params and fetch all the products that contain that category
+              */}
+
+            {/*Remove for you
+    create large deal carosel above the recently viewed //somewhat done
+
+    finish deals page, just display a list of items with deals add slider to get percentage off products
+
+    just added display a list of items within the past 24 hours
+
+    discover, each time the page loads, scramble the list of random products, search by tags, filter by category
+
+
+    create a horizontal scroll of products from electronics, clothing and homeliving, then the rest will be the rest of the current products
+*/}
 
             {/* <Route path="/login" element={<LoginPage />} /> */}
           </Routes>

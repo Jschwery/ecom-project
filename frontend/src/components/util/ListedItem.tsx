@@ -52,11 +52,6 @@ function ListedItem({
 
   const content = { ...defaultContent, ...formikValues };
 
-  useEffect(() => {
-    console.log("the images");
-    console.log(images);
-  }, [images]);
-
   return (
     <div
       className={`${

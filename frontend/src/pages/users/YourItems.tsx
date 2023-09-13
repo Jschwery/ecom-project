@@ -57,6 +57,11 @@ function YourItems() {
     setFilteredData(returnedOrders);
   }, [returnedOrders]);
 
+  useEffect(() => {
+    console.log("products");
+    console.log(products);
+  }, [products]);
+
   return user && user.isSeller ? (
     <>
       <SignedInNav />
@@ -111,10 +116,12 @@ function YourItems() {
                 <div className="flex flex-col space-y-4 items-center">
                   <h2>Orders</h2>
                   <div className="flex items-center">
-                    <FilterComponent
-                      data={returnedOrders || []}
-                      onFilter={setFilteredData}
-                    />
+                    {returnedOrders && returnedOrders.length > 0 && (
+                      <FilterComponent
+                        data={returnedOrders || []}
+                        onFilter={setFilteredData}
+                      />
+                    )}
                   </div>
                   <div className="w-full max-h-[65vh] overflow-y-auto">
                     <Orders
@@ -135,13 +142,13 @@ function YourItems() {
               open ? "w-9/12" : "w-7/12"
             }`}
           >
-            <h2>Your items</h2>
-            <p
+            <h1>Your items</h1>
+            <h4
               onClick={() => (window.location.pathname = "/add-item")}
-              className="cursor cursor-pointer"
+              className="cursor cursor-pointer hover:scale-105 add-product"
             >
-              Add another?
-            </p>
+              Add Product
+            </h4>
             <div className="w-full space-y-4 my-3">
               {validItems &&
                 validItems.map((product, index) => (
@@ -154,13 +161,15 @@ function YourItems() {
                 ))}
             </div>
             <div className="pb-3" style={{ marginTop: "auto" }}>
-              <div className="w-full px-2  bg-ca4 rounded-md">
-                <ViewProducts
-                  itemsList={products ?? []}
-                  showItemsCallback={setItems}
-                  ref={viewProductsRef}
-                />
-              </div>
+              {products && products.length > 0 && (
+                <div className="w-full px-2  bg-ca4 rounded-md">
+                  <ViewProducts
+                    itemsList={products ?? []}
+                    showItemsCallback={setItems}
+                    ref={viewProductsRef}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

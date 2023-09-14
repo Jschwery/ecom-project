@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 interface Props {
+  hideSvg?: boolean;
   dealPackage?: {
     imagePath: string;
     imageGrow: boolean;
@@ -16,6 +17,7 @@ interface Props {
 function PictureCarousel({
   images: originalImages = [],
   imageGrow,
+  hideSvg,
   dealPackage = [],
 }: Props) {
   const dealImages = dealPackage.map((dp) => dp.imagePath);
@@ -114,7 +116,7 @@ function PictureCarousel({
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6 !z-50"
+              className={`w-6 h-6 !z-50 ${hideSvg ? "hidden" : "visible"}`}
             >
               <path
                 strokeLinecap="round"

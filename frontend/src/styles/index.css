@@ -261,6 +261,10 @@ div.Dropdown-control {
   color: white;
 }
 
+.order-row:nth-child(odd) {
+  background-color: #f4f4f4;
+}
+
 select.select-filter {
   @apply !bg-ca4;
 }
@@ -280,6 +284,36 @@ select.select-filter {
 
 .add-product {
   position: relative;
+}
+h2.sale-item {
+  @apply !text-ca9 !absolute top-0 right-0;
+}
+
+h2.sale-item::after {
+  content: attr(data-sale-price);
+  position: absolute;
+  top: 95%;
+  right: 10%;
+  font-size: large !important;
+  font-size: 0.8em;
+  @apply text-red-500;
+  text-decoration: none !important;
+  white-space: nowrap;
+  margin-left: 5px;
+}
+
+h5.sale-item::after {
+  content: attr(data-sale-price);
+  position: absolute;
+  top: 95%;
+  right: 5%;
+  translate: 45%;
+  font-size: large !important;
+  font-size: 0.8em;
+  @apply text-red-500;
+  text-decoration: none !important;
+  white-space: nowrap;
+  margin-left: 5px;
 }
 
 .add-product::after {

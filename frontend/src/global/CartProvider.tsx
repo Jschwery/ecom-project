@@ -12,7 +12,7 @@ import useUser from "../hooks/useUser";
 import useProducts from "../hooks/useProducts";
 
 export type CartItem = {
-  product: string;
+  product: string | Product;
   quantity: number;
   dateAdded: Date;
 };
@@ -20,9 +20,11 @@ export type CartItem = {
 type CartContextType = {
   localCart: CartItem[];
   setLocalCart: (cart: CartItem[]) => void;
-  addToLocalCart: (productId: string, quantity?: number) => void;
+  addToLocalCart: (productId: string | Product, quantity?: number) => void;
   getProductQuantity: (product: Product) => number;
   getCartTotalCost: () => Promise<number>;
+  orderSavings?: number;
+  setOrderSavings?: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
 const defaultContextValue: CartContextType = {
@@ -43,8 +45,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [localCart, setLocalCart] = useState<CartItem[]>(() => getLocalCart());
   const { getProductById } = useProducts();
   const { user, updateUser } = useUser();
-
-  const addToLocalCart = (productID: string, quantity?: number) => {
+  const [orderSavings, setOrderSavings] = useState<number>();
+  const addToLocalCart = (
+    productID: string | Product,
+    quantity?: number,
+    price?: number
+  ) => {
     const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
     const existingItemIndex = currentCart.findIndex(
       (item: CartItem) => item.product === productID
@@ -56,6 +62,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const updatedItem = {
         ...localCart[existingItemIndex],
         quantity: quantity || localCart[existingItemIndex].quantity + 1,
+        price: price,
       };
 
       updatedCart = [...localCart];
@@ -83,15 +90,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (localCart && localCart.length > 0) {
       try {
         const localCartItems: Product[] = await Promise.all(
-          localCart.map((item) => getProductById(item.product))
+          localCart.map((item) => getProductById(item.product as string))
         );
 
         const totalcost = localCartItems.reduce((acc, productDetail) => {
+          if (productDetail.specialOffer) {
+            const quantity = getProductQuantity(productDetail);
+            const fullPrice = productDetail.price * quantity;
+            const salePrice =
+              (productDetail.salePrice || productDetail.price) * quantity;
+            const savings = fullPrice - salePrice;
+
+            setOrderSavings((prevSavings) => (prevSavings || 0) + savings);
+          }
+
           const cartItem = localCart.find(
             (item) => item.product === productDetail._id
           );
           if (cartItem) {
-            return acc + cartItem.quantity * productDetail.price;
+            return (
+              acc +
+              cartItem.quantity *
+                Number(
+                  (productDetail.salePrice || productDetail.price).toFixed(2)
+                )
+            );
           }
           return acc;
         }, 0);
@@ -113,6 +136,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToLocalCart,
         getProductQuantity,
         getCartTotalCost,
+        orderSavings,
+        setOrderSavings,
       }}
     >
       {children}

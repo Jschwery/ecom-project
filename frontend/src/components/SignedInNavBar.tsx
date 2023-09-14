@@ -49,8 +49,10 @@ const NavLink = ({ children, to }: NavLinkProps) => {
     </Box>
   );
 };
-
-export default function Simple() {
+interface NavBarProps {
+  describeCart?(visible: boolean): void;
+}
+export default function Simple({ describeCart }: NavBarProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isLoading } = useUser();
   const { localCart, addToLocalCart } = useCart();
@@ -80,6 +82,12 @@ export default function Simple() {
         console.log("selection not found");
     }
   };
+
+  useEffect(() => {
+    if (describeCart) {
+      describeCart(isCartVisible);
+    }
+  }, [isCartVisible]);
 
   return (
     <>

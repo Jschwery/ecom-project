@@ -251,8 +251,19 @@ function ProductPage() {
                               {product.name}
                             </h4>
                           </div>
-                          <h5 className="ml-1 flex-shrink-0">
-                            ${product.price}
+                          <h5
+                            className={`ml-1 flex-shrink-0  text-ca9 mr-auto sale-item ${
+                              product.specialOffer && product.salePrice
+                                ? "line-through"
+                                : ""
+                            }`}
+                            data-sale-price={
+                              product.salePrice
+                                ? `Sale: $${product.salePrice}`
+                                : ""
+                            }
+                          >
+                            {product.price ? "$" + product.price : "$15.00"}
                           </h5>
                         </div>
                         <span className="self-start">

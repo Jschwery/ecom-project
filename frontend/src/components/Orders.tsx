@@ -129,14 +129,6 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
           );
         })}
         <div className="flex flex-col min-w-0 truncate">
-          <h5
-            className={`min-w-0 truncate ${
-              !isEnlarged ? "text-lg" : "text-sm"
-            }`}
-            title={`Total: ${order.total.toFixed(2)}`}
-          >
-            Total: ${order.total.toFixed(2)}
-          </h5>
           <span className={`tag ${order.status.toLowerCase()}`}>
             {order.status}
           </span>

@@ -8,6 +8,7 @@ import useProducts from "../../hooks/useProducts";
 import { useFulfill } from "../../hooks/useFulfill";
 interface ProductProps {
   product: Product;
+  index: number;
 }
 
 function calculateSubtotal(product: Product) {
@@ -33,38 +34,51 @@ function formatDateAndTime(dateString: string | Date): string {
 }
 
 const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
-  ({ product }) => {
-    const preTaxTotal = product.price * (product.quantity || 0);
+  ({ product, index }) => {
+    const preTaxTotalWithoutSavings = product.price * (product.quantity || 0);
+    const savings = product.salePrice || 0;
+    const preTaxTotal = preTaxTotalWithoutSavings - savings;
     const tax = preTaxTotal * 0.08;
     const subtotal = preTaxTotal + tax;
 
+    //out of stock says fulfilled, did not subtract?
+
     return (
-      <div className="flex w-full flex-col bg-ca1 min-w-[320px] rounded p-2 my-1">
-        <div className="flex items-center space-x-1">
-          <h4>Product:</h4>
-          <h4>{product.name}</h4>
+      <>
+        <h4 className="px-2 py-1">Product {index + 1}</h4>
+        <div className="flex w-full flex-col px-3 space-y-1 bg-ca1 min-w-[320px] rounded p-2 my-1">
+          <div className="flex items-baseline space-x-2 order-row">
+            <h4>Product:</h4>
+            <h4>{product.name}</h4>
+          </div>
+          <div className="flex items-center space-x-2 order-row">
+            <h4>Quantity:</h4>
+            <h4>{product?.quantity}</h4>
+          </div>
+          <div className="flex items-center space-x-2 order-row">
+            <h4>Total (pre-tax):</h4>
+            <h5>
+              ${product.price} X {product?.quantity}
+            </h5>
+            <h5>=</h5>
+            <h5>${preTaxTotalWithoutSavings.toFixed(2)}</h5>
+          </div>
+          {savings > 0 && (
+            <div className="flex items-center space-x-2 order-row">
+              <h4>Savings:</h4>
+              <h4>-${savings.toFixed(2)}</h4>
+            </div>
+          )}
+          <div className="flex items-center space-x-2 order-row">
+            <h4>Tax:</h4>
+            <h4>${tax.toFixed(2)}</h4>
+          </div>
+          <div className="flex items-center space-x-2 order-row">
+            <h4>SubTotal:</h4>
+            <h4>${subtotal.toFixed(2)}</h4>
+          </div>
         </div>
-        <div className="flex items-center space-x-4">
-          <h4>Quantity:</h4>
-          <h4>{product?.quantity}</h4>
-        </div>
-        <div className="flex items-center space-x-4">
-          <h4>Total (pre-tax):</h4>
-          <h5>
-            {product.price} X {product?.quantity}
-          </h5>
-          <h5>=</h5>
-          <h5>${preTaxTotal.toFixed(2)}</h5>
-        </div>
-        <div className="flex items-center space-x-4">
-          <h4>Tax:</h4>
-          <h4>${tax.toFixed(2)}</h4>
-        </div>
-        <div className="flex items-center space-x-4">
-          <h4>SubTotal:</h4>
-          <h4>${subtotal.toFixed(2)}</h4>
-        </div>
-      </div>
+      </>
     );
   }
 );
@@ -129,6 +143,20 @@ function FullfillOrder() {
       }
     }
   };
+  const handleFullFillOrder = async () => {
+    const updatePromises: any = [];
+
+    memoizedProducts.forEach((product) => {
+      const updatePromise = handleFundsUpdate(product);
+      updatePromises.push(updatePromise);
+    });
+
+    try {
+      await Promise.all(updatePromises);
+    } catch (error) {
+      console.error("One or more product updates failed:", error);
+    }
+  };
 
   const handleFundsUpdate = async (product: Product) => {
     if (order && order._id && user) {
@@ -184,20 +212,6 @@ function FullfillOrder() {
     }
   };
 
-  const handleFullFillOrder = async () => {
-    const updatePromises: any = [];
-
-    memoizedProducts.forEach((product) => {
-      const updatePromise = handleFundsUpdate(product);
-      updatePromises.push(updatePromise);
-    });
-
-    try {
-      await Promise.all(updatePromises);
-    } catch (error) {
-      console.error("One or more product updates failed:", error);
-    }
-  };
   return (
     <div className="w-full h-screen bg-ca2 p-6">
       <div
@@ -224,45 +238,51 @@ function FullfillOrder() {
           ) : (
             ""
           )}
-          <h1 className="mb-5">Fulfill Order</h1>
-          <div className="flex min-w-[300px] items-center space-x-4">
-            <h4>Order #</h4>
-            <h5>{Number(order?.orderNumber) || 0}</h5>
-          </div>
-          <div className="flex min-w-[300px] items-center space-x-4">
-            <h4>Buyer:</h4>
-            <h5>{buyer?.name}</h5>
-          </div>
-          <div className="flex items-center space-x-4">
-            <h4>Address:</h4>
-            <h5>
-              {buyer?.shippingAddresses && buyer.shippingAddresses.length > 0
-                ? `${
-                    (buyer.shippingAddresses[0] &&
-                      buyer.shippingAddresses[0].name) ||
-                    ""
-                  }, ${
-                    (buyer.shippingAddresses[0] &&
-                      buyer.shippingAddresses[0].state) ||
-                    ""
-                  }, ${
-                    (buyer.shippingAddresses[0] &&
-                      buyer.shippingAddresses[0].zip) ||
-                    ""
-                  }`
-                : "No Address Found"}
-            </h5>
+          <h1 className="mb-5 mx-auto pt-2">Fulfill Order</h1>
+          <div className="flex flex-col space-y-1 px-2 bg-ca1 w-full">
+            <div className="flex min-w-[300px] items-center space-x-4 ">
+              <h4>Order #</h4>
+              <h5>{Number(order?.orderNumber) || 0}</h5>
+            </div>
+            <div className="flex min-w-[300px] items-center space-x-4">
+              <h4>Buyer:</h4>
+              <h5>{buyer?.name}</h5>
+            </div>
+            <div className="flex items-center space-x-4">
+              <h4>Address:</h4>
+              <h5>
+                {buyer?.shippingAddresses && buyer.shippingAddresses.length > 0
+                  ? `${
+                      (buyer.shippingAddresses[0] &&
+                        buyer.shippingAddresses[0].name) ||
+                      ""
+                    }, ${
+                      (buyer.shippingAddresses[0] &&
+                        buyer.shippingAddresses[0].state) ||
+                      ""
+                    }, ${
+                      (buyer.shippingAddresses[0] &&
+                        buyer.shippingAddresses[0].zip) ||
+                      ""
+                    }`
+                  : "No Address Found"}
+              </h5>
+            </div>
           </div>
           <Divider className="my-2" />
 
-          {memoizedProducts.map((product) => (
-            <MemoizedProductComponent key={product._id} product={product} />
+          {memoizedProducts.map((product, index) => (
+            <MemoizedProductComponent
+              key={product._id}
+              index={index}
+              product={product}
+            />
           ))}
           <Divider className="my-2" />
 
           {/*only allow to do the delete/cancel item on the items that are currently pending*/}
 
-          <div className="flex justify-between mb-3 min-w-[300px] items-center space-x-4">
+          <div className="flex w-full justify-between mb-3 min-w-[300px] items-center space-x-4 px-5">
             <div className="flex items-center space-x-2">
               <h4>Total</h4>
               <h4>${total.toFixed(2)}</h4>
@@ -275,7 +295,7 @@ function FullfillOrder() {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="w-6 h-6 cursor-pointer hover:scale-110 duration-200"
+                  className="w-6  h-6 cursor-pointer hover:scale-110 duration-200"
                   onClick={() => handleFullFillOrder()}
                 >
                   <path
@@ -293,7 +313,7 @@ function FullfillOrder() {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="w-6 h-6 cursor-pointer scale-110"
+                  className="w-6  h-6 cursor-pointer scale-110"
                   onClick={() => (window.location.pathname = "your-items")}
                 >
                   <path

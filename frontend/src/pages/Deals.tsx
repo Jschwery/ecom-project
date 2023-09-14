@@ -11,7 +11,7 @@ import ListedItem from "../components/util/ListedItem";
 function Deals() {
   const { products } = useProducts();
   const { user } = useUser();
-  const { categoryName } = useParams();
+  const { categoryName, salePercentage } = useParams();
   const [categoryItems, setCategoryItems] = useState<Product[]>();
   const [flexDirection, setFlexDirection] = useState("");
   const divRef: React.MutableRefObject<HTMLDivElement | null> =

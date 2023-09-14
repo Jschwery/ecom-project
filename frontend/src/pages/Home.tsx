@@ -31,13 +31,13 @@ export const spinnerStyles: React.CSSProperties = {
   animation: "spin 1s linear infinite",
 };
 
-const imageMetadata = [
+export const dealMetaData = [
   {
     imagePath: "/images/deals/yellowTech.jpg",
     dealLink: "/category/technology/special-offer",
     dealHeader: "Shop Electronics",
     dealSubheader: "Get up to 20% off top of the line electronics",
-    dealPercentage: "10%",
+    dealPercentage: "20",
     imageGrow: true,
   },
 ];
@@ -55,6 +55,14 @@ function App() {
     useRef<HTMLDivElement | null>(null);
   const [flexDirection, setFlexDirection] = useState("");
   const lastFlexDirection = useRef(flexDirection);
+  const [cartVisible, setCartVisible] = useState<boolean>();
+
+  useEffect(() => {
+    console.log("is cart visible");
+    console.log("in home");
+
+    console.log(cartVisible);
+  }, [cartVisible]);
 
   const breakpoints = [
     { max: 768, class: "flex-col-items" },
@@ -86,8 +94,6 @@ function App() {
 
   useLayoutEffect(() => {
     const currentWidth = getDivWidth(divRef.current);
-    console.log("current width");
-    console.log(currentWidth);
 
     if (currentWidth > breakpoints[breakpoints.length - 1].max) {
       if (
@@ -170,10 +176,18 @@ function App() {
 
   return (
     <>
-      {user ? <SignedInNav /> : <NotSignedInNav />}
+      {user ? (
+        <SignedInNav describeCart={(visible) => setCartVisible(visible)} />
+      ) : (
+        <NotSignedInNav />
+      )}
       <div className="pt-16 bg-ca2 w-full h-screen">
         <div className="flex my-5 h-[250px] overflow-hidden !px-3 w-full justify-center items-center">
-          <PictureCarousel imageGrow={true} dealPackage={imageMetadata} />
+          <PictureCarousel
+            hideSvg={cartVisible}
+            imageGrow={true}
+            dealPackage={dealMetaData}
+          />
         </div>
 
         <div className="bg-ca3 flex-col rounded-md p-4 m-4 ">

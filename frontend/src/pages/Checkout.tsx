@@ -24,7 +24,13 @@ import useProducts from "../hooks/useProducts";
 import { Product, User } from "../../typings";
 
 function Checkout() {
-  const { localCart, setLocalCart, getCartTotalCost } = useCart();
+  const {
+    localCart,
+    setLocalCart,
+    getCartTotalCost,
+    orderSavings,
+    setOrderSavings,
+  } = useCart();
   const { user } = useUser();
   const { getProductOwner, getProductById } = useProducts();
   const [showAddresses, setShowAddresses] = useState(false);
@@ -59,7 +65,7 @@ function Checkout() {
   async function handleOrderSubmit(event: React.MouseEvent<HTMLButtonElement>) {
     try {
       const localCartItems: Product[] = await Promise.all(
-        localCart.map((item) => getProductById(item.product))
+        localCart.map((item) => getProductById(item.product as string))
       );
 
       let productAndCountItems = [];
@@ -82,7 +88,9 @@ function Checkout() {
         const total = cartItem.quantity * productDetail.price;
         totalAmount += total;
 
-        const prodOwner: User = await getProductOwner(cartItem.product);
+        const prodOwner: User = await getProductOwner(
+          cartItem.product as string
+        );
         uniqueSellers.add(prodOwner._id);
 
         productAndCountItems.push({
@@ -109,6 +117,9 @@ function Checkout() {
       });
 
       setLocalCart([]);
+      if (setOrderSavings) {
+        setOrderSavings(0);
+      }
       window.localStorage.clear();
       toast({
         title: "Success",
@@ -257,30 +268,55 @@ function Checkout() {
             <h3>Order Summary</h3>
           </div>
           <Divider orientation="vertical" />
-          <div className="flex grow p-2 rounded-md border  bg-ca4 text-ca9 ">
+          <div className="flex grow p-2 rounded-md border bg-ca4 text-ca9 ">
             <div className="flex flex-col space-y-1 w-full">
               <div className="flex justify-between p-1">
                 <p>Items ({totalItems}):</p>
-                <p>${cartTotal}</p>
+                <p>${cartTotal?.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Shipping & handling</p>
                 <p>$4.99</p>
               </div>
+
+              {orderSavings && orderSavings > 0 ? (
+                <div className="flex justify-between">
+                  <p>Savings: </p>
+                  <p>-${orderSavings?.toFixed(2)}</p>
+                </div>
+              ) : null}
+
               <div className="flex justify-between">
                 <p>Total before tax: </p>
-                <p>${cartTotal && (cartTotal + 4.99).toFixed(2)}</p>
+                <p>
+                  $
+                  {cartTotal &&
+                    (cartTotal - (orderSavings || 0) + 4.99).toFixed(2)}
+                </p>
               </div>
+
               <div className="flex justify-between">
                 <p>Estimated Tax: </p>
-                <p>${cartTotal && ((cartTotal + 4.99) * 0.08).toFixed(2)}</p>
+                <p>
+                  $
+                  {cartTotal &&
+                    ((cartTotal - (orderSavings || 0) + 4.99) * 0.08).toFixed(
+                      2
+                    )}
+                </p>
               </div>
+
               <div className="flex justify-between">
                 <p>Order Total: </p>
                 <p>
                   $
                   {cartTotal &&
-                    (cartTotal + 4.99 + (cartTotal + 4.99) * 0.08).toFixed(2)}
+                    (
+                      cartTotal -
+                      (orderSavings || 0) +
+                      4.99 +
+                      (cartTotal - (orderSavings || 0) + 4.99) * 0.08
+                    ).toFixed(2)}
                 </p>
               </div>
             </div>

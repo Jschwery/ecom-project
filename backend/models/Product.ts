@@ -7,6 +7,7 @@ export interface IProduct extends Document {
   description: string;
   category: string;
   price: number;
+  salePrice?: number;
   specialOffer?: boolean;
   weight?: number;
   quantity: number;
@@ -28,6 +29,7 @@ const ProductSchema: Schema = new Schema({
   specialOffer: { type: Boolean, required: false },
   weight: { type: Number, required: false },
   sellerID: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  salePrice: { type: Number, required: false },
   name: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: String, required: true },

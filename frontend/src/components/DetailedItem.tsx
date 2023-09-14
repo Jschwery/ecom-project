@@ -276,14 +276,16 @@ function DetailedItem({
   return (
     <div className="flex flex-col bg-ca3 shadow px-4 py-2 rounded-md w-[90%] md:w-[80%] lg:w-[75%] xl:w-[65%] mx-auto">
       <div className="flex justify-between">
-        <h2>{product.name}</h2>
+        <h2 title={product.name} className="line-clamp-2">
+          {product.name}
+        </h2>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="w-6 h-6 cursor-pointer hover:scale-110 duration-300 "
+          className="w-6 h-6 shrink-0 cursor-pointer hover:scale-110 duration-300 "
           onClick={() => handleItemEdit()}
         >
           <path

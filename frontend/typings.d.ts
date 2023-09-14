@@ -70,6 +70,7 @@ export type Product = {
   rating?: number;
   specialOffer?: boolean;
   category: string;
+  salePrice?: number;
   weight?: number;
   price: number;
   reviews?: {

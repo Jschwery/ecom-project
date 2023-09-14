@@ -32,7 +32,9 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
 
       setProductCounts((prev) => ({
         ...prev,
-        [product._id || ""]: product.price * quantity,
+        [product._id || ""]: Number(
+          ((product.salePrice || product.price) * quantity).toFixed(2)
+        ),
       }));
     });
   }, [products, localCart]);
@@ -69,7 +71,9 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
       if (product) {
         setProductCounts((prev) => ({
           ...prev,
-          [product._id || ""]: product.quantity * product.price,
+          [product._id || ""]: product.specialOffer
+            ? Number(product.salePrice) * product.price
+            : product.quantity * product.price,
         }));
       }
     });
@@ -93,8 +97,6 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
     const currentCart: CartItem[] = JSON.parse(
       localStorage.getItem("cart") || "[]"
     );
-    console.log("the current cart is ");
-    console.log(currentCart);
 
     const existingItemIndex = currentCart.findIndex(
       (item: CartItem) => item.product === productID
@@ -112,14 +114,14 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
   return (
     <>
       <div
-        className={`cart-overlay ${isCartVisible ? "block" : "hidden"}`}
+        className={`cart-overlay  ${isCartVisible ? "block" : "hidden"}`}
         onClick={() => setShowCart(false)}
       ></div>
 
-      <div className={`cart-slide-in ${isCartVisible ? "visible" : ""}`}>
-        <div className="flex-grow flex flex-col p-2 md:p-4 space-y-2">
+      <div className={`cart-slide-in  ${isCartVisible ? "visible" : ""}`}>
+        <div className="flex flex-col p-2 md:p-4 space-y-2">
           <h1>Cart</h1>
-          <div className="flex-grow overflow-y-auto space-y-2">
+          <div className="flex flex-col w-full  overflow-y-auto space-y-2">
             {products.map((product: Product, idx: Key | null | undefined) => {
               if (product) {
                 return (
@@ -127,9 +129,9 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                     key={idx}
                     className="w-full flex flex-col bg-ca4 rounded-md"
                   >
-                    <div className="w-full flex flex-col justify-between md:flex-row  truncate px-0.5 bg-ca4 p-2 space-y-2 md:space-x-2 rounded-md">
+                    <div className="w-full flex flex-col justify-between md:flex-row  truncate line-clamp-2 px-0.5 bg-ca4 p-2 space-y-2 md:space-x-2 rounded-md">
                       <img
-                        className="self-center w-[60%] h-16 md:w-[30%] min-w-[30%]"
+                        className="self-center md:mr-6 w-[60%] h-16 md:w-[30%] min-w-[30%]"
                         src={
                           product.imageUrls && product.imageUrls[0]
                             ? product.imageUrls[0]
@@ -137,13 +139,29 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                         }
                         alt={product.name}
                       />
-                      <h3 className="truncate md:hidden mx-auto">
-                        {product.name}
-                      </h3>
-
-                      <div className="md:hidden flex flex-col items-center space-y-2">
-                        <h3>${product.price}</h3>
-
+                      <div
+                        title={product.name}
+                        className="md:hidden w-full flex justify-center"
+                      >
+                        <h4 className=" md:hidden truncate">{product.name}</h4>
+                      </div>
+                      <div className="md:hidden flex flex-col  items-center space-y-2">
+                        <div className="relative mx-auto mb-6 ">
+                          <h5
+                            className={`flex-shrink-0  text-ca9 mr-auto sale-item ${
+                              product.specialOffer && product.salePrice
+                                ? "line-through"
+                                : ""
+                            }`}
+                            data-sale-price={
+                              product.salePrice
+                                ? `Sale: $${product.salePrice}`
+                                : ""
+                            }
+                          >
+                            {product.price ? "$" + product.price : "$15.00"}
+                          </h5>
+                        </div>
                         <Counter
                           initialCount={getProductQuantity(product)}
                           onCountChange={(count: number) => {
@@ -152,12 +170,38 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                         />
                       </div>
 
-                      <div className="flex-col md:flex-row space-y-2 md:space-x-2">
-                        <h3 className="truncate hidden md:block">
-                          {product.name}
-                        </h3>
-                        <div className="flex space-x-2 items-center">
-                          <h3 className="hidden md:block">${product.price}</h3>
+                      <div className="flex-col w-full flex-wrap md:flex-row space-y-2 md:space-x-2">
+                        <div className="w-[62%]">
+                          <h3
+                            title={product.name}
+                            className="leading-snug mt-0.5 hidden md:block grow overflow-hidden truncate min-w-0"
+                          >
+                            {product.name}
+                          </h3>
+                        </div>
+                        <div className="md:flex space-x-5 py-3  hidden items-center">
+                          {product.salePrice && product.specialOffer ? (
+                            <div className="relative">
+                              <h5
+                                className={`text-ca9  sale-item ${
+                                  product.specialOffer && product.salePrice
+                                    ? "line-through"
+                                    : ""
+                                }`}
+                                data-sale-price={
+                                  product.salePrice
+                                    ? `Sale: $${product.salePrice}`
+                                    : ""
+                                }
+                              >
+                                {product.price ? "$" + product.price : "$15.00"}
+                              </h5>
+                            </div>
+                          ) : (
+                            <h3 className="hidden md:block">
+                              ${product.price}
+                            </h3>
+                          )}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -211,9 +255,20 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                     <div className="hidden  md:flex w-full justify-between items-end">
                       <div className="flex-col px-2 pb-2">
                         <h4>Total:</h4>
-                        <h4 className="text-ca9 font-semibold">
-                          ${productCounts[product._id || ""]}
-                        </h4>
+                        <div className="flex space-x-3 items-center">
+                          <h4 className="text-ca9 font-semibold">
+                            ${productCounts[product._id || ""]}
+                          </h4>
+                          {product.specialOffer && product.salePrice && (
+                            <h5 className="text-red-500">
+                              Saved: $
+                              {(
+                                product.price * getProductQuantity(product) -
+                                productCounts[product._id || ""]
+                              ).toFixed(2)}
+                            </h5>
+                          )}
+                        </div>
                       </div>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -240,12 +295,16 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
         </div>
         <div className="w-full flex justify-center mb-5 h-11">
           {localCart && localCart.length > 0 ? (
-            <Button
-              onClick={handleCartCheckout}
-              className="w-1/2 !text-ca1 !bg-ca8 hover:!bg-ca7"
-            >
-              Checkout
-            </Button>
+            <>
+              <div className="flex flex-col w-full items-center mt-4 space-y-2 justify-center">
+                <Button
+                  onClick={handleCartCheckout}
+                  className="w-1/2 py-2 !text-ca1 !bg-ca8 hover:!bg-ca7"
+                >
+                  Checkout
+                </Button>
+              </div>
+            </>
           ) : (
             <h2>Cart is Empty</h2>
           )}

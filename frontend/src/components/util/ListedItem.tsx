@@ -132,7 +132,7 @@ function ListedItem({
 
       <div className="flex flex-col justify-between w-full">
         <div className="flex flex-col justify-between px-4 max-w-1/3">
-          <div className="flex relative flex-col  space-y-1 pt-2 pl-2 pb-6">
+          <div className="flex items-center justify-between pt-3 pl-1">
             <h3
               title={product.name}
               className="text-ca9 w-2/3 line-clamp-2"
@@ -145,12 +145,14 @@ function ListedItem({
                 : "Product Name"}
             </h3>
             <h2
-              className={`text-ca1 mr-auto sale-item ${
+              className={`text-ca1 !top-0 sale-item ${
                 product.specialOffer && product.salePrice ? "line-through" : ""
               }`}
               style={wrapTextStyle}
               data-sale-price={
-                product.salePrice ? `Sale: $${product.salePrice}` : ""
+                product.salePrice && product.specialOffer
+                  ? `Sale: $${product.salePrice}`
+                  : ""
               }
             >
               {product.price
@@ -163,7 +165,7 @@ function ListedItem({
         </div>
 
         <div className="flex-grow flex-shrink-0 flex items-end max-w-1/3">
-          <div className="w-full flex px-5 pb-2 pt-5 justify-end space-x-2">
+          <div className="w-full flex px-5 pb-2 pt-5 justify-end mt-4 md:mt-0 space-x-2">
             <NumberInput
               w="25%"
               className="text-ca9"
@@ -207,8 +209,6 @@ function ListedItem({
 
             <span
               onClick={async () => {
-                // console.log(product);
-                // console.log(product._id);
                 if (product && product._id) {
                   const productFound: CartItem | undefined = localCart.find(
                     (cartProduct) => product._id === cartProduct.product

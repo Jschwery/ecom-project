@@ -99,9 +99,6 @@ function ProductPage() {
               const updatedRecentViews = [...user.recentlyViewed];
               updatedRecentViews[index] = updatedItem;
 
-              console.log("the updated reviews are");
-              console.log(updatedRecentViews);
-
               const updatedUserWithTime: User = {
                 ...user,
                 recentlyViewed: updatedRecentViews,
@@ -234,41 +231,42 @@ function ProductPage() {
                         }
                         className="flex flex-col cursor-pointer p-2 w-full justify-between  bg-ca2 rounded-md mb-3 items-center"
                       >
-                        <div className="flex w-full items-center justify-between">
-                          <div className="flex w-full items-center space-x-5 min-w-0">
-                            <img
-                              className="h-10 w-10 rounded-full min-w-[2.5rem]"
-                              src={
-                                (product.imageUrls && product.imageUrls[0]) ||
-                                "/images/logo2.svg"
-                              }
-                              alt={product.name}
-                            />
+                        <div className="flex w-full  space-x-3 items-center  min-w-0">
+                          <img
+                            className="h-10 w-10 rounded-full min-w-[2.5rem]"
+                            src={
+                              (product.imageUrls && product.imageUrls[0]) ||
+                              "/images/logo2.svg"
+                            }
+                            alt={product.name}
+                          />
+                          <div className="flex justify-between min-w-0  items-center w-full">
                             <h4
                               className="leading-snug mt-0.5 grow overflow-hidden truncate min-w-0"
                               title={product.name}
                             >
                               {product.name}
                             </h4>
+
+                            <h5
+                              className={`ml-1 flex-shrink-0  text-ca9 relative all-seller-item ${
+                                product.specialOffer && product.salePrice
+                                  ? "line-through"
+                                  : ""
+                              }`}
+                              data-sale-price={
+                                product.salePrice
+                                  ? `Sale: $${product.salePrice}`
+                                  : ""
+                              }
+                            >
+                              {product.price ? "$" + product.price : "$15.00"}
+                            </h5>
                           </div>
-                          <h5
-                            className={`ml-1 flex-shrink-0  text-ca9 mr-auto sale-item ${
-                              product.specialOffer && product.salePrice
-                                ? "line-through"
-                                : ""
-                            }`}
-                            data-sale-price={
-                              product.salePrice
-                                ? `Sale: $${product.salePrice}`
-                                : ""
-                            }
-                          >
-                            {product.price ? "$" + product.price : "$15.00"}
-                          </h5>
                         </div>
                         <span className="self-start">
                           {(
-                            <div className="flex items-center">
+                            <div className="flex items-center pt-1">
                               <h4>
                                 {Number(averageRating) !== 1
                                   ? averageRating
@@ -302,20 +300,37 @@ function ProductPage() {
           <div className="flex flex-col w-full md:w-[70%] px-2 my-5 md:my-0 space-y-3">
             <div className=" w-[80%]  md:w-full mx-auto md:mx-0  bg-ca3 p-4 md:p-6 rounded-lg shadow-black mb-2 pl-3 shadow-sm flex flex-col md:flex-row ">
               <div className="order-1 min-h-[250px] p-2 md:min-h-0 overflow-hidden flex items-center grow mb-4 md:mb-0  px-4 w-full md:w-[40%] min-w-[300px]">
-                <PictureCarousel images={foundProduct.imageUrls ?? []} />
+                <PictureCarousel
+                  images={
+                    foundProduct.imageUrls!.length > 0
+                      ? foundProduct.imageUrls
+                      : "/images/logo2.svg"
+                  }
+                />
               </div>
               <div className="px-3 md:px-0 order-2 md:order-1 w-[95%] md:w-[60%] min-w-0 truncate overflow-hidden">
-                <div className="flex flex-col md:flex-row overflow-hidden min-w-0 truncate justify-between items-start mb-4">
-                  <h1
-                    className="text-gray-800 md:px-2 font-bold overflow-hidden truncate min-w-0 text-2xl md:text-3xl md:max-w-xs"
+                <div className="flex flex-col md:flex-row justify-between min-w-0  items-center w-full">
+                  <h2
+                    className="leading-snug mt-0.5 grow overflow-hidden truncate min-w-0"
                     title={foundProduct.name}
                   >
                     {foundProduct.name}
-                  </h1>
+                  </h2>
 
-                  <span className=" text-ca8 text-lg md:text-xl">
-                    ${foundProduct.price}
-                  </span>
+                  <h2
+                    className={`ml-1 flex-shrink-0  text-ca9 relative sale-item ${
+                      foundProduct.specialOffer && foundProduct.salePrice
+                        ? "line-through"
+                        : ""
+                    }`}
+                    data-sale-price={
+                      foundProduct.salePrice
+                        ? `Sale: $${foundProduct.salePrice}`
+                        : ""
+                    }
+                  >
+                    {foundProduct.price ? "$" + foundProduct.price : "$15.00"}
+                  </h2>
                 </div>
                 <div className="flex items-center space-x-1">
                   <h5>

@@ -215,7 +215,7 @@ function FullfillOrder() {
   return (
     <div className="w-full h-screen bg-ca2 p-6">
       <div
-        className={`flex items-center rounded-md flex-col min-w-[350px] max-w-[600px] w-2/3 mx-auto bg-ca3 ${
+        className={`flex items-center rounded-md flex-col max-h-[95vh] overflow-y-auto min-w-[350px] max-w-[600px] w-2/3 mx-auto bg-ca3 ${
           order?.status === "Fulfilled"
             ? "border border-dashed border-green-600"
             : order?.status === "Canceled"

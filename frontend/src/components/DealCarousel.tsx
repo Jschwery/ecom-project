@@ -10,7 +10,7 @@ interface Props {
     dealSubheader: string;
     dealPercentage: string;
   }[];
-  images?: string[];
+  images?: string[] | string;
   imageGrow?: boolean;
 }
 
@@ -21,7 +21,10 @@ function PictureCarousel({
   dealPackage = [],
 }: Props) {
   const dealImages = dealPackage.map((dp) => dp.imagePath);
-  const images = [...dealImages, ...originalImages];
+  const images = [
+    ...dealImages,
+    ...(typeof originalImages === "object" ? originalImages : [originalImages]),
+  ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [slideTimer, setSlideTimer] = useState<number | null>(null);
@@ -58,18 +61,30 @@ function PictureCarousel({
     }
   }, [currentImageIndex]);
 
+  useEffect(() => {
+    console.log("the imgs");
+    console.log(images.length);
+
+    console.log(images);
+  }, [images]);
+
   return (
     <div className="flex h-[250px] w-full !mx-8 justify-center items-center md:mx-3">
       {images && images.length > 0 && (
         <>
-          <button onClick={prevImage} className="flex-shrink-0 px-3 p-2 !z-50">
+          <button
+            onClick={prevImage}
+            className={`flex-shrink-0 px-3 p-2 ${
+              !(images.length > 1) ? "hidden" : ""
+            }`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className="w-6 h-6 !z-50"
+              className="w-6 h-6"
             >
               <path
                 strokeLinecap="round"
@@ -109,14 +124,19 @@ function PictureCarousel({
             />
           )}
 
-          <button onClick={nextImage} className="flex-shrink-0 p-2  !z-50">
+          <button
+            onClick={nextImage}
+            className={`flex-shrink-0 p-2 ${
+              !(images.length > 1) ? "hidden" : ""
+            }`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
-              className={`w-6 h-6 !z-50 ${hideSvg ? "hidden" : "visible"}`}
+              className={`w-6 h-6${hideSvg ? "hidden" : "visible"}`}
             >
               <path
                 strokeLinecap="round"

@@ -286,7 +286,7 @@ select.select-filter {
   position: relative;
 }
 h2.sale-item {
-  @apply !text-ca9 !absolute top-0 right-0;
+  @apply !text-ca9 !relative top-1/4 right-0;
 }
 
 h2.sale-item::after {
@@ -295,6 +295,23 @@ h2.sale-item::after {
   top: 95%;
   right: 10%;
   font-size: large !important;
+  font-size: 0.8em;
+  @apply text-red-500;
+  text-decoration: none !important;
+  white-space: nowrap;
+  margin-left: 5px;
+}
+
+h5.all-seller-item {
+  @apply !text-ca9 !relative top-1/4 right-0;
+}
+
+h5.all-seller-item::after {
+  content: attr(data-sale-price);
+  position: absolute;
+  top: 100%;
+  right: 10%;
+  font-size: 14px !important;
   font-size: 0.8em;
   @apply text-red-500;
   text-decoration: none !important;

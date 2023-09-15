@@ -61,13 +61,6 @@ function PictureCarousel({
     }
   }, [currentImageIndex]);
 
-  useEffect(() => {
-    console.log("the imgs");
-    console.log(images.length);
-
-    console.log(images);
-  }, [images]);
-
   return (
     <div className="flex h-[250px] w-full !mx-8 justify-center items-center md:mx-3">
       {images && images.length > 0 && (

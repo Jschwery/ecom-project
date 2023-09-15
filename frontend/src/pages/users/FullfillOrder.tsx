@@ -144,13 +144,31 @@ function FullfillOrder() {
     }
   };
   const handleFullFillOrder = async () => {
-    const updatePromises: any = [];
+    const invalidProducts = [];
+    for (const product of memoizedProducts) {
+      const foundProduct = await getProductById(product._id as string);
+      if (foundProduct.quantity - product.quantity <= 0) {
+        invalidProducts.push(product);
+      }
+    }
 
-    memoizedProducts.forEach((product) => {
-      const updatePromise = handleFundsUpdate(product);
-      updatePromises.push(updatePromise);
-    });
+    if (invalidProducts.length > 0) {
+      const invalidProductNames = invalidProducts.map((p) => p.name).join(", ");
 
+      toast({
+        title: "Insufficient Stock",
+        description: `The following products need to be restocked: ${invalidProductNames}`,
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+
+    const updatePromises = memoizedProducts.map((product) =>
+      handleFundsUpdate(product)
+    );
     try {
       await Promise.all(updatePromises);
     } catch (error) {
@@ -161,6 +179,8 @@ function FullfillOrder() {
   const handleFundsUpdate = async (product: Product) => {
     if (order && order._id && user) {
       const buyerDetails: User = await getUserById(order.buyerID);
+
+      await handleProductUpdate(product);
 
       if (!buyerDetails) {
         console.error("Could not fetch the buyer details");
@@ -191,22 +211,6 @@ function FullfillOrder() {
             position: "top",
           });
           return;
-        }
-      }
-
-      try {
-        await handleProductUpdate(product);
-      } catch (err: any) {
-        console.error(err);
-        if (err.message === "Insufficient product quantity") {
-          toast({
-            title: "Product Out of Stock",
-            description: "Please restock the product.",
-            status: "warning",
-            duration: 5000,
-            isClosable: true,
-            position: "top",
-          });
         }
       }
     }
@@ -279,8 +283,6 @@ function FullfillOrder() {
             />
           ))}
           <Divider className="my-2" />
-
-          {/*only allow to do the delete/cancel item on the items that are currently pending*/}
 
           <div className="flex w-full justify-between mb-3 min-w-[300px] items-center space-x-4 px-5">
             <div className="flex items-center space-x-2">

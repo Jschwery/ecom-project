@@ -57,10 +57,15 @@ function ListedItem({
 
   const content = { ...defaultContent, ...formikValues };
   const { colors } = useTheme();
-  const { addToLocalCart, localCart } = useCart();
-  const [dealPercentage, setDealPercentage] = useState<number>();
+  const { addToLocalCart, localCart, setLocalCart } = useCart();
+  const [numberInputValue, setNumberInputValue] = useState(1);
   const { products, updateProduct } = useProducts();
   const toast = useToast();
+
+  useEffect(() => {
+    console.log("the number");
+    console.log(numberInputValue);
+  }, [numberInputValue]);
 
   useEffect(() => {
     const percentage = dealMetaData.find((deal) =>
@@ -145,7 +150,7 @@ function ListedItem({
                 : "Product Name"}
             </h3>
             <h2
-              className={`text-ca1 !top-0 sale-item ${
+              className={`text-ca1 px-1 pr-2 !whitespace-nowrap !top-0 sale-item ${
                 product.specialOffer && product.salePrice ? "line-through" : ""
               }`}
               style={wrapTextStyle}
@@ -165,14 +170,40 @@ function ListedItem({
         </div>
 
         <div className="flex-grow flex-shrink-0 flex items-end max-w-1/3">
-          <div className="w-full flex px-5 pb-2 pt-5 justify-end mt-4 md:mt-0 space-x-2">
+          <div className="w-full flex px-5 pb-2 pt-5 justify-end mt-4  space-x-2">
             <NumberInput
               w="25%"
               className="text-ca9"
               minW="80px"
-              defaultValue={1}
-              max={30}
+              value={numberInputValue}
+              max={200}
               clampValueOnBlur={false}
+              onChange={(valueAsString, valueAsNumber) => {
+                if (valueAsNumber > 200) {
+                  setNumberInputValue(200);
+                  toast({
+                    title: "Item Cap Reached",
+                    description:
+                      "You have reached the maximum allowed quantity for this item.",
+                    status: "warning",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top",
+                  });
+                } else if (valueAsNumber < 1 || isNaN(valueAsNumber)) {
+                  setNumberInputValue(1);
+                  toast({
+                    title: "Minimum Quantity",
+                    description: "Minimum allowed quantity for this item is 1.",
+                    status: "info",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top",
+                  });
+                } else {
+                  setNumberInputValue(valueAsNumber);
+                }
+              }}
               sx={{
                 borderColor: "black",
                 _hover: {
@@ -208,20 +239,23 @@ function ListedItem({
             </NumberInput>
 
             <span
+              className="bg-ca6 hover:bg-ca5 flex items-center text-white p-2 rounded-md text-center cursor-pointer"
               onClick={async () => {
                 if (product && product._id) {
                   const productFound: CartItem | undefined = localCart.find(
                     (cartProduct) => product._id === cartProduct.product
                   );
+
                   if (!productFound) {
-                    addToLocalCart(product._id);
+                    addToLocalCart(product._id, numberInputValue);
                     return;
                   }
-                  if (
-                    productFound &&
-                    (productFound as CartItem)?.quantity < 200
-                  ) {
-                    addToLocalCart(product._id);
+
+                  const newQuantity =
+                    (productFound as CartItem)?.quantity + numberInputValue;
+
+                  if (newQuantity <= 200) {
+                    addToLocalCart(product._id, newQuantity);
                   } else {
                     toast({
                       title: "Item Cap Reached",
@@ -235,7 +269,6 @@ function ListedItem({
                   }
                 }
               }}
-              className="bg-ca7 text-ca1 max-w-[140px] grow hover:bg-ca5 px-4 py-1 cursor-pointer rounded-full flex items-center justify-center"
             >
               Add To Cart
             </span>

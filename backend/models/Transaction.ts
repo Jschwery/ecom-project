@@ -4,9 +4,17 @@ import { IUser } from "./User";
 
 export interface ITransaction extends Document {
   productAndCount: {
+    productDetails: {
+      name: string;
+      description: string;
+      price: number;
+      imageUrls?: [string];
+      specialOffer?: boolean;
+    };
     productID: Schema.Types.ObjectId;
     productCount: number;
   }[];
+
   buyerID: IUser["_id"];
   sellerID: IUser["_id"][];
   quantity: number;

@@ -241,10 +241,10 @@ function AddItem() {
             >
               <div className="flex flex-col space-y-4 w-full justify-center items-center">
                 <h2>
-                  Product Preview{" "}
+                  Product Preview
                   {flexDirection === "flex-col-items"
-                    ? "(Mobile)"
-                    : "(Desktop)"}
+                    ? " (Mobile)"
+                    : " (Desktop)"}
                 </h2>
 
                 <ListedItem

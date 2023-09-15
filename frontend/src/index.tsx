@@ -57,11 +57,7 @@ ReactDOM.render(
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            {/*
-            finish the your items setup
-            
 
-            */}
             <Route path="/your-items" element={<YourItems />} />
             <Route path="/add-item" element={<AddItem />} />
             <Route path="/checkout" element={<Checkout />} />
@@ -82,9 +78,7 @@ ReactDOM.render(
               */}
 
             {/*Remove for you
-    create large deal carosel above the recently viewed //somewhat done
-
-    finish deals page, just display a list of items with deals add slider to get percentage off products
+    add two more carosel deals
 
     just added display a list of items within the past 24 hours
 

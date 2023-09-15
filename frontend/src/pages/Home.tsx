@@ -40,6 +40,22 @@ export const dealMetaData = [
     dealPercentage: "20",
     imageGrow: true,
   },
+  {
+    imagePath: "/images/deals/clothing.jpg",
+    dealLink: "/category/ClothingFashion/special-offer",
+    dealHeader: "Shop Clothing and Fashion",
+    dealSubheader: "Get up to 35% off stylish clothing",
+    dealPercentage: "35",
+    imageGrow: true,
+  },
+  {
+    imagePath: "/images/deals/homeliving.jpg",
+    dealLink: "/category/HomeLiving/special-offer",
+    dealHeader: "Home Living Bliss",
+    dealSubheader: "Get up to 15% off modern living essentials",
+    dealPercentage: "15",
+    imageGrow: true,
+  },
 ];
 
 function App() {
@@ -56,13 +72,6 @@ function App() {
   const [flexDirection, setFlexDirection] = useState("");
   const lastFlexDirection = useRef(flexDirection);
   const [cartVisible, setCartVisible] = useState<boolean>();
-
-  useEffect(() => {
-    console.log("is cart visible");
-    console.log("in home");
-
-    console.log(cartVisible);
-  }, [cartVisible]);
 
   const breakpoints = [
     { max: 768, class: "flex-col-items" },

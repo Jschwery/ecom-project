@@ -23,7 +23,15 @@ import { useEffect, useState } from "react";
 import Cart from "../pages/users/Cart";
 import { useCart } from "../global/CartProvider";
 
-const Links = ["For You", "Deals", "Just Added", "Discover"];
+type LinkType = {
+  name: string;
+  path?: string;
+};
+const Links: LinkType[] = [
+  { name: "Deals", path: "category/all/special-offer" },
+  { name: "Just Added" },
+  { name: "Discover" },
+];
 type NavLinkProps = {
   children: React.ReactNode;
   to: string;
@@ -124,10 +132,13 @@ export default function Simple({ describeCart }: NavBarProps) {
             >
               {Links.map((link) => (
                 <NavLink
-                  key={link}
-                  to={`/${link.toLowerCase().split(" ").join("-")}`}
+                  key={link.name}
+                  to={`/${(link.path || link.name)
+                    .toLowerCase()
+                    .split(" ")
+                    .join("-")}`}
                 >
-                  {link}
+                  {link.name}
                 </NavLink>
               ))}
             </HStack>
@@ -197,8 +208,11 @@ export default function Simple({ describeCart }: NavBarProps) {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>
               {Links.map((link) => (
-                <NavLink to={`/${link.toLowerCase()}`} key={link}>
-                  {link}
+                <NavLink
+                  to={`/${(link.path || link.name).toLowerCase()}`}
+                  key={link.name}
+                >
+                  {link.name}
                 </NavLink>
               ))}
             </Stack>

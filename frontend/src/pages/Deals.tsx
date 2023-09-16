@@ -20,8 +20,12 @@ function Deals() {
 
   useEffect(() => {
     if (!products || !categoryName) return;
+    console.log("the category name is: " + categoryName);
 
     const categoryItems = products?.filter((product) => {
+      if (categoryName === "all") {
+        return product.specialOffer;
+      }
       return (
         product.category.toUpperCase() === categoryName.toUpperCase() &&
         product.specialOffer

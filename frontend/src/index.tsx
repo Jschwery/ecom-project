@@ -16,6 +16,8 @@ import Checkout from "./pages/Checkout";
 import SellerPage from "./pages/users/SellerPage";
 import FullfillOrder from "./pages/users/FullfillOrder";
 import Deals from "./pages/Deals";
+import RecentlyAdded from "./pages/RecentlyAdded";
+import Test from "./pages/Test";
 
 const root = document.getElementById("root");
 
@@ -57,6 +59,7 @@ ReactDOM.render(
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/test" element={<Test />} />
 
             <Route path="/your-items" element={<YourItems />} />
             <Route path="/add-item" element={<AddItem />} />
@@ -72,6 +75,8 @@ ReactDOM.render(
               element={<Deals />}
             />
             <Route path="/category/:categoryName" element={<FullfillOrder />} />
+            <Route path="/just-added" element={<RecentlyAdded />} />
+
             {/*
               when clicking one of the items it will redirect to the category
               then the route will use params and fetch all the products that contain that category

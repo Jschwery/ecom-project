@@ -21,6 +21,7 @@ const themeColors = {
 module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   darkMode: false,
+  content: [require.resolve(require.resolve("react-widgets/styles.css"))],
   theme: {
     extend: {
       colors: themeColors,
@@ -39,5 +40,5 @@ module.exports = {
     },
   },
   variants: {},
-  plugins: [],
+  plugins: [require("react-widgets-tailwind")],
 };

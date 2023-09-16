@@ -9,6 +9,7 @@ import { getDivWidth } from "./AddItem";
 import { Product } from "../../typings";
 import { v4 as uuidv4 } from "uuid";
 import PictureCarousel from "../components/DealCarousel";
+import useResponsiveFlex from "../hooks/useResponsiveFlex";
 
 export const loadingStyles: React.CSSProperties = {
   position: "fixed",
@@ -49,13 +50,18 @@ export const dealMetaData = [
     imageGrow: true,
   },
   {
-    imagePath: "/images/deals/homeliving.jpg",
+    imagePath: "/images/deals/whitehomedecor.jpg",
     dealLink: "/category/HomeLiving/special-offer",
     dealHeader: "Home Living Bliss",
     dealSubheader: "Get up to 15% off modern living essentials",
     dealPercentage: "15",
     imageGrow: true,
   },
+];
+
+export const breakpoints = [
+  { max: 768, class: "flex-col-items" },
+  { max: 900, class: "flex-row-items" },
 ];
 
 function App() {
@@ -69,52 +75,8 @@ function App() {
   const [recentProducts, setRecentProduct] = useState<Product[]>();
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
-  const [flexDirection, setFlexDirection] = useState("");
-  const lastFlexDirection = useRef(flexDirection);
+  const flexDirection = useResponsiveFlex(divRef, breakpoints);
   const [cartVisible, setCartVisible] = useState<boolean>();
-
-  const breakpoints = [
-    { max: 768, class: "flex-col-items" },
-    { max: 900, class: "flex-row-items" },
-  ];
-
-  useEffect(() => {
-    const handleResize = () => {
-      const currentWidth = getDivWidth(divRef.current);
-
-      for (let bp of breakpoints) {
-        if (currentWidth <= bp.max) {
-          if (lastFlexDirection.current !== bp.class) {
-            setFlexDirection(bp.class);
-            lastFlexDirection.current = bp.class;
-          }
-          break;
-        }
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    const currentWidth = getDivWidth(divRef.current);
-
-    if (currentWidth > breakpoints[breakpoints.length - 1].max) {
-      if (
-        lastFlexDirection.current !== breakpoints[breakpoints.length - 1].class
-      ) {
-        setFlexDirection(breakpoints[breakpoints.length - 1].class);
-        lastFlexDirection.current = breakpoints[breakpoints.length - 1].class;
-      }
-
-      return;
-    }
-  }, [divRef.current]);
 
   useEffect(() => {
     async function fetchProducts() {

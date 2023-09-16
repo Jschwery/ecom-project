@@ -33,6 +33,13 @@ export const Counter = mongoose.model("Counter", CounterSchema);
 const TransactionSchema: Schema = new Schema({
   productAndCount: [
     {
+      productDetails: {
+        name: { type: String, required: true },
+        description: { type: String, required: true },
+        price: { type: Number, required: true },
+        imageUrls: { type: [String], default: undefined },
+        specialOffer: { type: Boolean, default: false }
+      },
       productID: {
         type: Schema.Types.ObjectId,
         ref: "Product",

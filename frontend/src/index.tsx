@@ -78,14 +78,20 @@ ReactDOM.render(
               */}
 
             {/*Remove for you
-    add two more carosel deals
+
+    have the items from the transaction not be loading
+    use the backup from the transactin
 
     just added display a list of items within the past 24 hours
 
     discover, each time the page loads, scramble the list of random products, search by tags, filter by category
 
+    just use categoryscroll for them below
 
-    create a horizontal scroll of products from electronics, clothing and homeliving, then the rest will be the rest of the current products
+    create a horizontal scroll of products from electronics, clothing and homeliving, then the rest will be the rest of the 
+    
+    
+    current products
 */}
 
             {/* <Route path="/login" element={<LoginPage />} /> */}

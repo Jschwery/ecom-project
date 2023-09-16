@@ -86,20 +86,22 @@ export type Product = {
 export type Transaction = {
   _id?: string;
   productAndCount: {
+    productDetails: {
+      name: string;
+      description: string;
+      price: number;
+      imageUrls?: string[];
+      specialOffer?: boolean;
+    };
     productID: string;
     productCount: number;
   }[];
   buyerID: string;
   sellerID: string[];
-  orderNumber: Number;
+  orderNumber: number;
   quantity: number;
   total: number;
-  status:
-    | "Pending"
-    | "Fulfilled"
-    | "Canceled"
-    | "pending"
-    | "fulfilled"
-    | "canceled";
+  status: "Pending" | "Fulfilled" | "Canceled" | "pending" | "fulfilled" | "canceled";
   transactionDate?: Date;
 };
+

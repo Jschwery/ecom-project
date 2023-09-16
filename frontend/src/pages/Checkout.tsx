@@ -94,6 +94,13 @@ function Checkout() {
         uniqueSellers.add(prodOwner._id);
 
         productAndCountItems.push({
+          productDetails: {
+            name: productDetail.name,
+            description: productDetail.description,
+            price: productDetail.price,
+            imageUrls: productDetail.imageUrls,
+            specialOffer: productDetail.specialOffer,
+          },
           productID: cartItem.product,
           productCount: cartItem.quantity,
         });

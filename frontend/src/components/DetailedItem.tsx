@@ -97,9 +97,11 @@ function DetailedItem({
 
   useEffect(() => {
     setIsChecked(product.specialOffer);
-    console.log("checked?????");
-    console.log(isChecked);
   }, [product.specialOffer]);
+
+  useEffect(() => {
+    selectCategory(selectedCategory as keyof TagsStarterMap);
+  }, [selectedCategory]);
 
   const uploadImageToS3 = async (images: string[]): Promise<string[]> => {
     const uploadedImageUrls: string[] = [];

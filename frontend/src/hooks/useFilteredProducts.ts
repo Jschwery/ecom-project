@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Product } from "../../typings";
 
+type Option = {
+  label: string;
+  value: string;
+};
+
 export function useFilteredProducts(initialProducts: Product[] | null) {
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [specialOfferFilter, setSpecialOfferFilter] = useState<boolean | null>(
@@ -8,17 +13,11 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
   );
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [priceFilter, setPriceFilter] = useState<number | null>(null);
-  const [reviewRatingFilter, setReviewRatingFilter] = useState<number | null>(
-    null
-  );
+
   const [tagsFilter, setTagsFilter] = useState<string[] | null>(null);
   const [creationDateFilter, setCreationDateFilter] = useState<Date | null>(
     null
   );
-  useEffect(() => {
-    console.log("the rating filter");
-    console.log(ratingFilter);
-  }, [ratingFilter]);
 
   if (!initialProducts) {
     return {
@@ -27,14 +26,25 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
       setSpecialOfferFilter,
       setCategoryFilter,
       setPriceFilter,
-      setReviewRatingFilter,
       setTagsFilter,
       setCreationDateFilter,
     };
   }
 
   const filteredProducts = initialProducts.filter((product) => {
-    if (ratingFilter !== null && product.rating !== ratingFilter) return false;
+    const productRating = (product.reviews || []).reduce(
+      (acum, rating) => acum + (rating.rating || 0),
+      0
+    );
+    const reviewCount = (product.reviews || []).filter(
+      (review) => review.rating
+    ).length;
+    const ratingAverage = reviewCount
+      ? (productRating / reviewCount).toFixed(2)
+      : "0.00";
+
+    if (ratingFilter !== null && parseFloat(ratingAverage) < ratingFilter)
+      return false;
     if (
       specialOfferFilter !== null &&
       product.specialOffer !== specialOfferFilter
@@ -44,9 +54,11 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
     if (priceFilter !== null && product.price > priceFilter) return false;
     if (
       tagsFilter &&
-      (!product.tags || !tagsFilter.every((tag) => product.tags!.includes(tag)))
+      (!product.tags ||
+        !tagsFilter.every((value) => product.tags!.includes(value)))
     )
       return false;
+
     if (
       creationDateFilter &&
       (!product.creationDate || product.creationDate > creationDateFilter)
@@ -62,7 +74,6 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
     setSpecialOfferFilter,
     setCategoryFilter,
     setPriceFilter,
-    setReviewRatingFilter,
     setTagsFilter,
     setCreationDateFilter,
   };

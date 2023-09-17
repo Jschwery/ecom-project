@@ -11,32 +11,46 @@ import { useEffect, useState } from "react";
 import StarRating from "../StarRating";
 import { TAGS_STARTER } from "../../data/tags";
 import { MultiSelect } from "react-multi-select-component";
-type Option = {
+export type Option = {
   value: string | number;
   label: string;
 };
 
 interface ProductProps {
   priceFilterCallback?: (priceValue: number) => void;
-  dateFilterCallback?: (ascDesc: boolean) => void;
   tagFilterCallback?: (tags: Option[]) => void;
   starRatingCallback?: (starRating: number) => void;
+  isMinimized?: (isMinimized: boolean) => void;
+  isEnabled?: (
+    filtersEnabled: {
+      filterName: string;
+      value: boolean;
+    }[]
+  ) => void;
 }
+
 function ProductFilters({
   priceFilterCallback,
-  dateFilterCallback,
   tagFilterCallback,
   starRatingCallback,
+  isMinimized,
+  isEnabled,
 }: ProductProps) {
   const [sliderValues, setSliderValues] = useState([5]);
   const [showTooltips, setShowTooltips] = useState([false]);
   const [productRating, setProductRating] = useState<number>(-1);
-  const [ascDesc, setAscDesc] = useState(false);
   const [tags, setTags] = useState<Option[]>([]);
   const [selected, setSelected] = useState([]);
   const { colors } = useTheme();
   const tagObj = { ...TAGS_STARTER };
-
+  const [minimize, setMinimize] = useState(false);
+  const [filtersEnabled, setFiltersEnabled] = useState<
+    { filterName: string; value: boolean }[]
+  >([
+    { filterName: "priceFilter", value: false },
+    { filterName: "tagFilter", value: false },
+    { filterName: "ratingFilter", value: false },
+  ]);
   useEffect(() => {
     let tempTags = new Set<string>();
 
@@ -51,6 +65,20 @@ function ProductFilters({
     }));
     setTags(tagOptions);
   }, []);
+
+  useEffect(() => {
+    if (!isMinimized) {
+      return;
+    }
+    isMinimized(minimize);
+  }, [minimize]);
+
+  useEffect(() => {
+    if (!isEnabled) {
+      return;
+    }
+    isEnabled(filtersEnabled);
+  }, [filtersEnabled]);
 
   const handleSliderChange = (index: number, value: number) => {
     const newSliderValues = [...sliderValues];
@@ -77,22 +105,15 @@ function ProductFilters({
       priceFilterCallback(sliderValues[0]);
     }
   }, [sliderValues]);
+
   useEffect(() => {
-    if (!ascDesc) {
-      return;
-    }
-    if (dateFilterCallback) {
-      dateFilterCallback(ascDesc);
-    }
-  }, [ascDesc]);
-  useEffect(() => {
-    if (!tags) {
+    if (!selected) {
       return;
     }
     if (tagFilterCallback) {
-      tagFilterCallback(tags);
+      tagFilterCallback(selected);
     }
-  }, [tags]);
+  }, [selected]);
   useEffect(() => {
     if (!productRating) {
       return;
@@ -102,13 +123,73 @@ function ProductFilters({
     }
   }, [productRating]);
 
+  const toggleFilter = (filterName: string) => {
+    setFiltersEnabled((prevFilters) =>
+      prevFilters.map((filter) =>
+        filter.filterName === filterName
+          ? { ...filter, value: !filter.value }
+          : filter
+      )
+    );
+  };
+
   return (
-    <div className="w-full h-screen">
-      <div className="w-1/2 mx-auto">
-        <div className="w-full flex flex-col space-y-6 p-12">
+    <div className="relative w-full min-w-0">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="1.5"
+        stroke="currentColor"
+        className={`w-6 h-6 absolute top-5 cursor-pointer transition-all duration-500 ${
+          minimize ? "left-5 rotate-180" : "right-5"
+        }`}
+        onClick={() => {
+          setMinimize((prevState) => {
+            console.log("Changing minimize to:", !prevState);
+            return !prevState;
+          });
+        }}
+        style={{ background: "transparent", zIndex: 1000 }}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+        />
+      </svg>
+      <div
+        className={` transition-all duration-500 ${
+          minimize
+            ? "opacity-0 max-h-0 w-0"
+            : "w-full opacity-100 max-h-[500px]"
+        }`}
+      >
+        <div
+          className={`w-full flex flex-col space-y-6 p-12 ${
+            minimize
+              ? "opacity-0 max-h-0 w-0"
+              : "w-full opacity-100 max-h-[500px]"
+          }`}
+        >
+          <h1>Filter By:</h1>
           {sliderValues.map((sliderValue, index) => (
             <div key={index} className="flex flex-col space-y-2">
-              <h3>Price Filter</h3>
+              <h3>Price</h3>
+              <div className="flex space-x-2 items-center">
+                <p className="pt-0.5"> Enable Price Filter</p>
+
+                <input
+                  className="cursor-pointer "
+                  type="checkbox"
+                  checked={
+                    filtersEnabled.find(
+                      (filter) => filter.filterName === "priceFilter"
+                    )?.value || false
+                  }
+                  onChange={() => toggleFilter("priceFilter")}
+                />
+              </div>
               <Slider
                 id={`slider${index + 1}`}
                 defaultValue={sliderValue}
@@ -144,47 +225,22 @@ function ProductFilters({
               </Slider>
             </div>
           ))}
-
           <div className="flex flex-col space-y-2">
-            <h3>Filter Date</h3>
-            <div className="flex items-center space-x-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
-                />
-              </svg>
-              <h5>Date {ascDesc ? "desc" : "asc"}</h5>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                onClick={() => setAscDesc(!ascDesc)}
-                className={`w-5 cursor-pointer h-5 transition-all duration-500 ${
-                  !ascDesc ? "rotate-180" : "rotate-0"
-                }`}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
-              </svg>
-            </div>
-          </div>
-          <div className="flex flex-col space-y-1">
             <h3>Tags</h3>
+            <div className="flex space-x-2 items-center">
+              <p className="pt-0.5"> Enable Tag Filter</p>
 
+              <input
+                className="cursor-pointer"
+                type="checkbox"
+                checked={
+                  filtersEnabled.find(
+                    (filter) => filter.filterName === "tagFilter"
+                  )?.value || false
+                }
+                onChange={() => toggleFilter("tagFilter")}
+              />
+            </div>
             <MultiSelect
               options={tags}
               value={selected}
@@ -192,20 +248,37 @@ function ProductFilters({
               labelledBy="Select"
             />
           </div>
-          <StarRating
-            value={productRating || 0}
-            onChange={function (value: number | null): void {
-              if (productRating === value) {
-                setProductRating((rating) => rating - 1);
-                return;
-              }
-              setProductRating(value || 0);
-            }}
-          />
+
+          <div className="flex flex-col space-y-2">
+            <h3>Rating</h3>
+            <div className="flex space-x-2 items-center">
+              <p className="pt-0.5"> Enable Rating Filter</p>
+
+              <input
+                className="cursor-pointer"
+                type="checkbox"
+                checked={
+                  filtersEnabled.find(
+                    (filter) => filter.filterName === "ratingFilter"
+                  )?.value || false
+                }
+                onChange={() => toggleFilter("ratingFilter")}
+              />
+            </div>
+            <StarRating
+              value={productRating || 0}
+              onChange={(value: number | null) => {
+                if (productRating === value) {
+                  setProductRating((rating) => rating - 1);
+                  return;
+                }
+                setProductRating(value || 0);
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
 export default ProductFilters;

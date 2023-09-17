@@ -7,16 +7,38 @@ import { useParams } from "react-router-dom";
 import { Product } from "../../typings";
 import { getDivWidth } from "./AddItem";
 import ListedItem from "../components/util/ListedItem";
-
+import ProductFilters from "../components/util/ProductFilters";
+import { useFilteredProducts } from "../hooks/useFilteredProducts";
+import { Option } from "../components/util/ProductFilters";
 function Deals() {
   const { products } = useProducts();
   const { user } = useUser();
-  const { categoryName, salePercentage } = useParams();
+  const { categoryName } = useParams();
   const [categoryItems, setCategoryItems] = useState<Product[]>();
   const [flexDirection, setFlexDirection] = useState("");
+  const [minimized, setMinimized] = useState<boolean>();
+  const [filtersState, setFiltersState] = useState<
+    {
+      filterName: string;
+      value: boolean;
+    }[]
+  >([
+    { filterName: "priceFilter", value: false },
+    { filterName: "tagFilter", value: false },
+    { filterName: "ratingFilter", value: false },
+  ]);
+
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
   const lastFlexDirection = useRef(flexDirection);
+
+  const { filteredProducts, setPriceFilter, setRatingFilter, setTagsFilter } =
+    useFilteredProducts(categoryItems || null);
+
+  useEffect(() => {
+    console.log("the filteredProducts are");
+    console.log(filteredProducts);
+  }, [filteredProducts]);
 
   useEffect(() => {
     if (!products || !categoryName) return;
@@ -62,11 +84,6 @@ function Deals() {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("cat items");
-    console.log(categoryItems);
-  }, [categoryItems]);
-
   useLayoutEffect(() => {
     const currentWidth = getDivWidth(divRef.current);
 
@@ -82,22 +99,60 @@ function Deals() {
     }
   }, [divRef.current]);
 
+  //price values need to scale to the max number of all the elements
+  // put the stars under the title for the element
+
   return (
     <div className="w-full h-screen bg-ca1">
       {user ? <SignedInNav /> : <NotSignedInNav />}
-      <div
-        ref={divRef}
-        className="w-full justify-center p-4 pt-20 flex-wrap flex gap-4 bg-ca7"
-      >
-        {categoryItems &&
-          categoryItems.map((p) => (
-            <ListedItem
-              key={p._id}
-              images={p.imageUrls}
-              flexDirection={flexDirection}
-              product={p}
-            />
-          ))}
+      <div className="flex flex-col md:flex-row w-full pt-16">
+        <div
+          className={`w-full  transition-all duration-500 ${
+            minimized ? "md:w-[0] max-h-0" : "md:w-[40%] max-h-[550px]"
+          }`}
+        >
+          <ProductFilters
+            isEnabled={(filters: { filterName: string; value: boolean }[]) => {
+              setFiltersState(filters);
+            }}
+            priceFilterCallback={
+              filtersState.find((f) => f.filterName === "priceFilter")?.value
+                ? (priceValue: number) => {
+                    setPriceFilter(priceValue);
+                  }
+                : undefined
+            }
+            tagFilterCallback={
+              filtersState.find((f) => f.filterName === "tagFilter")?.value
+                ? (tagFilter: Option[]) => {
+                    setTagsFilter(tagFilter.map((t) => t.value as string));
+                  }
+                : undefined
+            }
+            starRatingCallback={
+              filtersState.find((f) => f.filterName === "ratingFilter")?.value
+                ? (starRating: number) => {
+                    setRatingFilter(starRating + 1);
+                  }
+                : undefined
+            }
+            isMinimized={(minimized: boolean) => setMinimized(minimized)}
+          />
+        </div>
+        <div
+          ref={divRef}
+          className="grow justify-center p-4 pt-20 flex-wrap flex gap-4 bg-ca7"
+        >
+          {filteredProducts &&
+            filteredProducts.map((p) => (
+              <ListedItem
+                key={p._id}
+                images={p.imageUrls}
+                flexDirection={flexDirection}
+                product={p}
+              />
+            ))}
+        </div>
       </div>
     </div>
   );

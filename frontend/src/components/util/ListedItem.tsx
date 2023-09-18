@@ -16,7 +16,7 @@ import useProductData from "../../hooks/useProductData";
 import { dealMetaData } from "../../pages/Home";
 import useProducts from "../../hooks/useProducts";
 interface ListedItemProps {
-  flexDirection: string | "flex-col-items" | "flex-row-items";
+  flexDirection?: string | "flex-col-items" | "flex-row-items";
   product?: Product;
   images?: string[];
   salePercentage?: number;
@@ -102,6 +102,17 @@ function ListedItem({
     }
   }, [dealMetaData, product]);
 
+  const getAverageRating = (reviews: any) => {
+    const totalRating = reviews.reduce(
+      (accum: number, review: any) => accum + (review.rating || 0),
+      0
+    );
+    const reviewCount = reviews.filter((review: any) => review.rating).length;
+    return reviewCount ? (totalRating / reviewCount).toFixed(2) : "0.00";
+  };
+
+  const productAverageRating = getAverageRating(product.reviews || []);
+
   return (
     <div
       className={`${
@@ -109,7 +120,7 @@ function ListedItem({
           ? `${
               customStyles.flexRow || ""
             } flex  h-52 w-full bg-ca2 shadow-sm shadow-black items-stretch`
-          : "flex flex-col h-96 w-80 space-y-4 justify-between items-stretch"
+          : "flex flex-col h-[26rem] w-80 space-y-4 justify-between items-stretch"
       } rounded-md bg-ca2 max-w-[900px]  ${
         showScrollbar ? "overflow-y-auto" : ""
       }`}
@@ -137,18 +148,37 @@ function ListedItem({
 
       <div className="flex flex-col justify-between w-full">
         <div className="flex flex-col justify-between px-4 max-w-1/3">
-          <div className="flex items-center justify-between pt-3 pl-1">
-            <h3
-              title={product.name}
-              className="text-ca9 w-2/3 line-clamp-2"
-              style={wrapTextStyle}
-            >
-              {product.name
-                ? product.name
-                : content.name
-                ? content.name
-                : "Product Name"}
-            </h3>
+          <div className="flex items-start justify-between pt-3 pl-1">
+            <div className="flex flex-col w-[90%]">
+              <h3
+                title={product.name}
+                className="text-ca9 w-2/3 line-clamp-2"
+                style={wrapTextStyle}
+              >
+                {product.name
+                  ? product.name
+                  : content.name
+                  ? content.name
+                  : "Product Name"}
+              </h3>
+              <div className="flex items-center">
+                <p>{productAverageRating}</p>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="yellow"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="none"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                  />
+                </svg>
+              </div>
+            </div>
             <h2
               className={`text-ca1 px-1 pr-2 !whitespace-nowrap !top-0 sale-item ${
                 product.specialOffer && product.salePrice ? "line-through" : ""
@@ -170,7 +200,7 @@ function ListedItem({
         </div>
 
         <div className="flex-grow flex-shrink-0 flex items-end max-w-1/3">
-          <div className="w-full flex px-5 pb-2 pt-5 justify-end mt-4  space-x-2">
+          <div className="w-full flex px-5 pb-3 pt-6 justify-end mt-4  space-x-2">
             <NumberInput
               w="25%"
               className="text-ca9"

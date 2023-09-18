@@ -18,6 +18,7 @@ import FullfillOrder from "./pages/users/FullfillOrder";
 import Deals from "./pages/Deals";
 import RecentlyAdded from "./pages/RecentlyAdded";
 import Test from "./pages/Test";
+import Discover from "./pages/Discover";
 
 const root = document.getElementById("root");
 
@@ -70,6 +71,7 @@ ReactDOM.render(
             <Route path="/products/:productID" element={<ProductPage />} />
             <Route path="/seller/:sellerID" element={<SellerPage />} />
             <Route path="/orders/:orderID" element={<FullfillOrder />} />
+            <Route path="/discover" element={<Discover />} />
             <Route
               path="/category/:categoryName/special-offer"
               element={<Deals />}

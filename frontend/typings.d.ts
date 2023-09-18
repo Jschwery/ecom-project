@@ -11,6 +11,9 @@ declare global {
       mode?: "sync" | "eager" | "weak" | "lazy" | "lazy-once" | Function
     ) => any;
   }
+  interface Window {
+    scrollTimeout: ReturnType<typeof setTimeout>;
+  }
 }
 export interface User {
   _id: string;
@@ -101,7 +104,12 @@ export type Transaction = {
   orderNumber: number;
   quantity: number;
   total: number;
-  status: "Pending" | "Fulfilled" | "Canceled" | "pending" | "fulfilled" | "canceled";
+  status:
+    | "Pending"
+    | "Fulfilled"
+    | "Canceled"
+    | "pending"
+    | "fulfilled"
+    | "canceled";
   transactionDate?: Date;
 };
-

@@ -10,6 +10,21 @@ import ListedItem from "../components/util/ListedItem";
 import ProductFilters from "../components/util/ProductFilters";
 import { useFilteredProducts } from "../hooks/useFilteredProducts";
 import { Option } from "../components/util/ProductFilters";
+import ViewProducts from "./users/ViewProducts";
+
+export const getMaxPrice = (products: Product[]) => {
+  if (!products) {
+    return;
+  }
+  return Math.max(
+    ...products.map((product) => product.salePrice || product.price)
+  );
+};
+export const breakpoints = [
+  { max: 768, class: "flex-col-items" },
+  { max: 900, class: "flex-row-items" },
+];
+
 function Deals() {
   const { products } = useProducts();
   const { user } = useUser();
@@ -17,6 +32,7 @@ function Deals() {
   const [categoryItems, setCategoryItems] = useState<Product[]>();
   const [flexDirection, setFlexDirection] = useState("");
   const [minimized, setMinimized] = useState<boolean>();
+  const [scaledPrice, setScaledPrice] = useState<number>();
   const [filtersState, setFiltersState] = useState<
     {
       filterName: string;
@@ -27,6 +43,7 @@ function Deals() {
     { filterName: "tagFilter", value: false },
     { filterName: "ratingFilter", value: false },
   ]);
+  const [paginatedProducts, setPaginatedProducts] = useState<Product[]>([]);
 
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
@@ -35,10 +52,8 @@ function Deals() {
   const { filteredProducts, setPriceFilter, setRatingFilter, setTagsFilter } =
     useFilteredProducts(categoryItems || null);
 
-  useEffect(() => {
-    console.log("the filteredProducts are");
-    console.log(filteredProducts);
-  }, [filteredProducts]);
+  let maxPrice = getMaxPrice(categoryItems!);
+  let scalingFactor = maxPrice ? maxPrice / 100 : 1;
 
   useEffect(() => {
     if (!products || !categoryName) return;
@@ -55,11 +70,6 @@ function Deals() {
     });
     setCategoryItems(categoryItems);
   }, [products, categoryName]);
-
-  const breakpoints = [
-    { max: 768, class: "flex-col-items" },
-    { max: 900, class: "flex-row-items" },
-  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -99,26 +109,26 @@ function Deals() {
     }
   }, [divRef.current]);
 
-  //price values need to scale to the max number of all the elements
-  // put the stars under the title for the element
-
   return (
     <div className="w-full h-screen bg-ca1">
       {user ? <SignedInNav /> : <NotSignedInNav />}
-      <div className="flex flex-col md:flex-row w-full pt-16">
+      <div className="flex flex-col md:flex-row h-full w-full pt-16">
         <div
-          className={`w-full  transition-all duration-500 ${
-            minimized ? "md:w-[0] max-h-0" : "md:w-[40%] max-h-[550px]"
+          className={`w-full h-full transition-all duration-500 ${
+            minimized ? "md:w-[0] max-h-0 h-0" : "md:w-[40%]"
           }`}
         >
           <ProductFilters
+            price={scaledPrice}
             isEnabled={(filters: { filterName: string; value: boolean }[]) => {
               setFiltersState(filters);
             }}
             priceFilterCallback={
               filtersState.find((f) => f.filterName === "priceFilter")?.value
                 ? (priceValue: number) => {
-                    setPriceFilter(priceValue);
+                    let scaledPrice = priceValue * scalingFactor;
+                    setScaledPrice(Number(scaledPrice.toFixed(2)));
+                    setPriceFilter(scaledPrice);
                   }
                 : undefined
             }
@@ -141,10 +151,11 @@ function Deals() {
         </div>
         <div
           ref={divRef}
-          className="grow justify-center p-4 pt-20 flex-wrap flex gap-4 bg-ca7"
+          className="h-full w-full items-center p-4 flex flex-col gap-4 bg-ca4"
         >
-          {filteredProducts &&
-            filteredProducts.map((p) => (
+          <h1>Products</h1>
+          {paginatedProducts &&
+            paginatedProducts.map((p) => (
               <ListedItem
                 key={p._id}
                 images={p.imageUrls}
@@ -152,6 +163,14 @@ function Deals() {
                 product={p}
               />
             ))}
+          <div>
+            {products && products.length > 0 && (
+              <ViewProducts
+                itemsList={filteredProducts ?? []}
+                showItemsCallback={setPaginatedProducts}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

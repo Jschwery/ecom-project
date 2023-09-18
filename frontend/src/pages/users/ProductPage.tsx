@@ -318,7 +318,7 @@ function ProductPage() {
                   </h2>
 
                   <h2
-                    className={`ml-1 flex-shrink-0  text-ca9 relative sale-item ${
+                    className={`ml-1 flex-shrink-0 text-ca9 relative sale-item-other ${
                       foundProduct.specialOffer && foundProduct.salePrice
                         ? "line-through"
                         : ""
@@ -332,45 +332,11 @@ function ProductPage() {
                     {foundProduct.price ? "$" + foundProduct.price : "$15.00"}
                   </h2>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <h5>
-                    {foundProduct.reviews &&
-                    foundProduct.reviews.length > 0 &&
-                    foundProduct.reviews.some((review) => review.rating)
-                      ? (
-                          foundProduct.reviews.reduce(
-                            (acum, current) =>
-                              current.rating ? acum + current.rating : acum,
-                            0
-                          ) /
-                          foundProduct.reviews.filter((review) => review.rating)
-                            .length
-                        ).toFixed(2)
-                      : "No reviews yet"}
-                  </h5>
-                  {foundProduct.reviews &&
-                    foundProduct.reviews.some((review) => review.rating) && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="yellow"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="none"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
-                        />
-                      </svg>
-                    )}
-                </div>
 
-                <p className="text-gray-500 mt-2 md:mt-4">
-                  {foundProduct.description}
-                </p>
-                <div className="flex flex-col truncate min-w-0 overflow-hidden">
+                <div className="flex flex-col truncate min-w-0 py-3 overflow-hidden">
+                  <p className="text-gray-500 mt-2 md:mt-4">
+                    {foundProduct.description}
+                  </p>
                   <span className="text-ca8 font-semibold">
                     Category: {foundProduct.category}
                   </span>
@@ -378,6 +344,41 @@ function ProductPage() {
                   <span className="text-ca6 font-semibold">
                     Quantity available: {foundProduct.quantity}
                   </span>
+                  <div className="flex items-center space-x-1">
+                    <h5>
+                      {foundProduct.reviews &&
+                      foundProduct.reviews.length > 0 &&
+                      foundProduct.reviews.some((review) => review.rating)
+                        ? (
+                            foundProduct.reviews.reduce(
+                              (acum, current) =>
+                                current.rating ? acum + current.rating : acum,
+                              0
+                            ) /
+                            foundProduct.reviews.filter(
+                              (review) => review.rating
+                            ).length
+                          ).toFixed(2)
+                        : "No reviews yet"}
+                    </h5>
+                    {foundProduct.reviews &&
+                      foundProduct.reviews.some((review) => review.rating) && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="yellow"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="none"
+                          className="w-6 h-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                          />
+                        </svg>
+                      )}
+                  </div>
                   <div className="flex justify-between flex-wrap">
                     {foundProduct.tags && (
                       <div className="flex items-center space-x-1 flex-wrap mt-4">

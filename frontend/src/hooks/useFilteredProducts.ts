@@ -51,7 +51,11 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
     )
       return false;
     if (categoryFilter && product.category !== categoryFilter) return false;
-    if (priceFilter !== null && product.price > priceFilter) return false;
+    if (
+      priceFilter !== null &&
+      (product.salePrice || product.price) > priceFilter
+    )
+      return false;
     if (
       tagsFilter &&
       (!product.tags ||

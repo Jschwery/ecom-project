@@ -27,6 +27,7 @@ interface ProductProps {
       value: boolean;
     }[]
   ) => void;
+  price?: number;
 }
 
 function ProductFilters({
@@ -35,6 +36,7 @@ function ProductFilters({
   starRatingCallback,
   isMinimized,
   isEnabled,
+  price,
 }: ProductProps) {
   const [sliderValues, setSliderValues] = useState([5]);
   const [showTooltips, setShowTooltips] = useState([false]);
@@ -134,7 +136,7 @@ function ProductFilters({
   };
 
   return (
-    <div className="relative w-full min-w-0">
+    <div className={`min-h-0 h-auto w-full min-w-0 sticky top-16`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -150,7 +152,7 @@ function ProductFilters({
             return !prevState;
           });
         }}
-        style={{ background: "transparent", zIndex: 1000 }}
+        style={{ background: "transparent", zIndex: 40 }}
       >
         <path
           strokeLinecap="round"
@@ -159,122 +161,119 @@ function ProductFilters({
         />
       </svg>
       <div
-        className={` transition-all duration-500 ${
-          minimize
-            ? "opacity-0 max-h-0 w-0"
-            : "w-full opacity-100 max-h-[500px]"
+        className={`wrapper transition-all z-50 duration-500 ${
+          minimize ? "" : "is-open"
         }`}
       >
-        <div
-          className={`w-full flex flex-col space-y-6 p-12 ${
-            minimize
-              ? "opacity-0 max-h-0 w-0"
-              : "w-full opacity-100 max-h-[500px]"
-          }`}
-        >
-          <h1>Filter By:</h1>
-          {sliderValues.map((sliderValue, index) => (
-            <div key={index} className="flex flex-col space-y-2">
-              <h3>Price</h3>
-              <div className="flex space-x-2 items-center">
-                <p className="pt-0.5"> Enable Price Filter</p>
+        <div className="inner">
+          <div className={`w-full flex grow flex-col space-y-6 p-12`}>
+            <h1>Filter By:</h1>
+            <div className="flex h-18 flex-col space-y-2 z-50">
+              <h3>Tags</h3>
+              <div className="flex space-x-2 items-center z-50">
+                <p className="pt-0.5"> Enable Tag Filter</p>
 
                 <input
-                  className="cursor-pointer "
+                  className="cursor-pointer"
                   type="checkbox"
                   checked={
                     filtersEnabled.find(
-                      (filter) => filter.filterName === "priceFilter"
+                      (filter) => filter.filterName === "tagFilter"
                     )?.value || false
                   }
-                  onChange={() => toggleFilter("priceFilter")}
+                  onChange={() => toggleFilter("tagFilter")}
                 />
               </div>
-              <Slider
-                id={`slider${index + 1}`}
-                defaultValue={sliderValue}
-                min={0}
-                max={100}
-                colorScheme={colors.ca8}
-                onChange={(v) => handleSliderChange(index, v)}
-                onMouseEnter={() => handleMouseEnter(index)}
-                onMouseLeave={() => handleMouseLeave(index)}
-              >
-                <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
-                  25%
-                </SliderMark>
-                <SliderMark value={50} mt="1" ml="-2.5" fontSize="sm">
-                  50%
-                </SliderMark>
-                <SliderMark value={75} mt="1" ml="-2.5" fontSize="sm">
-                  75%
-                </SliderMark>
-                <SliderTrack>
-                  <SliderFilledTrack bg={colors.ca5} />
-                </SliderTrack>
-                <Tooltip
-                  hasArrow
-                  bg={colors.ca7}
-                  color="white"
-                  placement="top"
-                  isOpen={showTooltips[index]}
-                  label={`${sliderValue}%`}
+              <MultiSelect
+                options={tags}
+                value={selected}
+                onChange={setSelected}
+                labelledBy="Select"
+                className="!z-50"
+              />
+            </div>
+
+            {sliderValues.map((sliderValue, index) => (
+              <div key={index} className="flex flex-col space-y-2">
+                <h3>Price</h3>
+                <div className="flex space-x-2 items-center">
+                  <p className="pt-0.5"> Enable Price Filter</p>
+
+                  <input
+                    className="cursor-pointer "
+                    type="checkbox"
+                    checked={
+                      filtersEnabled.find(
+                        (filter) => filter.filterName === "priceFilter"
+                      )?.value || false
+                    }
+                    onChange={() => toggleFilter("priceFilter")}
+                  />
+                </div>
+                <Slider
+                  id={`slider${index + 1}`}
+                  defaultValue={sliderValue}
+                  min={0}
+                  max={100}
+                  colorScheme={colors.ca8}
+                  onChange={(v) => handleSliderChange(index, v)}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={() => handleMouseLeave(index)}
                 >
-                  <SliderThumb />
-                </Tooltip>
-              </Slider>
-            </div>
-          ))}
-          <div className="flex flex-col space-y-2">
-            <h3>Tags</h3>
-            <div className="flex space-x-2 items-center">
-              <p className="pt-0.5"> Enable Tag Filter</p>
+                  <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
+                    25%
+                  </SliderMark>
+                  <SliderMark value={50} mt="1" ml="-2.5" fontSize="sm">
+                    50%
+                  </SliderMark>
+                  <SliderMark value={75} mt="1" ml="-2.5" fontSize="sm">
+                    75%
+                  </SliderMark>
+                  <SliderTrack>
+                    <SliderFilledTrack bg={colors.ca5} />
+                  </SliderTrack>
 
-              <input
-                className="cursor-pointer"
-                type="checkbox"
-                checked={
-                  filtersEnabled.find(
-                    (filter) => filter.filterName === "tagFilter"
-                  )?.value || false
-                }
-                onChange={() => toggleFilter("tagFilter")}
+                  <Tooltip
+                    hasArrow
+                    bg={colors.ca7}
+                    color="white"
+                    placement="top"
+                    isOpen={showTooltips[index]}
+                    label={price ? price : ""}
+                  >
+                    <SliderThumb />
+                  </Tooltip>
+                </Slider>
+              </div>
+            ))}
+
+            <div className="flex flex-col space-y-2">
+              <h3>Rating</h3>
+              <div className="flex space-x-2 items-center">
+                <p className="pt-0.5"> Enable Rating Filter</p>
+
+                <input
+                  className="cursor-pointer"
+                  type="checkbox"
+                  checked={
+                    filtersEnabled.find(
+                      (filter) => filter.filterName === "ratingFilter"
+                    )?.value || false
+                  }
+                  onChange={() => toggleFilter("ratingFilter")}
+                />
+              </div>
+              <StarRating
+                value={productRating || 0}
+                onChange={(value: number | null) => {
+                  if (productRating === value) {
+                    setProductRating((rating) => rating - 1);
+                    return;
+                  }
+                  setProductRating(value || 0);
+                }}
               />
             </div>
-            <MultiSelect
-              options={tags}
-              value={selected}
-              onChange={setSelected}
-              labelledBy="Select"
-            />
-          </div>
-
-          <div className="flex flex-col space-y-2">
-            <h3>Rating</h3>
-            <div className="flex space-x-2 items-center">
-              <p className="pt-0.5"> Enable Rating Filter</p>
-
-              <input
-                className="cursor-pointer"
-                type="checkbox"
-                checked={
-                  filtersEnabled.find(
-                    (filter) => filter.filterName === "ratingFilter"
-                  )?.value || false
-                }
-                onChange={() => toggleFilter("ratingFilter")}
-              />
-            </div>
-            <StarRating
-              value={productRating || 0}
-              onChange={(value: number | null) => {
-                if (productRating === value) {
-                  setProductRating((rating) => rating - 1);
-                  return;
-                }
-                setProductRating(value || 0);
-              }}
-            />
           </div>
         </div>
       </div>

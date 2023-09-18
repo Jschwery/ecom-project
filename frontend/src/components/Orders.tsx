@@ -23,11 +23,6 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
   const toast = useToast();
 
   useEffect(() => {
-    console.log("the filtered orders are:");
-    console.log(filteredOrders);
-  }, [filteredOrders]);
-
-  useEffect(() => {
     async function fetchProductDetails() {
       let updatedProducts: { [key: string]: any } = {};
 
@@ -145,10 +140,10 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
 
   return (
     <>
-      <div className="flex w-full space-y-2 items-center flex-col">
+      <div className="flex w-full space-y-2 items-center  flex-col">
         {Array.isArray(filteredOrders) &&
           filteredOrders.map((order: Transaction) =>
-            makeOrder(order, order._id || uuidv4())
+            makeOrder(order, Object.keys(order)[0] || uuidv4())
           )}
       </div>
     </>

@@ -61,8 +61,6 @@ export default function useUser() {
         }
       );
 
-      console.log("Received products from server:", productRequest.data);
-
       setAllProducts(productRequest.data);
     } catch (error) {
       console.error("Error fetching user products:", error);

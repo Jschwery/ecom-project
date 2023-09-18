@@ -37,23 +37,34 @@ export const useFulfill = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        let alternetProduct = [];
+        let alternetProduct = []; // Not used?
         if (order?.productAndCount) {
           const productPromises = order.productAndCount.map(
             async (productInfo) => {
-              const product = await getProductById(productInfo.productID);
+              const product: Product = await getProductById(
+                productInfo.productID
+              );
               if (!product) {
-                return {
-                  ...productInfo.productDetails,
+                const syntheticProduct: Product = {
+                  accountId: "Buyer",
+                  name: productInfo.productDetails.name,
+                  description: productInfo.productDetails.description,
+                  category: "CatX",
+                  price: productInfo.productDetails.price,
                   quantity: productInfo.productCount,
+                  imageUrls: productInfo.productDetails.imageUrls,
+                  specialOffer: productInfo.productDetails.specialOffer,
                 };
+                console.log("the syntheticProduct is");
+                console.log(syntheticProduct);
+
+                return syntheticProduct;
               }
               return product;
             }
           );
 
           const allProducts: Product[] = await Promise.all(productPromises);
-          console.log("All Products:", allProducts);
 
           const fetchedProducts: Product[] = allProducts.filter((product) =>
             user?.products?.some((p) => product._id === p)
@@ -71,7 +82,10 @@ export const useFulfill = () => {
                 : 0,
             };
           });
-          setProducts(updatedProducts);
+
+          setProducts(
+            updatedProducts.length > 0 ? updatedProducts : allProducts
+          );
         }
       } catch (err) {
         console.error(err);

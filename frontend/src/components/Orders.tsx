@@ -23,6 +23,11 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
   const toast = useToast();
 
   useEffect(() => {
+    console.log("the filtered orders are:");
+    console.log(filteredOrders);
+  }, [filteredOrders]);
+
+  useEffect(() => {
     async function fetchProductDetails() {
       let updatedProducts: { [key: string]: any } = {};
 
@@ -104,7 +109,8 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
         </div>
 
         {order?.productAndCount?.map((productInfo) => {
-          const product = products?.[productInfo.productID];
+          const product =
+            products?.[productInfo.productID] || productInfo.productDetails;
 
           return (
             <div

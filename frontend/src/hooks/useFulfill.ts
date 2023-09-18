@@ -37,10 +37,21 @@ export const useFulfill = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        let alternetProduct = [];
         if (order?.productAndCount) {
-          const productPromises = order.productAndCount.map((productInfo) =>
-            getProductById(productInfo.productID)
+          const productPromises = order.productAndCount.map(
+            async (productInfo) => {
+              const product = await getProductById(productInfo.productID);
+              if (!product) {
+                return {
+                  ...productInfo.productDetails,
+                  quantity: productInfo.productCount,
+                };
+              }
+              return product;
+            }
           );
+
           const allProducts: Product[] = await Promise.all(productPromises);
           console.log("All Products:", allProducts);
 

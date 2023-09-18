@@ -41,8 +41,6 @@ const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
     const tax = preTaxTotal * 0.08;
     const subtotal = preTaxTotal + tax;
 
-    //out of stock says fulfilled, did not subtract?
-
     return (
       <>
         <h4 className="px-2 py-1">Product {index + 1}</h4>
@@ -100,6 +98,11 @@ function FullfillOrder() {
     });
   }, [products]);
   productsRef.current = memoizedProducts;
+
+  useEffect(() => {
+    console.log("the products are");
+    console.log(products);
+  }, [products]);
 
   const total = useMemo(() => {
     return memoizedProducts.reduce(

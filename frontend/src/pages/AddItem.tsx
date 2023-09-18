@@ -322,8 +322,15 @@ function AddItem() {
                   <FormLabel>Price</FormLabel>
                   <NumberInput
                     name="price"
+                    value={formik.values.price}
                     onBlur={formik.handleBlur}
-                    onChange={(value) => formik.setFieldValue("price", value)}
+                    onChange={(valueAsString, valueAsNumber) => {
+                      if (valueAsNumber > 999) {
+                        formik.setFieldValue("price", 999);
+                      } else {
+                        formik.setFieldValue("price", valueAsNumber);
+                      }
+                    }}
                     precision={2}
                     step={0.2}
                   >

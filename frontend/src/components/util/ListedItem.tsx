@@ -148,11 +148,11 @@ function ListedItem({
 
       <div className="flex flex-col justify-between w-full">
         <div className="flex flex-col justify-between px-4 max-w-1/3">
-          <div className="flex items-start justify-between pt-3 pl-1">
-            <div className="flex flex-col w-[90%]">
+          <div className="flex items-start w-full justify-between pt-3 pl-1">
+            <div className="flex flex-col min-w-[45%]">
               <h3
                 title={product.name}
-                className="text-ca9 w-2/3 line-clamp-2"
+                className="text-ca9 pr-1 line-clamp-2"
                 style={wrapTextStyle}
               >
                 {product.name
@@ -180,9 +180,11 @@ function ListedItem({
               </div>
             </div>
             <h2
-              className={`text-ca1 px-1 pr-2 !whitespace-nowrap !top-0 sale-item ${
-                product.specialOffer && product.salePrice ? "line-through" : ""
-              }`}
+              className={`text-ca1 px-1 pr-2 !whitespace-nowrap !top-0 
+              sale-item-other
+               ${
+                 product.specialOffer && product.salePrice ? "line-through" : ""
+               }`}
               style={wrapTextStyle}
               data-sale-price={
                 product.salePrice && product.specialOffer

@@ -40,6 +40,7 @@ import { TagsStarterMap } from "../data/tags";
 import Creatable from "react-select/creatable";
 import { MultiValue } from "../pages/AddItem";
 import { deleteImgFromS3 } from "./util/DeleteFromS3";
+import { dealMetaData } from "../pages/Home";
 
 interface DetailedItemProps {
   removeItemByIndex: (index: number) => void;
@@ -140,15 +141,28 @@ function DetailedItem({
 
     return uploadedImageUrls;
   };
+
   const submitForm = async (formValues: Product, imageUrls: string[]) => {
     if (imageUrls && imageUrls.length > 0) {
       formValues.imageUrls = imageUrls;
     }
 
+    const percentage = dealMetaData.find((deal) =>
+      deal.dealLink.toLowerCase().includes(formValues.category.toLowerCase())
+    )?.dealPercentage;
+
+    const salePrice = parseFloat(
+      (
+        formValues.price -
+        formValues.price * (Number(percentage) / 100)
+      ).toFixed(2)
+    );
+
     return axios.put(
       `http://localhost:5000/api/products/${product._id}`,
       {
         ...formValues,
+        salePrice: salePrice,
         imageUrls: imageUrls,
         sellerID: user?._id,
         tags: selectedTags.map((tag) => tag.value),
@@ -424,9 +438,15 @@ function DetailedItem({
                       <NumberInput
                         name="price"
                         onBlur={formik.handleBlur}
-                        onChange={(value) =>
-                          formik.setFieldValue("price", value)
-                        }
+                        onChange={(value) => {
+                          const numericValue = parseFloat(value);
+
+                          if (numericValue > 999) {
+                            value = "999";
+                          }
+
+                          formik.setFieldValue("price", value);
+                        }}
                         precision={2}
                         step={0.2}
                         value={formik.values.price}

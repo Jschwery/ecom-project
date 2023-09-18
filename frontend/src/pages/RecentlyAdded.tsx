@@ -64,9 +64,9 @@ function RecentlyAdded() {
   return (
     <div className="w-full h-screen bg-ca1">
       {user ? <SignedInNav /> : <NotSignedInNav />}
-      <div className="flex flex-col md:flex-row h-full w-full pt-16">
+      <div className="flex flex-col md:flex-row  w-full pt-16">
         <div
-          className={`w-full transition-all duration-500 ${
+          className={`w-full transition-all bg-ca1 duration-500 ${
             minimized ? "md:w-[0] max-h-0 h-0" : "md:w-[40%]"
           }`}
         >
@@ -103,7 +103,7 @@ function RecentlyAdded() {
         </div>
         <div className="pt-6 flex h-full items-center flex-col w-full bg-ca3">
           <h1>Recently Added</h1>
-          <h4>Passed 24hrs</h4>
+          <h4>Past 24hrs</h4>
           <div
             ref={divRef}
             className="w-full justify-center p-4 flex-col items-center flex gap-4 bg-ca3"

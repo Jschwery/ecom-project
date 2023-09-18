@@ -43,6 +43,19 @@ function ProductPage() {
   const [input, setInput] = useState("");
   const toast = useToast();
   const pageRef = useRef<any>(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const renderedReviews = useMemo(() => {
     return reviewUsers?.map((review, index) => {
@@ -318,7 +331,9 @@ function ProductPage() {
                   </h2>
 
                   <h2
-                    className={`ml-1 flex-shrink-0 text-ca9 relative sale-item-other ${
+                    className={`ml-1 flex-shrink-0 text-ca9 relative ${
+                      windowWidth >= 768 ? "sale-item-other" : "sale-item"
+                    } ${
                       foundProduct.specialOffer && foundProduct.salePrice
                         ? "line-through"
                         : ""

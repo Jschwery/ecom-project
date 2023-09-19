@@ -10,6 +10,7 @@ import { Product } from "../../typings";
 import { v4 as uuidv4 } from "uuid";
 import PictureCarousel from "../components/DealCarousel";
 import useResponsiveFlex from "../hooks/useResponsiveFlex";
+import CategoryScroll from "../components/util/CategoryScroll";
 
 export const loadingStyles: React.CSSProperties = {
   position: "fixed",
@@ -146,38 +147,57 @@ function App() {
   }
 
   return (
-    <>
+    <div className="w-full  bg-ca2">
       {user ? (
         <SignedInNav describeCart={(visible) => setCartVisible(visible)} />
       ) : (
         <NotSignedInNav />
       )}
       <div className="pt-16 bg-ca2 w-full h-screen">
-        <div className="flex my-5 h-[250px] overflow-hidden !px-3 w-full justify-center items-center">
+        <div className="flex my-5 h-[250px] overflow-hidden p-4 justify-center items-center">
           <PictureCarousel
             hideSvg={cartVisible}
             imageGrow={true}
             dealPackage={dealMetaData}
           />
         </div>
-
-        <div className="bg-ca3 flex-col rounded-md p-4 m-4 ">
-          <h2 className="px-2">Recently Viewed</h2>
-          <div className="flex space-x-2 overflow-x-auto py-3 px-2">
-            {recentProducts &&
-              recentProducts.map((product) => (
-                <img
-                  key={product._id || uuidv4()}
-                  className="w-20 h-20 cursor-pointer hover:scale-110 rounded-full bg-ca1 p-1"
-                  src={product?.imageUrls?.[0] || "/images/logo2.svg"}
-                  alt="Product Image"
-                />
-              ))}
+        {recentProducts && recentProducts.length > 0 && (
+          <div className="flex flex-col space-y-4 mx-8 mt-8">
+            <h2>Recently Viewed</h2>
+            <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-3 px-2">
+              {recentProducts &&
+                recentProducts.map((product) => (
+                  <img
+                    key={product._id || uuidv4()}
+                    className="w-20 h-20 cursor-pointer hover:scale-110 rounded-full bg-ca1 p-1"
+                    src={product?.imageUrls?.[0] || "/images/logo2.svg"}
+                    alt="Product Image"
+                  />
+                ))}
+            </div>
+          </div>
+        )}
+        <div className="flex flex-col space-y-4 mx-8 mt-8">
+          <h3>Technology & Electronics</h3>
+          <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-2">
+            <CategoryScroll category={"Technology"} />
+          </div>
+        </div>
+        <div className="flex flex-col space-y-4 mx-8 mt-8">
+          <h3>Clothing and Fashion</h3>
+          <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-2">
+            <CategoryScroll category={"ClothingFashion"} />
+          </div>
+        </div>
+        <div className="flex flex-col space-y-4 mx-8 mt-8">
+          <h3>Home Living</h3>
+          <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-2">
+            <CategoryScroll category={"HomeLiving"} />
           </div>
         </div>
         <div
           ref={divRef}
-          className="w-full justify-center p-4 flex-wrap flex gap-4 bg-ca7"
+          className="justify-center p-4 flex-wrap flex m-4 gap-4 bg-ca3"
         >
           {products &&
             products.map((p) => (
@@ -190,7 +210,7 @@ function App() {
             ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

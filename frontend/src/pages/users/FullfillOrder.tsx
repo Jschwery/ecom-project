@@ -99,11 +99,6 @@ function FullfillOrder() {
   }, [products]);
   productsRef.current = memoizedProducts;
 
-  useEffect(() => {
-    console.log("the products are");
-    console.log(products);
-  }, [products]);
-
   const total = useMemo(() => {
     return memoizedProducts.reduce(
       (acc, product) => acc + calculateSubtotal(product),

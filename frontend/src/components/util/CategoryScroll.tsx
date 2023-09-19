@@ -9,22 +9,25 @@ function CategoryScroll({ category }: { category: string }) {
   );
 
   return (
-    <div style={{ maxWidth: "90%", overflowX: "auto" }}>
+    <div
+      className="flex py-1.5 px-2 items-center overflow-hidden"
+      style={{ maxWidth: "90%", overflowX: "auto" }}
+    >
       {filteredProducts?.map((product) => (
         <Link
           key={product._id}
           to={`/products/${product._id}`}
           style={{ marginRight: "16px" }}
+          className="hover:scale-110"
         >
           <img
             src={product.imageUrls![0] || "/images/logo2.svg"}
             alt={product.name}
             style={{
-              width: "45px",
-              height: "45px",
               borderRadius: "50%",
-              objectFit: "cover",
+              objectFit: "contain",
             }}
+            className="bg-ca1 px-1 w-20 h-20"
           />
         </Link>
       ))}

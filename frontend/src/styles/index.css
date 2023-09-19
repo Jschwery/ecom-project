@@ -307,10 +307,10 @@ select.select-filter {
   position: relative;
 }
 h2.sale-item {
-  @apply !text-ca9 !relative top-1/4 right-0;
+  @apply !text-ca9 !relative;
 }
 h2.sale-item-other {
-  @apply !text-ca9 !relative top-1/4 right-0;
+  @apply !text-ca9 !relative;
 }
 
 h2.sale-item::after {

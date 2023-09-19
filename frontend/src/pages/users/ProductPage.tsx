@@ -321,7 +321,7 @@ function ProductPage() {
                   }
                 />
               </div>
-              <div className="px-3 md:px-0 order-2 md:order-1 w-[95%] md:w-[60%] min-w-0 truncate overflow-hidden">
+              <div className="px-3 md:px-0 order-2 md:order-1 w-[95%] md:w-[60%] flex flex-col justify-between min-w-0 truncate overflow-hidden">
                 <div className="flex flex-col md:flex-row justify-between min-w-0  items-center w-full">
                   <h2
                     className="leading-snug mt-0.5 grow overflow-hidden truncate min-w-0"
@@ -394,48 +394,48 @@ function ProductPage() {
                         </svg>
                       )}
                   </div>
-                  <div className="flex justify-between flex-wrap">
-                    {foundProduct.tags && (
-                      <div className="flex items-center space-x-1 flex-wrap mt-4">
-                        {foundProduct.tags.map((tag, idx) => (
-                          <ITag key={idx} tagName={tag} />
-                        ))}
-                      </div>
-                    )}
-                    <button
-                      onClick={async () => {
-                        if (foundProduct && foundProduct._id) {
-                          const productFound = localCart.find(
-                            (product) => product.product === foundProduct._id
-                          );
-                          if (!productFound) {
-                            addToLocalCart(foundProduct._id, 1);
-                            return;
-                          }
-
-                          if (productFound && productFound?.quantity < 200) {
-                            addToLocalCart(foundProduct._id);
-                          } else {
-                            toast({
-                              title: "Item Cap Reached",
-                              description:
-                                "You have reached the maximum allowed quantity for this item.",
-                              status: "warning",
-                              duration: 5000,
-                              isClosable: true,
-                              position: "top",
-                            });
-                          }
-                        } else {
-                          console.error("foundProduct._id is undefined");
+                </div>
+                <div className="flex justify-between !mt-auto space-y-2 flex-wrap ">
+                  {foundProduct.tags && (
+                    <div className="flex items-center space-x-1 flex-wrap mt-4">
+                      {foundProduct.tags.map((tag, idx) => (
+                        <ITag key={idx} tagName={tag} />
+                      ))}
+                    </div>
+                  )}
+                  <button
+                    onClick={async () => {
+                      if (foundProduct && foundProduct._id) {
+                        const productFound = localCart.find(
+                          (product) => product.product === foundProduct._id
+                        );
+                        if (!productFound) {
+                          addToLocalCart(foundProduct._id, 1);
+                          return;
                         }
-                      }}
-                      className="self-end line-clamp-1 !min-w-[113px] bg-ca6 hover:bg-ca5 text-white py-2
+
+                        if (productFound && productFound?.quantity < 200) {
+                          addToLocalCart(foundProduct._id);
+                        } else {
+                          toast({
+                            title: "Item Cap Reached",
+                            description:
+                              "You have reached the maximum allowed quantity for this item.",
+                            status: "warning",
+                            duration: 5000,
+                            isClosable: true,
+                            position: "top",
+                          });
+                        }
+                      } else {
+                        console.error("foundProduct._id is undefined");
+                      }
+                    }}
+                    className="self-end line-clamp-1 !min-w-[113px] bg-ca6 hover:bg-ca5 text-white py-2
                        px-4 rounded-full whitespace-nowrap overflow-hidden text-overflow-ellipsis ml-auto"
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>

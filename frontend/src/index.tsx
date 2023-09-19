@@ -89,9 +89,6 @@ ReactDOM.render(
     have the items from the transaction not be loading
     use the backup from the transactin
 
-    just added display a list of items within the past 24 hours
-
-    discover, each time the page loads, scramble the list of random products, search by tags, filter by category
 
     just use categoryscroll for them below
 

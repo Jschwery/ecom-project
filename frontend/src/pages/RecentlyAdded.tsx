@@ -118,12 +118,36 @@ function RecentlyAdded() {
                 />
               );
             })}
+
             <div>
               {filteredProducts && products.length > 0 && (
                 <ViewProducts
                   itemsList={filteredProducts ?? []}
                   showItemsCallback={setPaginatedProducts}
                 />
+              )}
+              {filteredProducts && filteredProducts.length === 0 && (
+                <div className="md:h-[80vh] h-[50vh] w-full items-center flex bg-ca3">
+                  <div className="flex items-center flex-col space-y-4">
+                    <h3 className="text-ca6 text-2xl md:text-3xl">
+                      No Products Found
+                    </h3>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="w-28 h-28 md:w-36 md:h-36 text-ca5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                      />
+                    </svg>
+                  </div>
+                </div>
               )}
             </div>
           </div>

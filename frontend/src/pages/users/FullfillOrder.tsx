@@ -35,8 +35,14 @@ function formatDateAndTime(dateString: string | Date): string {
 
 const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
   ({ product, index }) => {
-    const preTaxTotalWithoutSavings = product.price * (product.quantity || 0);
-    const savings = product.salePrice || 0;
+    const quantity = product.quantity || 1;
+
+    const preTaxTotalWithoutSavings = product.price * quantity;
+
+    const savings = product.salePrice
+      ? (product.price - product.salePrice) * quantity
+      : 0;
+
     const preTaxTotal = preTaxTotalWithoutSavings - savings;
     const tax = preTaxTotal * 0.08;
     const subtotal = preTaxTotal + tax;

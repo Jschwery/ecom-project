@@ -161,8 +161,8 @@ function ListedItem({
                   ? content.name
                   : "Product Name"}
               </h3>
-              <div className="flex items-center">
-                <p>{productAverageRating}</p>
+              <div className="flex items-center space-x-1">
+                <p className="pt-0.5">{productAverageRating}</p>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="yellow"
@@ -279,6 +279,9 @@ function ListedItem({
                   );
 
                   if (!productFound) {
+                    console.log("the number input is");
+                    console.log(numberInputValue);
+
                     addToLocalCart(product._id, numberInputValue);
                     return;
                   }

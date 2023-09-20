@@ -61,7 +61,6 @@ ReactDOM.render(
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/test" element={<Test />} />
-
             <Route path="/your-items" element={<YourItems />} />
             <Route path="/add-item" element={<AddItem />} />
             <Route path="/checkout" element={<Checkout />} />
@@ -84,21 +83,15 @@ ReactDOM.render(
               then the route will use params and fetch all the products that contain that category
               */}
 
-            {/*Remove for you
+            {/* dropdown categories select from the logged in and the not logged in navbar
+              
+              
+              create the categories specific page
 
-    have the items from the transaction not be loading
-    use the backup from the transactin
+              have the filter component
 
-
-    just use categoryscroll for them below
-
-    create a horizontal scroll of products from electronics, clothing and homeliving, then the rest will be the rest of the 
-    
-    
-    current products
-*/}
-
-            {/* <Route path="/login" element={<LoginPage />} /> */}
+              searchbar to search all the items
+              */}
           </Routes>
         </Router>
       </CartProvider>

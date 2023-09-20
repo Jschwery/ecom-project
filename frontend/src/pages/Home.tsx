@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import PictureCarousel from "../components/DealCarousel";
 import useResponsiveFlex from "../hooks/useResponsiveFlex";
 import CategoryScroll from "../components/util/CategoryScroll";
+import ViewProducts from "./users/ViewProducts";
 
 export const loadingStyles: React.CSSProperties = {
   position: "fixed",
@@ -78,6 +79,7 @@ function App() {
     useRef<HTMLDivElement | null>(null);
   const flexDirection = useResponsiveFlex(divRef, breakpoints);
   const [cartVisible, setCartVisible] = useState<boolean>();
+  const [paginatedProducts, setPaginatedProduct] = useState<Product[]>([]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -153,7 +155,7 @@ function App() {
       ) : (
         <NotSignedInNav />
       )}
-      <div className="pt-16 bg-ca2 w-full h-screen">
+      <div className="pt-16 bg-ca2 pb-4 w-full">
         <div className="flex my-5 h-[250px] overflow-hidden p-4 justify-center items-center">
           <PictureCarousel
             hideSvg={cartVisible}
@@ -162,7 +164,7 @@ function App() {
           />
         </div>
         {recentProducts && recentProducts.length > 0 && (
-          <div className="flex flex-col space-y-4 mx-8 mt-8">
+          <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
             <h2>Recently Viewed</h2>
             <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-3 px-2">
               {recentProducts &&
@@ -177,30 +179,31 @@ function App() {
             </div>
           </div>
         )}
-        <div className="flex flex-col space-y-4 mx-8 mt-8">
+        <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
           <h3>Technology & Electronics</h3>
-          <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-2">
+          <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
             <CategoryScroll category={"Technology"} />
           </div>
         </div>
-        <div className="flex flex-col space-y-4 mx-8 mt-8">
+        <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
           <h3>Clothing and Fashion</h3>
-          <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-2">
+          <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
             <CategoryScroll category={"ClothingFashion"} />
           </div>
         </div>
-        <div className="flex flex-col space-y-4 mx-8 mt-8">
+        <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
           <h3>Home Living</h3>
-          <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-2">
+          <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
             <CategoryScroll category={"HomeLiving"} />
           </div>
         </div>
         <div
           ref={divRef}
-          className="justify-center p-4 flex-wrap flex m-4 gap-4 bg-ca3"
+          className="justify-center p-4 flex-wrap rounded-md mt-20 items-center flex flex-col w-[85%] md:w-[80%] mx-auto gap-4 bg-ca3"
         >
-          {products &&
-            products.map((p) => (
+          <h2 className="py-5">All Products</h2>
+          {paginatedProducts &&
+            paginatedProducts.map((p) => (
               <ListedItem
                 key={p._id}
                 images={p.imageUrls}
@@ -208,6 +211,14 @@ function App() {
                 product={p}
               />
             ))}
+          <div>
+            {products && products.length > 0 && (
+              <ViewProducts
+                itemsList={products ?? []}
+                showItemsCallback={setPaginatedProduct}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

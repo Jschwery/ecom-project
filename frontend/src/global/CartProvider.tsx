@@ -70,7 +70,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     } else {
       const newCartItem = {
         product: productID,
-        quantity: 1,
+        quantity: quantity || 1,
         dateAdded: new Date(),
       };
       updatedCart = [...localCart, newCartItem];

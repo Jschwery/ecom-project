@@ -83,13 +83,10 @@ ReactDOM.render(
               then the route will use params and fetch all the products that contain that category
               */}
 
-            {/* dropdown categories select from the logged in and the not logged in navbar
-              
-              
+            {/*
+                         
               create the categories specific page
-
               have the filter component
-
               searchbar to search all the items
               */}
           </Routes>

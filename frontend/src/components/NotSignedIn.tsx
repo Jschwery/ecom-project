@@ -21,8 +21,20 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-
-export default function WithSubnavigation() {
+export interface NavItem {
+  label: string;
+  subLabel?: string;
+  children?: Array<NavItem>;
+  href?: string;
+}
+interface NotSignedInNavProps {
+  NAV_ITEMS: NavItem[];
+  signIn?: boolean;
+}
+const NotSignedInNav: React.FC<NotSignedInNavProps> = ({
+  NAV_ITEMS,
+  signIn,
+}) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -56,51 +68,54 @@ export default function WithSubnavigation() {
           <img width={70} height={70} src="/images/logo2.svg" alt="logoon" />
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav />
+            <DesktopNav NAV_ITEMS={NAV_ITEMS} />
           </Flex>
         </Flex>
-
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={"flex-end"}
-          direction={"row"}
-          spacing={6}
-        >
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            textColor={"black"}
-            fontWeight={400}
-            variant={"link"}
-            href={"/login"}
+        {signIn && (
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={"flex-end"}
+            direction={"row"}
+            spacing={6}
           >
-            Sign In
-          </Button>
-          <Button
-            as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"ca7"}
-            href={"/register"}
-            _hover={{
-              bg: "ca6",
-            }}
-          >
-            Sign Up
-          </Button>
-        </Stack>
+            <Button
+              as={"a"}
+              fontSize={"sm"}
+              textColor={"black"}
+              fontWeight={400}
+              variant={"link"}
+              href={"/login"}
+            >
+              Sign In
+            </Button>
+            <Button
+              as={"a"}
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"sm"}
+              fontWeight={600}
+              color={"white"}
+              bg={"ca7"}
+              href={"/register"}
+              _hover={{
+                bg: "ca6",
+              }}
+            >
+              Sign Up
+            </Button>
+          </Stack>
+        )}
       </Flex>
 
       <Collapse className="pt-14" in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav NAV_ITEMS={NAV_ITEMS} />
       </Collapse>
     </Box>
   );
+};
+interface DesktopNavProps {
+  NAV_ITEMS: NavItem[];
 }
-
-const DesktopNav = () => {
+export const DesktopNav: React.FC<DesktopNavProps> = ({ NAV_ITEMS }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
@@ -150,7 +165,7 @@ const DesktopNav = () => {
   );
 };
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
+export const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
   return (
     <Box
       as="a"
@@ -202,10 +217,13 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
     </Box>
   );
 };
+interface MobileNavProps {
+  NAV_ITEMS: NavItem[];
+}
 
-const MobileNav = () => {
+export const MobileNav: React.FC<MobileNavProps> = ({ NAV_ITEMS }) => {
   return (
-    <Stack bg={"ca2"} p={4} display={{ md: "none" }}>
+    <Stack bg={"ca1"} p={4} display={{ md: "none" }}>
       {NAV_ITEMS.map((navItem, index) => (
         <MobileNavItem key={`${navItem.label}-${index}`} {...navItem} />
       ))}
@@ -213,7 +231,7 @@ const MobileNav = () => {
   );
 };
 
-const MobileNavItem = ({ label, children, href }: NavItem) => {
+export const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -269,50 +287,4 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
   );
 };
 
-interface NavItem {
-  label: string;
-  subLabel?: string;
-  children?: Array<NavItem>;
-  href?: string;
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-  {
-    label: "Inspiration",
-    children: [
-      {
-        label: "Explore Design Work",
-        subLabel: "Trending Design to inspire you",
-        href: "#",
-      },
-      {
-        label: "New & Noteworthy",
-        subLabel: "Up-and-coming Designers",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Find Work",
-    children: [
-      {
-        label: "Job Board",
-        subLabel: "Find your dream design job",
-        href: "#",
-      },
-      {
-        label: "Freelance Projects",
-        subLabel: "An exclusive list for contract work",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Learn Design",
-    href: "#",
-  },
-  {
-    label: "Hire Designers",
-    href: "#",
-  },
-];
+export default NotSignedInNav;

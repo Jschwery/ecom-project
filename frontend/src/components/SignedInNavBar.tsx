@@ -14,6 +14,7 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  Collapse,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { handleSignOut } from "./Logout";
@@ -22,6 +23,7 @@ import { lighten } from "polished";
 import { useEffect, useState } from "react";
 import Cart from "../pages/users/Cart";
 import { useCart } from "../global/CartProvider";
+import { DesktopNav, MobileNav } from "./NotSignedIn";
 
 type LinkType = {
   name: string;
@@ -96,7 +98,109 @@ export default function Simple({ describeCart }: NavBarProps) {
       describeCart(isCartVisible);
     }
   }, [isCartVisible]);
-
+  interface NavItem {
+    label: string;
+    subLabel?: string;
+    children?: Array<NavItem>;
+    href?: string;
+  }
+  const NAV_ITEMS = [
+    {
+      label: "Personal Care",
+      children: [
+        {
+          label: "Clothing & Fashion",
+          subLabel: "Find cool tech",
+          href: "/okay",
+        },
+        {
+          label: "Beauty & Personal Care",
+          subLabel: "Get home living essentials",
+          href: "/moop",
+        },
+        {
+          label: "Jewelery Accessories",
+          subLabel: "Get home living essentials",
+          href: "/moop",
+        },
+        {
+          label: "Health Wellness",
+          subLabel: "Get home living essentials",
+          href: "/moop",
+        },
+        {
+          label: "Pets",
+          subLabel: "Get home living essentials",
+          href: "/moop",
+        },
+      ],
+    },
+    {
+      label: "Lifestyle",
+      children: [
+        {
+          label: "General",
+          subLabel: "Fsdad",
+          href: "/adad",
+        },
+        {
+          label: "HomeLiving",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Crafts & Hobbies",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Books, Music, Entertainment",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Food & Beverages",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Travel",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+      ],
+    },
+    {
+      label: "Tech",
+      children: [
+        {
+          label: "Technology",
+          subLabel: "Fsdad",
+          href: "/adad",
+        },
+        {
+          label: "Sports & Outdoors",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Toys & Children",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Automotive",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+        {
+          label: "Travel",
+          subLabel: "Fsdasd",
+          href: "/adads",
+        },
+      ],
+    },
+  ];
   return (
     <>
       <Box
@@ -141,6 +245,9 @@ export default function Simple({ describeCart }: NavBarProps) {
                   {link.name}
                 </NavLink>
               ))}
+              <Flex display={{ base: "none", md: "flex" }}>
+                <DesktopNav NAV_ITEMS={NAV_ITEMS} />
+              </Flex>
             </HStack>
           </HStack>
           <Flex className="space-x-3 cursor-pointer" alignItems={"center"}>
@@ -204,20 +311,22 @@ export default function Simple({ describeCart }: NavBarProps) {
           </Flex>
         </Flex>
 
-        {isOpen ? (
-          <Box pb={4} display={{ md: "none" }}>
-            <Stack as={"nav"} spacing={4}>
-              {Links.map((link) => (
-                <NavLink
-                  to={`/${(link.path || link.name).toLowerCase()}`}
-                  key={link.name}
-                >
-                  {link.name}
-                </NavLink>
-              ))}
+        <Collapse className="pt-14 md:!hidden" in={isOpen} animateOpacity>
+          <Stack as={"nav"} spacing={4}>
+            {Links.map((link) => (
+              <NavLink
+                to={`/${(link.path || link.name).toLowerCase()}`}
+                key={link.name}
+              >
+                {link.name}
+              </NavLink>
+            ))}
+            <Stack pt={5} spacing={-2}>
+              <h4>Categories</h4>
+              <MobileNav NAV_ITEMS={NAV_ITEMS} />
             </Stack>
-          </Box>
-        ) : null}
+          </Stack>
+        </Collapse>
       </Box>
     </>
   );

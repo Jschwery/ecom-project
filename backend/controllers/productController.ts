@@ -167,3 +167,17 @@ export const getAllProducts = async (req: CustomRequest, res: Response) => {
       .send({ message: "Error fetching products", error: error.message });
   }
 };
+
+export async function findByCategory(req: CustomRequest, res: Response) {
+  try {
+    const category = req.body.category;
+    if (!category) {
+      return res.status(400).json({ error: "Category not provided" });
+    }
+    const products = await Product.find({ category: category });
+    return res.status(200).json(products);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
+}

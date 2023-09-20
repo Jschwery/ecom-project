@@ -31,6 +31,11 @@ router.delete(
   extractTokenAndUser,
   productController.deleteProductById
 );
+router.get(
+  "/products/category/:categoryName",
+  productController.findByCategory
+);
+
 router.get("/products/owner/:productId", productController.findProductOwner);
 router.get("/products/:productId", productController.getProductById);
 

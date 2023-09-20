@@ -19,6 +19,7 @@ import Deals from "./pages/Deals";
 import RecentlyAdded from "./pages/RecentlyAdded";
 import Test from "./pages/Test";
 import Discover from "./pages/Discover";
+import ProductCategory from "./pages/ProductCategory";
 
 const root = document.getElementById("root");
 
@@ -75,7 +76,10 @@ ReactDOM.render(
               path="/category/:categoryName/special-offer"
               element={<Deals />}
             />
-            <Route path="/category/:categoryName" element={<FullfillOrder />} />
+            <Route
+              path="/category/:categoryName"
+              element={<ProductCategory />}
+            />
             <Route path="/just-added" element={<RecentlyAdded />} />
 
             {/*
@@ -85,6 +89,8 @@ ReactDOM.render(
 
             {/*
                          
+              make recently visited clickable
+
               create the categories specific page
               have the filter component
               searchbar to search all the items

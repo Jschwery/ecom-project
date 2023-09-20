@@ -83,6 +83,20 @@ export default function useProducts() {
     }
   }, []);
 
+  const getProductsByCategory = useCallback(async (category: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/products/category/${category}`,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
   const getProductOwner = useCallback(async (productID: string) => {
     try {
       const response = await axios.get(
@@ -115,6 +129,7 @@ export default function useProducts() {
     getProductById,
     getProductOwner,
     updateProduct,
+    getProductsByCategory,
     loading,
     error,
     findProductOwner,

@@ -1,10 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import NotSignedInNav, {
-  DesktopNav,
-  DesktopSubNav,
-  MobileNav,
-  MobileNavItem,
-} from "../components/NotSignedIn";
+import NotSignedInNav from "../components/NotSignedIn";
 import SignedInNav from "../components/SignedInNavBar";
 import ListedItem from "../components/util/ListedItem";
 import useProducts from "../hooks/useProducts";

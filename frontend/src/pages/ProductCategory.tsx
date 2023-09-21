@@ -46,7 +46,6 @@ function ProductCategory() {
     .join(" ");
 
   useEffect(() => {
-    console.log("Running ProductCategory useEffect");
     if (!memoizedCategoryName) {
       return;
     }
@@ -56,7 +55,6 @@ function ProductCategory() {
         const categories: Product[] = await getProductsByCategory(
           memoizedCategoryName
         );
-        console.log("Categories fetched: ", categories);
 
         setCategoryProducts(categories);
       } catch (err) {

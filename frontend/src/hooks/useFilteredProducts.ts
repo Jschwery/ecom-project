@@ -7,8 +7,6 @@ type Option = {
 };
 
 export function useFilteredProducts(initialProducts: Product[] | null) {
-  console.log("useFilteredProducts is being called.");
-
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [specialOfferFilter, setSpecialOfferFilter] = useState<boolean | null>(
     null
@@ -22,8 +20,6 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
   );
 
   const filteredProducts = useMemo(() => {
-    console.log("Running useMemo in useFilteredProducts");
-
     if (!initialProducts) return [];
     return initialProducts.filter((product) => {
       const productRating = (product.reviews || []).reduce(

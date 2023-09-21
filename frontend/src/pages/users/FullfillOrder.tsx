@@ -281,7 +281,7 @@ function FullfillOrder() {
 
           {memoizedProducts.map((product, index) => (
             <MemoizedProductComponent
-              key={product._id}
+              key={product._id || `product-${index}`}
               index={index}
               product={product}
             />

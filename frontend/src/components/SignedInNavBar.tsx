@@ -42,7 +42,7 @@ const NavLink = ({ children, to }: NavLinkProps) => {
   return (
     <Box
       as="a"
-      px={2}
+      px={1}
       py={1}
       rounded={"md"}
       _hover={{
@@ -110,28 +110,28 @@ export default function Simple({ describeCart }: NavBarProps) {
       children: [
         {
           label: "Clothing & Fashion",
-          subLabel: "Find cool tech",
-          href: "/okay",
+          subLabel: "Find your style",
+          href: "/category/clothingFashion",
         },
         {
           label: "Beauty & Personal Care",
-          subLabel: "Get home living essentials",
-          href: "/moop",
+          subLabel: "Care that glows",
+          href: "/category/beautyPersonalCare",
         },
         {
           label: "Jewelery Accessories",
-          subLabel: "Get home living essentials",
-          href: "/moop",
+          subLabel: "Add some sparkle",
+          href: "/category/JeweleryAccessories",
         },
         {
           label: "Health Wellness",
-          subLabel: "Get home living essentials",
-          href: "/moop",
+          subLabel: "Wellness essentials",
+          href: "/category/HealthWellness",
         },
         {
           label: "Pets",
-          subLabel: "Get home living essentials",
-          href: "/moop",
+          subLabel: "Pamper your pets",
+          href: "/category/Pets",
         },
       ],
     },
@@ -140,33 +140,33 @@ export default function Simple({ describeCart }: NavBarProps) {
       children: [
         {
           label: "General",
-          subLabel: "Fsdad",
-          href: "/adad",
+          subLabel: "Everyday items",
+          href: "/category/General",
         },
         {
           label: "HomeLiving",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Home essentials",
+          href: "/category/HomeLiving",
         },
         {
           label: "Crafts & Hobbies",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Craft your joy",
+          href: "/category/CraftsHobbies",
         },
         {
           label: "Books, Music, Entertainment",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Entertain yourself",
+          href: "/category/BooksMusicEntertainment",
         },
         {
           label: "Food & Beverages",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Tasty treats",
+          href: "/category/FoodBeverages",
         },
         {
           label: "Travel",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Wander wisely",
+          href: "/category/Travel",
         },
       ],
     },
@@ -175,32 +175,33 @@ export default function Simple({ describeCart }: NavBarProps) {
       children: [
         {
           label: "Technology",
-          subLabel: "Fsdad",
-          href: "/adad",
+          subLabel: "Tech it out",
+          href: "/category/Technology",
         },
         {
           label: "Sports & Outdoors",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Get active",
+          href: "/category/SportsOutdoors",
         },
         {
           label: "Toys & Children",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Playtime fun",
+          href: "/category/ToysChildren",
         },
         {
           label: "Automotive",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Drive safe",
+          href: "/category/Automotive",
         },
         {
           label: "Travel",
-          subLabel: "Fsdasd",
-          href: "/adads",
+          subLabel: "Pack & go",
+          href: "/category/TravelTech",
         },
       ],
     },
   ];
+
   return (
     <>
       <Box
@@ -234,9 +235,9 @@ export default function Simple({ describeCart }: NavBarProps) {
               spacing={4}
               display={{ base: "none", md: "flex" }}
             >
-              {Links.map((link) => (
+              {Links.map((link, index) => (
                 <NavLink
-                  key={link.name}
+                  key={link.name + ` ${index}`}
                   to={`/${(link.path || link.name)
                     .toLowerCase()
                     .split(" ")
@@ -313,10 +314,10 @@ export default function Simple({ describeCart }: NavBarProps) {
 
         <Collapse className="pt-14 md:!hidden" in={isOpen} animateOpacity>
           <Stack as={"nav"} spacing={4}>
-            {Links.map((link) => (
+            {Links.map((link, index) => (
               <NavLink
                 to={`/${(link.path || link.name).toLowerCase()}`}
-                key={link.name}
+                key={link.name + ` - ${index}`}
               >
                 {link.name}
               </NavLink>

@@ -33,10 +33,10 @@ const FilterComponent: React.FC<FilterProps> = ({ data, onFilter }) => {
         onChange={handleChange}
         className="w-full p-1 rounded-sm bg-ca2 md:w-14rem cursor-pointer select-dropdown"
       >
-        {statuses.map((status) => (
+        {statuses.map((status, index) => (
           <option
             className="cursor-pointer select-option"
-            key={status}
+            key={status + ` ${index}`}
             value={status}
           >
             {status}

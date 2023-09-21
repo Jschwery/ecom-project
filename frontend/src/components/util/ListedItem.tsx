@@ -120,7 +120,7 @@ function ListedItem({
           ? `${
               customStyles.flexRow || ""
             } flex  h-52 w-full bg-ca2 shadow-sm shadow-black items-stretch`
-          : "flex flex-col h-[26rem] w-80 space-y-4 justify-between items-stretch"
+          : "flex flex-col h-[26rem] w-80 space-y-1 items-stretch"
       } rounded-md bg-ca2 max-w-[900px]  ${
         showScrollbar ? "overflow-y-auto" : ""
       }`}
@@ -146,13 +146,13 @@ function ListedItem({
         />
       </div>
 
-      <div className="flex flex-col justify-between w-full">
+      <div className="flex flex-col justify-between min-w-0 grow w-full">
         <div className="flex flex-col justify-between px-4 max-w-1/3">
-          <div className="flex items-start w-full justify-between pt-3 pl-1">
+          <div className="flex items-start w-full min-w-0 truncate justify-between pt-3 pl-1">
             <div className="flex flex-col min-w-[45%]">
               <h3
                 title={product.name}
-                className="text-ca9 pr-1 line-clamp-2"
+                className="text-ca9 pr-1 min-w-0 truncate  line-clamp-2"
                 style={wrapTextStyle}
               >
                 {product.name
@@ -161,6 +161,7 @@ function ListedItem({
                   ? content.name
                   : "Product Name"}
               </h3>
+              <h5 className="py-1">{product.category}</h5>
               <div className="flex items-center space-x-1">
                 <p className="pt-0.5">{productAverageRating}</p>
                 <svg
@@ -180,7 +181,7 @@ function ListedItem({
               </div>
             </div>
             <h2
-              className={`text-ca1 px-1 pr-2 !whitespace-nowrap !top-0 
+              className={`text-ca1 px-1 pr-2 shrink-0 !whitespace-nowrap !top-0 
               sale-item-other
                ${
                  product.specialOffer && product.salePrice ? "line-through" : ""

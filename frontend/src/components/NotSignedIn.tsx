@@ -121,25 +121,52 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ NAV_ITEMS }) => {
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
   return (
-    <Stack direction={"row"} spacing={4}>
+    <Stack direction={"row"} spacing={2.5}>
       {NAV_ITEMS.map((navItem, index) => (
         <Box key={`${navItem.label}-${index}`}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
-              <Box
-                as="a"
-                p={2}
-                href={navItem.href ?? "#"}
-                fontSize={"sm"}
-                fontWeight={500}
-                color={linkColor}
-                _hover={{
-                  textDecoration: "none",
-                  color: linkHoverColor,
-                }}
-              >
-                {navItem.label}
-              </Box>
+              <Flex className="items-center">
+                <Box
+                  as="a"
+                  p={2}
+                  href={navItem.href ?? "#"}
+                  sx={{
+                    fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
+                    fontFeatureSettings: "'kern'",
+                    fontVariationSettings: "normal",
+                    lineHeight: "24px",
+                    tabSize: 4,
+                    textDecorationColor: "rgb(26, 32, 44)",
+                    textDecorationLine: "none",
+                    textDecorationStyle: "solid",
+                    textDecorationThickness: "auto",
+                    textSizeAdjust: "100%",
+                  }}
+                  color={linkColor}
+                  _hover={{
+                    textDecoration: "none",
+                    color: linkHoverColor,
+                  }}
+                >
+                  {navItem.label}
+                </Box>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-[18px] h-[18px] -ml-1 pt-1 cursor-pointer"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  />
+                </svg>
+              </Flex>
             </PopoverTrigger>
 
             {navItem.children && (
@@ -152,8 +179,8 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ NAV_ITEMS }) => {
                 minW={"sm"}
               >
                 <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
+                  {navItem.children.map((child, index) => (
+                    <DesktopSubNav key={child.label + ` ${index}`} {...child} />
                   ))}
                 </Stack>
               </PopoverContent>
@@ -270,11 +297,11 @@ export const MobileNavItem = ({ label, children, href }: NavItem) => {
           align={"start"}
         >
           {children &&
-            children.map((child) => (
+            children.map((child, index) => (
               <Box
                 className="hover:!bg-ca3 px-2 rounded-md"
                 as="a"
-                key={child.label}
+                key={child.label + ` - ${index}`}
                 py={2}
                 href={child.href}
               >

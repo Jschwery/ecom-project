@@ -57,11 +57,6 @@ function YourItems() {
     setFilteredData(returnedOrders);
   }, [returnedOrders]);
 
-  useEffect(() => {
-    console.log("products");
-    console.log(products);
-  }, [products]);
-
   return user && user.isSeller ? (
     <>
       <SignedInNav />

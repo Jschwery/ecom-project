@@ -103,13 +103,13 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
           />
         </div>
 
-        {order?.productAndCount?.map((productInfo) => {
+        {order?.productAndCount?.map((productInfo, index) => {
           const product =
             products?.[productInfo.productID] || productInfo.productDetails;
 
           return (
             <div
-              key={productInfo.productID}
+              key={productInfo.productID + ` - ${index}`}
               className="flex space-x-1 justify-between w-full items-center"
             >
               <div className="flex flex-col min-w-0 truncate my-1">
@@ -142,8 +142,8 @@ function Orders({ isEnlarged, getOrders, filteredOrders }: OrderProps) {
     <>
       <div className="flex w-full space-y-2 items-center  flex-col">
         {Array.isArray(filteredOrders) &&
-          filteredOrders.map((order: Transaction) =>
-            makeOrder(order, Object.keys(order)[0] || uuidv4())
+          filteredOrders.map((order: Transaction, index: number) =>
+            makeOrder(order, `${order._id}-${index}`)
           )}
       </div>
     </>

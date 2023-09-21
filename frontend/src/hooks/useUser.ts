@@ -81,30 +81,38 @@ export default function useUser() {
     }
   }, []);
 
-  const updateUser = useCallback(async (user: User) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.put(
-        "http://localhost:5000/api/users/edit",
-        user,
-        {
-          withCredentials: true,
-        }
-      );
+  const updateUser = useCallback(
+    async (
+      user: User
+    ): Promise<{ status: number | null; error: string | null }> => {
+      setIsLoading(true);
+      try {
+        const response = await axios.put(
+          "http://localhost:5000/api/users/edit",
+          user,
+          {
+            withCredentials: true,
+          }
+        );
 
-      if (response.status >= 200 && response.status < 300) {
-        setUser(response.data);
-        return { status: response.status, error: null };
-      } else {
-        return { status: response.status, error: "Unexpected response code." };
+        if (response.status >= 200 && response.status < 300) {
+          setUser(response.data);
+          return { status: response.status, error: null };
+        } else {
+          return {
+            status: response.status,
+            error: "Unexpected response code.",
+          };
+        }
+      } catch (err: any) {
+        console.error(err);
+        return { status: null, error: err.message };
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err: any) {
-      console.error(err);
-      return { status: null, error: err.message };
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   const atomicUserUpdate = async (buyer: User, seller: User) => {
     setIsLoading(true);

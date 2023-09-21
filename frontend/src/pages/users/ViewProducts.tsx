@@ -12,7 +12,7 @@ const ViewItems = forwardRef(
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [shownItems, setShownItems] = useState<any[]>([]);
     const validItems = React.useMemo(
-      () => itemsList.filter((item) => item && item._id),
+      () => [...itemsList].filter((item) => item && item._id),
       [itemsList]
     );
 
@@ -20,7 +20,10 @@ const ViewItems = forwardRef(
       if (validItems.length) {
         const startIdx = (currentPage - 1) * 4;
         const endIdx = currentPage * 4;
-        setShownItems(validItems.slice(startIdx, endIdx));
+        const newShownItems = validItems.slice(startIdx, endIdx);
+        if (JSON.stringify(newShownItems) !== JSON.stringify(shownItems)) {
+          setShownItems(newShownItems);
+        }
       }
     }, [validItems, currentPage]);
 

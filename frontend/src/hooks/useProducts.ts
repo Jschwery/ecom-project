@@ -86,10 +86,7 @@ export default function useProducts() {
   const getProductsByCategory = useCallback(async (category: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/products/category/${category}`,
-        {
-          withCredentials: true,
-        }
+        `http://localhost:5000/api/products/category/${category}`
       );
       return response.data;
     } catch (err) {

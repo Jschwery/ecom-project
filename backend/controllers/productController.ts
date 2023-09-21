@@ -170,11 +170,15 @@ export const getAllProducts = async (req: CustomRequest, res: Response) => {
 
 export async function findByCategory(req: CustomRequest, res: Response) {
   try {
-    const category = req.body.category;
+    const category = req.params.categoryName;
     if (!category) {
       return res.status(400).json({ error: "Category not provided" });
     }
-    const products = await Product.find({ category: category });
+
+    const products = await Product.find({
+      category: new RegExp(category, "i"),
+    });
+
     return res.status(200).json(products);
   } catch (err) {
     console.error(err);

@@ -20,19 +20,117 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { handleSignOut } from "./Logout";
 import useUser from "../hooks/useUser";
 import { lighten } from "polished";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Cart from "../pages/users/Cart";
 import { useCart } from "../global/CartProvider";
 import { DesktopNav, MobileNav } from "./NotSignedIn";
 
-type LinkType = {
+export type LinkType = {
   name: string;
   path?: string;
 };
-const Links: LinkType[] = [
+export const Links: LinkType[] = [
   { name: "Deals", path: "category/all/special-offer" },
   { name: "Just Added" },
   { name: "Discover" },
+];
+
+export const NAV_ITEMS = [
+  {
+    label: "Personal Care",
+    children: [
+      {
+        label: "Clothing & Fashion",
+        subLabel: "Find your style",
+        href: "/category/clothingFashion",
+      },
+      {
+        label: "Beauty & Personal Care",
+        subLabel: "Care that glows",
+        href: "/category/beautyPersonalCare",
+      },
+      {
+        label: "Jewelery Accessories",
+        subLabel: "Add some sparkle",
+        href: "/category/JeweleryAccessories",
+      },
+      {
+        label: "Health Wellness",
+        subLabel: "Wellness essentials",
+        href: "/category/HealthWellness",
+      },
+      {
+        label: "Pets",
+        subLabel: "Pamper your pets",
+        href: "/category/Pets",
+      },
+    ],
+  },
+  {
+    label: "Lifestyle",
+    children: [
+      {
+        label: "General",
+        subLabel: "Everyday items",
+        href: "/category/General",
+      },
+      {
+        label: "HomeLiving",
+        subLabel: "Home essentials",
+        href: "/category/HomeLiving",
+      },
+      {
+        label: "Crafts & Hobbies",
+        subLabel: "Craft your joy",
+        href: "/category/CraftsHobbies",
+      },
+      {
+        label: "Books, Music, Entertainment",
+        subLabel: "Entertain yourself",
+        href: "/category/BooksMusicEntertainment",
+      },
+      {
+        label: "Food & Beverages",
+        subLabel: "Tasty treats",
+        href: "/category/FoodBeverages",
+      },
+      {
+        label: "Travel",
+        subLabel: "Wander wisely",
+        href: "/category/Travel",
+      },
+    ],
+  },
+  {
+    label: "Tech",
+    children: [
+      {
+        label: "Technology",
+        subLabel: "Tech it out",
+        href: "/category/Technology",
+      },
+      {
+        label: "Sports & Outdoors",
+        subLabel: "Get active",
+        href: "/category/SportsOutdoors",
+      },
+      {
+        label: "Toys & Children",
+        subLabel: "Playtime fun",
+        href: "/category/ToysChildren",
+      },
+      {
+        label: "Automotive",
+        subLabel: "Drive safe",
+        href: "/category/Automotive",
+      },
+      {
+        label: "Travel",
+        subLabel: "Pack & go",
+        href: "/category/TravelTech",
+      },
+    ],
+  },
 ];
 type NavLinkProps = {
   children: React.ReactNode;
@@ -66,6 +164,8 @@ export default function Simple({ describeCart }: NavBarProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, isLoading } = useUser();
   const { localCart, addToLocalCart } = useCart();
+  const lastItemRef = useRef(null);
+  const mainContainerRef = useRef<any>(null);
 
   const [totalCart, setTotalCart] = useState();
   const [isCartVisible, setCartVisible] = useState(false);
@@ -104,108 +204,14 @@ export default function Simple({ describeCart }: NavBarProps) {
     children?: Array<NavItem>;
     href?: string;
   }
-  const NAV_ITEMS = [
-    {
-      label: "Personal Care",
-      children: [
-        {
-          label: "Clothing & Fashion",
-          subLabel: "Find your style",
-          href: "/category/clothingFashion",
-        },
-        {
-          label: "Beauty & Personal Care",
-          subLabel: "Care that glows",
-          href: "/category/beautyPersonalCare",
-        },
-        {
-          label: "Jewelery Accessories",
-          subLabel: "Add some sparkle",
-          href: "/category/JeweleryAccessories",
-        },
-        {
-          label: "Health Wellness",
-          subLabel: "Wellness essentials",
-          href: "/category/HealthWellness",
-        },
-        {
-          label: "Pets",
-          subLabel: "Pamper your pets",
-          href: "/category/Pets",
-        },
-      ],
-    },
-    {
-      label: "Lifestyle",
-      children: [
-        {
-          label: "General",
-          subLabel: "Everyday items",
-          href: "/category/General",
-        },
-        {
-          label: "HomeLiving",
-          subLabel: "Home essentials",
-          href: "/category/HomeLiving",
-        },
-        {
-          label: "Crafts & Hobbies",
-          subLabel: "Craft your joy",
-          href: "/category/CraftsHobbies",
-        },
-        {
-          label: "Books, Music, Entertainment",
-          subLabel: "Entertain yourself",
-          href: "/category/BooksMusicEntertainment",
-        },
-        {
-          label: "Food & Beverages",
-          subLabel: "Tasty treats",
-          href: "/category/FoodBeverages",
-        },
-        {
-          label: "Travel",
-          subLabel: "Wander wisely",
-          href: "/category/Travel",
-        },
-      ],
-    },
-    {
-      label: "Tech",
-      children: [
-        {
-          label: "Technology",
-          subLabel: "Tech it out",
-          href: "/category/Technology",
-        },
-        {
-          label: "Sports & Outdoors",
-          subLabel: "Get active",
-          href: "/category/SportsOutdoors",
-        },
-        {
-          label: "Toys & Children",
-          subLabel: "Playtime fun",
-          href: "/category/ToysChildren",
-        },
-        {
-          label: "Automotive",
-          subLabel: "Drive safe",
-          href: "/category/Automotive",
-        },
-        {
-          label: "Travel",
-          subLabel: "Pack & go",
-          href: "/category/TravelTech",
-        },
-      ],
-    },
-  ];
 
   return (
     <>
       <Box
-        className="z-50 fixed w-full shadow-sm shadow-black"
+        className={`z-50 fixed w-full shadow-sm max-h-[100vh] shadow-black ${
+          isOpen ? "overflow-y-auto" : "over-hidden"
+        }`}
+        ref={mainContainerRef}
         bg={"ca1"}
         px={4}
       >
@@ -312,7 +318,12 @@ export default function Simple({ describeCart }: NavBarProps) {
           </Flex>
         </Flex>
 
-        <Collapse className="pt-14 md:!hidden" in={isOpen} animateOpacity>
+        <Collapse
+          className="pt-14 !overflow-visible md:!hidden"
+          in={isOpen}
+          animateOpacity
+          style={{ height: isOpen ? "auto" : "0px" }}
+        >
           <Stack as={"nav"} spacing={4}>
             {Links.map((link, index) => (
               <NavLink
@@ -322,9 +333,16 @@ export default function Simple({ describeCart }: NavBarProps) {
                 {link.name}
               </NavLink>
             ))}
-            <Stack pt={5} spacing={-2}>
+            <Stack
+              pt={5}
+              spacing={-2}
+              style={{ height: "auto", overflowY: "auto" }}
+            >
               <h4>Categories</h4>
-              <MobileNav NAV_ITEMS={NAV_ITEMS} />
+              <MobileNav
+                mainContainerRef={mainContainerRef}
+                NAV_ITEMS={NAV_ITEMS}
+              />
             </Stack>
           </Stack>
         </Collapse>

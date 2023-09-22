@@ -14,6 +14,7 @@ import {
   useBreakpointValue,
   useDisclosure,
   Center,
+  HStack,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -21,6 +22,9 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { NavLink } from "react-router-dom";
+import { Links, NAV_ITEMS } from "./SignedInNavBar";
 export interface NavItem {
   label: string;
   subLabel?: string;
@@ -28,88 +32,142 @@ export interface NavItem {
   href?: string;
 }
 interface NotSignedInNavProps {
-  NAV_ITEMS: NavItem[];
   signIn?: boolean;
 }
-const NotSignedInNav: React.FC<NotSignedInNavProps> = ({
-  NAV_ITEMS,
-  signIn,
-}) => {
-  const { isOpen, onToggle } = useDisclosure();
+const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
+  const { isOpen, onClose, onOpen, onToggle } = useDisclosure();
+  const mainContainerRef = useRef<any>(null);
+
+  const handleResize = () => {
+    if (window.innerWidth >= 768) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
-    <Box>
-      <Flex
+    <>
+      <Box
+        className={`z-40 fixed w-full  shadow-sm max-h-[100vh] shadow-black ${
+          isOpen ? "overflow-y-auto" : "over-hidden"
+        }`}
+        ref={mainContainerRef}
         bg={"ca1"}
-        className="fixed w-full z-50"
-        minH={"60px"}
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        align={"center"}
-        shadow={"lg"}
+        px={4}
       >
-        <Flex
-          flex={{ base: 1, md: "auto" }}
-          ml={{ base: -2 }}
-          display={{ base: "flex", md: "none" }}
-        >
+        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
-            onClick={onToggle}
-            className="hover:!bg-ca2"
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
-            variant={"ghost"}
-            aria-label={"Toggle Navigation"}
+            className="!bg-ca1 hover:!bg-ca2 "
+            size={"md"}
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            aria-label={"Open Menu"}
+            display={{ md: "none" }}
+            onClick={isOpen ? onClose : onOpen}
           />
-        </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
-          <img width={70} height={70} src="/images/logo2.svg" alt="logoon" />
-
-          <Flex display={{ base: "none", md: "flex" }} ml={10}>
-            <DesktopNav NAV_ITEMS={NAV_ITEMS} />
-          </Flex>
-        </Flex>
-        {signIn && (
-          <Stack
-            flex={{ base: 1, md: 0 }}
-            justify={"flex-end"}
-            direction={"row"}
-            spacing={6}
-          >
-            <Button
-              as={"a"}
-              fontSize={"sm"}
-              textColor={"black"}
-              fontWeight={400}
-              variant={"link"}
-              href={"/login"}
-            >
-              Sign In
-            </Button>
-            <Button
-              as={"a"}
-              display={{ base: "none", md: "inline-flex" }}
-              fontSize={"sm"}
-              fontWeight={600}
-              color={"white"}
-              bg={"ca7"}
-              href={"/register"}
-              _hover={{
-                bg: "ca6",
+          <HStack spacing={8} alignItems={"center"}>
+            <img
+              className="cursor-pointer"
+              onClick={() => {
+                window.location.pathname = "/";
               }}
-            >
-              Sign Up
-            </Button>
-          </Stack>
-        )}
-      </Flex>
+              width={70}
+              height={70}
+              src="/images/logo2.svg"
+              alt="logoon"
+            />
 
-      <Collapse className="pt-14" in={isOpen} animateOpacity>
-        <MobileNav NAV_ITEMS={NAV_ITEMS} />
-      </Collapse>
-    </Box>
+            <HStack
+              as={"nav"}
+              spacing={4}
+              display={{ base: "none", md: "flex" }}
+            >
+              {Links.map((link, index) => (
+                <NavLink
+                  key={link.name + ` ${index}`}
+                  to={`/${(link.path || link.name)
+                    .toLowerCase()
+                    .split(" ")
+                    .join("-")}`}
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+
+              <DesktopNav NAV_ITEMS={NAV_ITEMS} />
+            </HStack>
+          </HStack>
+          {signIn && (
+            <Stack
+              flex={{ base: 1, md: 0 }}
+              justify={"flex-end"}
+              direction={"row"}
+              spacing={6}
+            >
+              <Button
+                as={"a"}
+                fontSize={"sm"}
+                textColor={"black"}
+                fontWeight={400}
+                variant={"link"}
+                href={"/login"}
+              >
+                Sign In
+              </Button>
+              <Button
+                as={"a"}
+                display={{ base: "none", md: "inline-flex" }}
+                fontSize={"sm"}
+                fontWeight={600}
+                color={"white"}
+                bg={"ca7"}
+                href={"/register"}
+                _hover={{
+                  bg: "ca6",
+                }}
+              >
+                Sign Up
+              </Button>
+            </Stack>
+          )}
+        </Flex>
+
+        <Collapse
+          className="pt-14 !overflow-visible md:!hidden"
+          in={isOpen}
+          animateOpacity
+          style={{ height: isOpen ? "auto" : "0px" }}
+        >
+          <Stack as={"nav"} spacing={4}>
+            {Links.map((link, index) => (
+              <NavLink
+                to={`/${(link.path || link.name).toLowerCase()}`}
+                key={link.name + ` - ${index}`}
+              >
+                {link.name}
+              </NavLink>
+            ))}
+            <Stack
+              pt={5}
+              spacing={-2}
+              style={{ height: "auto", overflowY: "auto" }}
+            >
+              <h4>Categories</h4>
+              <MobileNav
+                mainContainerRef={mainContainerRef}
+                NAV_ITEMS={NAV_ITEMS}
+              />
+            </Stack>
+          </Stack>
+        </Collapse>
+      </Box>
+    </>
   );
 };
 interface DesktopNavProps {
@@ -123,10 +181,10 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ NAV_ITEMS }) => {
   return (
     <Stack direction={"row"} spacing={2.5}>
       {NAV_ITEMS.map((navItem, index) => (
-        <Box key={`${navItem.label}-${index}`}>
+        <Box className=" " key={`${navItem.label}-${index}`}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
-              <Flex className="items-center">
+              <Flex className="items-center !z-50">
                 <Box
                   as="a"
                   p={2}
@@ -175,6 +233,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ NAV_ITEMS }) => {
                 boxShadow={"xl"}
                 bg={popoverContentBgColor}
                 p={4}
+                className={" !z-50"}
                 rounded={"xl"}
                 minW={"sm"}
               >
@@ -244,28 +303,61 @@ export const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
     </Box>
   );
 };
+
 interface MobileNavProps {
   NAV_ITEMS: NavItem[];
+  mainContainerRef?: React.RefObject<any>;
 }
 
-export const MobileNav: React.FC<MobileNavProps> = ({ NAV_ITEMS }) => {
+export const MobileNav: React.FC<MobileNavProps> = ({
+  NAV_ITEMS,
+  mainContainerRef,
+}) => {
   return (
     <Stack bg={"ca1"} p={4} display={{ md: "none" }}>
       {NAV_ITEMS.map((navItem, index) => (
-        <MobileNavItem key={`${navItem.label}-${index}`} {...navItem} />
+        <MobileNavItem
+          key={`${navItem.label}-${index}`}
+          {...navItem}
+          mainContainerRef={mainContainerRef}
+        />
       ))}
     </Stack>
   );
 };
 
-export const MobileNavItem = ({ label, children, href }: NavItem) => {
+interface MobileNavItemProps extends NavItem {
+  mainContainerRef?: React.RefObject<any>;
+}
+
+export const MobileNavItem: React.FC<MobileNavItemProps> = ({
+  label,
+  children,
+  href,
+  mainContainerRef,
+}) => {
   const { isOpen, onToggle } = useDisclosure();
+  const lastChildRef = useRef<HTMLAnchorElement>(null);
+
+  const handleItemClick = () => {
+    setTimeout(() => {
+      if (lastChildRef.current && mainContainerRef?.current) {
+        const topPos = lastChildRef.current.getBoundingClientRect().top;
+        const containerTop =
+          mainContainerRef.current.getBoundingClientRect().top;
+        const offset = topPos - containerTop;
+
+        mainContainerRef.current.scrollTo({ top: offset, behavior: "smooth" });
+      }
+    }, 500);
+  };
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
       <Box
         py={2}
         as="a"
+        onClick={handleItemClick}
         href={href ?? "#"}
         justifyContent="space-between"
         alignItems="center"
@@ -304,6 +396,7 @@ export const MobileNavItem = ({ label, children, href }: NavItem) => {
                 key={child.label + ` - ${index}`}
                 py={2}
                 href={child.href}
+                ref={index === children.length - 1 ? lastChildRef : undefined}
               >
                 {child.label}
               </Box>
@@ -313,5 +406,4 @@ export const MobileNavItem = ({ label, children, href }: NavItem) => {
     </Stack>
   );
 };
-
 export default NotSignedInNav;

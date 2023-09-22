@@ -64,7 +64,7 @@ function YourItems() {
       <div className="pt-16 w-full h-screen  bg-ca2">
         <div className="flex h-full w-full p-5 bg-ca2">
           <div
-            className={`bg-ca3 mx-3 rounded min-w-[150px] px-5 shadow-md shadow-black transition-all duration-500 ${
+            className={`bg-ca3 mx-3 overflow-y-auto rounded min-w-[150px] px-5 shadow-md shadow-black transition-all duration-500 ${
               open ? "w-3/12" : "w-5/12"
             }`}
           >
@@ -118,7 +118,7 @@ function YourItems() {
                       />
                     )}
                   </div>
-                  <div className="w-full max-h-[65vh] overflow-y-auto">
+                  <div className="w-full">
                     <Orders
                       isEnlarged={open}
                       filteredOrders={filteredData}

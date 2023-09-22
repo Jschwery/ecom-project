@@ -159,26 +159,7 @@ function App() {
       {user ? (
         <SignedInNav describeCart={(visible) => setCartVisible(visible)} />
       ) : (
-        <NotSignedInNav
-          signIn={true}
-          NAV_ITEMS={[
-            {
-              label: "label",
-              children: [
-                {
-                  label: "label children",
-                  subLabel: "sublabel",
-                  href: "somelink",
-                },
-                {
-                  label: "label 2",
-                  subLabel: "sublabel 2",
-                  href: "someotherlink",
-                },
-              ],
-            },
-          ]}
-        />
+        <NotSignedInNav signIn={true} />
       )}
       <div className="pt-16 bg-ca2 pb-4 w-full">
         <div className="flex my-5 h-[250px] overflow-hidden p-4 justify-center items-center">

@@ -63,24 +63,7 @@ function RecentlyAdded() {
   let scalingFactor = maxPrice ? maxPrice / 100 : 1;
   return (
     <div className="w-full h-screen bg-ca1">
-      {user ? (
-        <SignedInNav />
-      ) : (
-        <NotSignedInNav
-          NAV_ITEMS={[
-            {
-              label: "okay",
-              children: [
-                {
-                  label: "okay",
-                  subLabel: "sublabel",
-                  href: "href",
-                },
-              ],
-            },
-          ]}
-        />
-      )}
+      {user ? <SignedInNav /> : <NotSignedInNav />}
       <div className="flex flex-col md:flex-row w-full pt-16">
         <div
           className={`w-full transition-all bg-ca1 duration-500 ${

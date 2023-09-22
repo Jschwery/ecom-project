@@ -141,20 +141,7 @@ function Discover() {
 
   return (
     <div className="w-full h-screen items-center bg-ca1  flex flex-col">
-      {user ? (
-        <SignedInNav />
-      ) : (
-        <NotSignedInNav
-          NAV_ITEMS={[
-            {
-              label: "okay",
-              children: [
-                { label: "label", subLabel: "sublabel", href: " href" },
-              ],
-            },
-          ]}
-        />
-      )}
+      {user ? <SignedInNav /> : <NotSignedInNav />}
 
       <h2 className="sticky top-0 mt-24 mb-8 z-10">Discover New Products</h2>
 

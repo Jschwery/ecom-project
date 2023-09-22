@@ -23,24 +23,7 @@ function Home() {
     <div>
       <button onClick={() => handleBtn()}>clickme</button>
       <div className="app">
-        {btn ? (
-          <NotSignedInHeader
-            NAV_ITEMS={[
-              {
-                label: "label",
-                children: [
-                  {
-                    label: "label",
-                    subLabel: "sublabel",
-                    href: "samplehref",
-                  },
-                ],
-              },
-            ]}
-          />
-        ) : (
-          <SignedInHeader />
-        )}
+        {btn ? <NotSignedInHeader /> : <SignedInHeader />}
 
         <div className="w-full flex h-1/4 flex-col px-10 py-10 space-y-2 bg-slate-300 overflow-hidden">
           <h2>

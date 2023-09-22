@@ -73,30 +73,7 @@ function ProductCategory() {
 
   return (
     <div className="w-full h-screen">
-      {user ? (
-        <SignedInNav />
-      ) : (
-        <NotSignedInNav
-          signIn={true}
-          NAV_ITEMS={[
-            {
-              label: "label",
-              children: [
-                {
-                  label: "label children",
-                  subLabel: "sublabel",
-                  href: "somelink",
-                },
-                {
-                  label: "label 2",
-                  subLabel: "sublabel 2",
-                  href: "someotherlink",
-                },
-              ],
-            },
-          ]}
-        />
-      )}
+      {user ? <SignedInNav /> : <NotSignedInNav signIn={true} />}
 
       <div className="flex flex-col md:flex-row w-full pt-16">
         <div

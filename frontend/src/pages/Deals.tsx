@@ -111,24 +111,7 @@ function Deals() {
 
   return (
     <div className="w-full h-screen bg-ca1">
-      {user ? (
-        <SignedInNav />
-      ) : (
-        <NotSignedInNav
-          NAV_ITEMS={[
-            {
-              label: "notsure",
-              children: [
-                {
-                  label: "okay label",
-                  subLabel: "the sublabel",
-                  href: "href",
-                },
-              ],
-            },
-          ]}
-        />
-      )}
+      {user ? <SignedInNav /> : <NotSignedInNav />}
       <div className="flex flex-col md:flex-row h-full w-full pt-16">
         <div
           className={`w-full h-full transition-all duration-500 ${

@@ -81,20 +81,6 @@ ReactDOM.render(
               element={<ProductCategory />}
             />
             <Route path="/just-added" element={<RecentlyAdded />} />
-
-            {/*
-              when clicking one of the items it will redirect to the category
-              then the route will use params and fetch all the products that contain that category
-              */}
-
-            {/*
-                         
-              make recently visited clickable
-
-              create the categories specific page
-              have the filter component
-              searchbar to search all the items
-              */}
           </Routes>
         </Router>
       </CartProvider>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { getDivWidth } from "../pages/AddItem";
+import { throttle } from "lodash";
 
 type Breakpoint = {
   max: number;
@@ -8,12 +9,15 @@ type Breakpoint = {
 
 function useResponsiveFlex(
   divRef: React.RefObject<HTMLDivElement | null>,
-  breakpoints: Breakpoint[]
+  breakpoints: Breakpoint[],
+  initialDirection?: string
 ) {
-  const [flexDirection, setFlexDirection] = useState("");
+  const [flexDirection, setFlexDirection] = useState(initialDirection);
+  console.log("Inside useResponsiveFlex, initial state:", flexDirection);
+
   const lastFlexDirection = useRef(flexDirection);
 
-  const handleResize = () => {
+  const handleResize = throttle(() => {
     const currentWidth = getDivWidth(divRef.current);
 
     for (let bp of breakpoints) {
@@ -25,7 +29,14 @@ function useResponsiveFlex(
         break;
       }
     }
-  };
+  }, 775);
+
+  useEffect(() => {
+    if (initialDirection !== flexDirection) {
+      setFlexDirection(initialDirection);
+      lastFlexDirection.current = initialDirection;
+    }
+  }, [initialDirection, flexDirection]);
 
   useEffect(() => {
     handleResize();

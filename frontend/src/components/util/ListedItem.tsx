@@ -63,9 +63,9 @@ function ListedItem({
   const toast = useToast();
 
   useEffect(() => {
-    console.log("the number");
-    console.log(numberInputValue);
-  }, [numberInputValue]);
+    console.log("within listed");
+    console.log(flexDirection);
+  }, [flexDirection]);
 
   useEffect(() => {
     const percentage = dealMetaData.find((deal) =>
@@ -101,6 +101,10 @@ function ListedItem({
       updateProductWithSale();
     }
   }, [dealMetaData, product]);
+
+  useEffect(() => {
+    console.log("ListedItem re-rendered, new flexDirection:", flexDirection);
+  }, [flexDirection]);
 
   const getAverageRating = (reviews: any) => {
     const totalRating = reviews.reduce(

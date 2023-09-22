@@ -11,7 +11,7 @@ function CategoryScroll({ category }: { category: string }) {
   return (
     <div
       className="flex py-1.5 px-2 items-center overflow-hidden"
-      style={{ maxWidth: "90%", overflowX: "auto" }}
+      style={{ maxWidth: "99%", overflowX: "auto" }}
     >
       {filteredProducts?.map((product) => (
         <Link

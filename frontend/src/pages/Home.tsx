@@ -63,7 +63,7 @@ export const dealMetaData = [
 
 export const breakpoints = [
   { max: 768, class: "flex-col-items" },
-  { max: 900, class: "flex-row-items" },
+  { max: 1800, class: "flex-row-items" },
 ];
 
 function App() {
@@ -77,9 +77,33 @@ function App() {
   const [recentProducts, setRecentProduct] = useState<Product[]>();
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
-  const flexDirection = useResponsiveFlex(divRef, breakpoints);
   const [cartVisible, setCartVisible] = useState<boolean>();
   const [paginatedProducts, setPaginatedProduct] = useState<Product[]>([]);
+  let initialFlexDirection = "";
+  if (typeof window !== "undefined") {
+    const windowWidth = window.innerWidth;
+
+    for (let bp of breakpoints) {
+      console.log("window width");
+      console.log(windowWidth);
+
+      console.log("bp max");
+      console.log(bp.max);
+
+      if (windowWidth <= bp.max) {
+        initialFlexDirection = bp.class;
+        break;
+      }
+    }
+  }
+  console.log("the initial flex direction is IN HOME!!!!");
+  console.log(initialFlexDirection);
+
+  const flexDirection = useResponsiveFlex(
+    divRef,
+    breakpoints,
+    initialFlexDirection
+  );
 
   useEffect(() => {
     async function fetchProducts() {
@@ -188,29 +212,56 @@ function App() {
             </div>
           </div>
         )}
-        <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
+        <div className="flex flex-col space-y-4 w-[93%] overflow-y-hidden md:w-[80%] mx-auto mt-8 h-[375px] drop-shadow-md">
           <h3>Technology & Electronics</h3>
-          <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
-            <CategoryScroll category={"Technology"} />
+          <div className="flex flex-col bg-ca3 rounded-md overflow-x-auto">
+            <img
+              className="w-full h-[65%] object-cover cursor-pointer"
+              src="/images/tech2.jpg"
+              alt="TechImg"
+              onClick={() => (window.location.pathname = "category/Technology")}
+            />
+            <div className=" w-full flex items-center h-full">
+              <CategoryScroll category={"Technology"} />
+            </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
+        <div className="flex flex-col space-y-4 w-[93%] overflow-y-hidden md:w-[80%] mx-auto mt-8 h-[375px] drop-shadow-md">
           <h3>Clothing and Fashion</h3>
-          <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
-            <CategoryScroll category={"ClothingFashion"} />
+          <div className="flex flex-col bg-ca3 rounded-md overflow-x-auto">
+            <img
+              className="w-full h-[65%] object-cover cursor-pointer"
+              src="/images/fashion2.jpg"
+              alt="fashionimg"
+              onClick={() =>
+                (window.location.pathname = "category/clothingFashion")
+              }
+            />
+            <div className=" w-full flex items-center h-full">
+              <CategoryScroll category={"ClothingFashion"} />
+            </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
+        <div className="flex flex-col space-y-4 w-[93%] overflow-y-hidden md:w-[80%] mx-auto mt-8 h-[375px] drop-shadow-md">
           <h3>Home Living</h3>
-          <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
-            <CategoryScroll category={"HomeLiving"} />
+          <div className="flex flex-col bg-ca3 rounded-md overflow-x-auto">
+            <img
+              className="w-full h-[65%] object-cover cursor-pointer"
+              src="/images/homedeco2.jpg"
+              alt="decoImg"
+              onClick={() => (window.location.pathname = "category/HomeLiving")}
+            />
+            <div className=" w-full flex items-center h-full">
+              <CategoryScroll category={"HomeLiving"} />
+            </div>
           </div>
         </div>
         <div
           ref={divRef}
-          className="justify-center p-4 flex-wrap rounded-md mt-20 items-center flex flex-col w-[93%] md:w-[80%] mx-auto gap-4 bg-ca3"
+          className="justify-center relative p-4 flex-wrap rounded-md mt-20 items-center flex flex-col w-[93%] md:w-[80%] mx-auto gap-4 bg-ca3"
         >
-          <h2 className="py-5">All Products</h2>
+          <h2 className="py-5 absolute -top-[70px] left-0">All Products</h2>
+
           {paginatedProducts &&
             paginatedProducts.map((p) => (
               <ListedItem
@@ -235,5 +286,3 @@ function App() {
 }
 
 export default App;
-
-//category/all overflow white

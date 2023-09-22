@@ -29,6 +29,7 @@
     "bootstrap": "^5.3.1",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.9",
+    "enzyme": "^3.11.0",
     "formik": "^2.4.3",
     "framer-motion": "^10.15.1",
     "install": "^0.13.0",
@@ -77,5 +78,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/enzyme": "^3.10.13"
   }
 }

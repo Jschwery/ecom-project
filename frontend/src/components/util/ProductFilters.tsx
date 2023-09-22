@@ -148,7 +148,6 @@ function ProductFilters({
         }`}
         onClick={() => {
           setMinimize((prevState) => {
-            console.log("Changing minimize to:", !prevState);
             return !prevState;
           });
         }}

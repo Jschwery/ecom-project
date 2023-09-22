@@ -51,7 +51,6 @@ function ProductCategory() {
     }
     const category = async () => {
       try {
-        console.log("Fetching categories for: ", memoizedCategoryName);
         const categories: Product[] = await getProductsByCategory(
           memoizedCategoryName
         );
@@ -90,8 +89,6 @@ function ProductCategory() {
               filtersState.find((f) => f.filterName === "priceFilter")?.value
                 ? (priceValue: number) => {
                     let scaledPrice = priceValue * scalingFactor;
-                    console.log("the scaled price is");
-                    console.log(scaledPrice);
 
                     setScaledPrice(Number(scaledPrice.toFixed(2)));
                     setPriceFilter(scaledPrice);

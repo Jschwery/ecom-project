@@ -2,9 +2,6 @@ import Transaction, { ITransaction } from "../models/Transaction";
 import mongoose from "mongoose";
 
 export const createTransaction = async (transactionInfo: ITransaction) => {
-  console.log("heres transaction info: ");
-  console.log(transactionInfo);
-
   const transaction = new Transaction(transactionInfo);
   return await transaction.save();
 };

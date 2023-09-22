@@ -21,7 +21,6 @@ function Counter({ initialCount = 1, onCountChange }: CounterProps) {
     if (Number.isNaN(newCount) || newCount <= 0) {
       newCount = 1;
     }
-    console.log("the new count is " + newCount);
 
     if (newCount > 200) {
       toast({

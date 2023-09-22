@@ -41,11 +41,6 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
   const [dynamicNavItems, setDynamicNavItems] = useState<any>([]);
 
   useEffect(() => {
-    console.log("the dynamic nav items are");
-    console.log(dynamicNavItems);
-  }, [dynamicNavItems]);
-
-  useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 890);
       if (window.innerWidth >= 768) {

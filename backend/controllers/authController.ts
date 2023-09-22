@@ -40,7 +40,6 @@ export const handleLogin = async (req: CustomRequest, res: Response) => {
     return res.status(400).send("Email or password is incorrect");
 
   const token = userService.generateVerificationToken(user._id as string);
-  console.log("token: " + token);
 
   const maxAge = req.body.rememberMe
     ? 7 * 24 * 60 * 60 * 1000

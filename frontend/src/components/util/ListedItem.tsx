@@ -63,11 +63,6 @@ function ListedItem({
   const toast = useToast();
 
   useEffect(() => {
-    console.log("within listed");
-    console.log(flexDirection);
-  }, [flexDirection]);
-
-  useEffect(() => {
     const percentage = dealMetaData.find((deal) =>
       deal.dealLink.toLowerCase().includes(product.category.toLowerCase())
     )?.dealPercentage;
@@ -284,9 +279,6 @@ function ListedItem({
                   );
 
                   if (!productFound) {
-                    console.log("the number input is");
-                    console.log(numberInputValue);
-
                     addToLocalCart(product._id, numberInputValue);
                     return;
                   }

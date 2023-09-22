@@ -55,8 +55,6 @@ export const useFulfill = () => {
                   imageUrls: productInfo.productDetails.imageUrls,
                   specialOffer: productInfo.productDetails.specialOffer,
                 };
-                console.log("the syntheticProduct is");
-                console.log(syntheticProduct);
 
                 return syntheticProduct;
               }

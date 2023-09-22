@@ -84,20 +84,12 @@ function App() {
     const windowWidth = window.innerWidth;
 
     for (let bp of breakpoints) {
-      console.log("window width");
-      console.log(windowWidth);
-
-      console.log("bp max");
-      console.log(bp.max);
-
       if (windowWidth <= bp.max) {
         initialFlexDirection = bp.class;
         break;
       }
     }
   }
-  console.log("the initial flex direction is IN HOME!!!!");
-  console.log(initialFlexDirection);
 
   const flexDirection = useResponsiveFlex(
     divRef,

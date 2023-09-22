@@ -5,9 +5,6 @@ import Transaction from "../models/Transaction";
 
 export const createTransaction = async (req: CustomRequest, res: Response) => {
   try {
-    console.log("create transaction");
-    console.log(req.body);
-
     const result = await transactionService.createTransaction(req.body);
     res.status(201).json(result);
   } catch (error) {
@@ -43,9 +40,6 @@ export async function getBuyerTransaction(req: CustomRequest, res: Response) {
 }
 
 export async function getSellerTransaction(req: CustomRequest, res: Response) {
-  console.log("Entered getSellerTransaction");
-  console.log("Seller ID:", req.params.sellerID);
-
   try {
     const result = await transactionService.getSellerTransaction(
       req.params.sellerID

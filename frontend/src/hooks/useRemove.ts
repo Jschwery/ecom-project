@@ -78,8 +78,6 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
         }
       );
 
-      console.log("before set items in useRemove");
-
       setItems((prevItems) => prevItems.filter((_, indx) => index !== indx));
 
       if (onDeleteCallback) {

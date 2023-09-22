@@ -116,9 +116,6 @@ function Checkout() {
         transactionDate: new Date(),
       };
 
-      console.log("the data to submit");
-      console.log(dataToSubmit);
-
       await axios.post("http://localhost:5000/api/transactions", dataToSubmit, {
         withCredentials: true,
       });

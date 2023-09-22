@@ -80,8 +80,6 @@ function ProductPage() {
           const alreadyViewed = user.recentlyViewed?.some(
             (viewed) => viewed.product === productID
           );
-          console.log("the user recently viewed");
-          console.log(user.recentlyViewed);
 
           if (!alreadyViewed) {
             const newView = {

@@ -13,7 +13,6 @@ function useResponsiveFlex(
   initialDirection?: string
 ) {
   const [flexDirection, setFlexDirection] = useState(initialDirection);
-  console.log("Inside useResponsiveFlex, initial state:", flexDirection);
 
   const lastFlexDirection = useRef(flexDirection);
 

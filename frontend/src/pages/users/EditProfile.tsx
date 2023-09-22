@@ -255,8 +255,6 @@ export default function UserProfileEdit({
 
   const handleContinue = async () => {
     const errors = await formik.validateForm();
-    console.log("the errors");
-    console.log(errors);
 
     if (Object.keys(errors).length === 0) {
       setPage("second");
@@ -652,9 +650,6 @@ export default function UserProfileEdit({
                                             address.name === currentAddress.name
                                         )
                                     );
-
-                                  console.log("heres the refined addresses");
-                                  console.log(refinedAddresses);
 
                                   const result = await updateUser({
                                     ...user,

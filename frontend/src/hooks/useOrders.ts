@@ -57,8 +57,6 @@ export const useOrders = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
-
         return response.data;
       } else {
         throw new Error("Failed to update the order");

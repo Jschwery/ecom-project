@@ -29,7 +29,6 @@ export default function useProducts() {
 
   const updateProduct = useCallback(async (product: Product) => {
     setLoading(true);
-    console.log(product);
     try {
       const response = await axios.put(
         `http://localhost:5000/api/products/${product._id}`,

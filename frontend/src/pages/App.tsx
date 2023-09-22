@@ -9,11 +9,6 @@ import Login from "../components/Login";
 import React from "react";
 
 function Home() {
-  useEffect(() => {
-    //check for session cookie, if there then restore session
-    //if no session cookie show appbar that has sign in/up, else show users profile component
-  }, []);
-
   const [btn, setBtn] = useState(false);
   const handleBtn = () => {
     setBtn(!btn);

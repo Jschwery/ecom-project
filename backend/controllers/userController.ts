@@ -176,10 +176,6 @@ export const updateUser = async (req: CustomRequest, res: Response) => {
 };
 
 export const uploadToS3 = async (req: CustomRequest, res: Response) => {
-  console.log(`Received upload request at: ${new Date().toISOString()}`);
-  console.log(`Method: ${req.method}`);
-  console.log(`Headers: ${JSON.stringify(req.headers)}`);
-
   const s3 = new AWS.S3({
     signatureVersion: "v4",
   });

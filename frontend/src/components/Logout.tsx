@@ -7,8 +7,6 @@ const clientID =
 
 export async function handleSignOut() {
   try {
-    console.log("SIGNOUT CALLED FRONTEND");
-
     const response = await axios.post(
       "http://localhost:5000/api/signout",
       {},

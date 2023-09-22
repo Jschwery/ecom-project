@@ -25,8 +25,6 @@ router.get("/login-failure", (req, res) => {
 router.post("/login", authController.handleLogin);
 
 router.post("/signout", (req: CustomRequest, res: Response) => {
-  console.log("THE SIGNOUT CALLED");
-
   res.cookie("googleToken", "", {
     expires: new Date(0),
     httpOnly: true,

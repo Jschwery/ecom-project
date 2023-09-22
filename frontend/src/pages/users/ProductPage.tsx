@@ -188,7 +188,7 @@ function ProductPage() {
 
       <div className="bg-ca2 w-full h-screen min-h-screen pt-20">
         <div className="w-full grow p-4 flex flex-col md:flex-row bg-ca2">
-          <div className="w-[80%] mx-auto min-w-[30%] rounded-md md:w-[30%] md:mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
+          <div className="w-[78%] mx-auto min-w-[30%] rounded-md md:w-[30%] md:mx-2 flex items-center flex-col bg-ca4  shadow-md shadow-black">
             <h2 className="pt-2">Seller</h2>
             <img
               onClick={() =>
@@ -221,7 +221,7 @@ function ProductPage() {
               </div>
               <h2 className="py-2">All Seller Items</h2>
 
-              <div className="flex flex-col w-full max-h-[400px] overflow-y-auto scrollable-darker-scrollbar">
+              <div className="flex flex-col w-full max-h-[550px] overflow-y-auto scrollable-darker-scrollbar">
                 {allProducts &&
                   allProducts.map((product, index) => {
                     const reviewTotal =
@@ -352,11 +352,11 @@ function ProductPage() {
                   <p className="text-gray-500 mt-2 md:mt-4">
                     {foundProduct.description}
                   </p>
-                  <span className="text-ca8 font-semibold">
+                  <span className="text-ca8 font-semibold min-w-0 truncate">
                     Category: {foundProduct.category}
                   </span>
 
-                  <span className="text-ca6 font-semibold">
+                  <span className="text-ca6 font-semibold min-w-0 truncate">
                     Quantity available: {foundProduct.quantity}
                   </span>
                   <div className="flex items-center space-x-1">
@@ -441,7 +441,7 @@ function ProductPage() {
             </div>
 
             <div className="w-[80%]  md:w-full mx-auto md:mx-0 flex flex-col items-center shadow-md shadow-black rounded-md bg-ca2 grow">
-              <h1>Product Reviews</h1>
+              <h1 className="text-xl sm:text-3xl">Product Reviews</h1>
               {renderedReviews.length > 0 ? (
                 renderedReviews
               ) : (
@@ -458,7 +458,7 @@ function ProductPage() {
                   />
                 )}
                 <div className="w-[80%] bg-ca4 mt-auto rounded-md space-y-2 justify-center p-5 flex flex-col">
-                  <div className="flex items-center space-x-2 pl-4">
+                  <div className="flex items-center space-x-2 pl-4 flex-wrap">
                     <h3>Leave a review?</h3>
                     <StarRating
                       value={productRating || 0}

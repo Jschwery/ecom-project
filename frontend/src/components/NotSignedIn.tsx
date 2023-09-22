@@ -22,7 +22,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Links, NAV_ITEMS } from "./SignedInNavBar";
 export interface NavItem {
@@ -35,22 +35,50 @@ interface NotSignedInNavProps {
   signIn?: boolean;
 }
 const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
-  const { isOpen, onClose, onOpen, onToggle } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const mainContainerRef = useRef<any>(null);
-
-  const handleResize = () => {
-    if (window.innerWidth >= 768) {
-      onClose();
-    }
-  };
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [dynamicNavItems, setDynamicNavItems] = useState<any>([]);
 
   useEffect(() => {
+    console.log("the dynamic nav items are");
+    console.log(dynamicNavItems);
+  }, [dynamicNavItems]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 890);
+      if (window.innerWidth >= 768) {
+        onClose();
+      }
+    };
+
     window.addEventListener("resize", handleResize);
     handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [onClose]);
+
+  useEffect(() => {
+    if (isSmallScreen) {
+      const updatedNavItems = [...NAV_ITEMS];
+      const newNavItem = {
+        label: "More",
+        children: Links.map((link) => ({
+          label: link.name,
+          subLabel: "",
+          href: `/${(link.path || link.name)
+            .toLowerCase()
+            .split(" ")
+            .join("-")}`,
+        })),
+      };
+      updatedNavItems.push(newNavItem);
+      setDynamicNavItems(updatedNavItems);
+    } else {
+      setDynamicNavItems([...NAV_ITEMS]);
+    }
+  }, [isSmallScreen]);
 
   return (
     <>
@@ -62,16 +90,24 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
         bg={"ca1"}
         px={4}
       >
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <IconButton
-            className="!bg-ca1 hover:!bg-ca2 "
-            size={"md"}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={"Open Menu"}
-            display={{ md: "none" }}
-            onClick={isOpen ? onClose : onOpen}
-          />
-          <HStack spacing={8} alignItems={"center"}>
+        <Flex
+          h={16}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          className="md:!justify-between"
+        >
+          <Flex flex={1} className="md:hidden" justifyContent={"start"}>
+            <IconButton
+              className="!bg-ca1 hover:!bg-ca2"
+              size={"md"}
+              icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+              aria-label={"Open Menu"}
+              display={{ md: "none" }}
+              onClick={isOpen ? onClose : onOpen}
+            />
+          </Flex>
+
+          <Flex flex={1} justifyContent={"center"}>
             <img
               className="cursor-pointer"
               onClick={() => {
@@ -82,60 +118,37 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
               src="/images/logo2.svg"
               alt="logoon"
             />
+          </Flex>
 
-            <HStack
-              as={"nav"}
-              spacing={4}
-              display={{ base: "none", md: "flex" }}
-            >
-              {Links.map((link, index) => (
-                <NavLink
-                  key={link.name + ` ${index}`}
-                  to={`/${(link.path || link.name)
-                    .toLowerCase()
-                    .split(" ")
-                    .join("-")}`}
+          <Flex flex={1} justifyContent={"end"}>
+            {signIn && (
+              <Stack justify={"flex-end"} direction={"row"} spacing={6}>
+                <Button
+                  as={"a"}
+                  fontSize={"sm"}
+                  textColor={"black"}
+                  fontWeight={400}
+                  variant={"link"}
+                  href={"/login"}
                 >
-                  {link.name}
-                </NavLink>
-              ))}
-
-              <DesktopNav NAV_ITEMS={NAV_ITEMS} />
-            </HStack>
-          </HStack>
-          {signIn && (
-            <Stack
-              flex={{ base: 1, md: 0 }}
-              justify={"flex-end"}
-              direction={"row"}
-              spacing={6}
-            >
-              <Button
-                as={"a"}
-                fontSize={"sm"}
-                textColor={"black"}
-                fontWeight={400}
-                variant={"link"}
-                href={"/login"}
-              >
-                Sign In
-              </Button>
-              <Button
-                as={"a"}
-                display={{ base: "none", md: "inline-flex" }}
-                fontSize={"sm"}
-                fontWeight={600}
-                color={"white"}
-                bg={"ca7"}
-                href={"/register"}
-                _hover={{
-                  bg: "ca6",
-                }}
-              >
-                Sign Up
-              </Button>
-            </Stack>
-          )}
+                  Sign In
+                </Button>
+                <Button
+                  as={"a"}
+                  fontSize={"sm"}
+                  fontWeight={600}
+                  color={"white"}
+                  bg={"ca7"}
+                  href={"/register"}
+                  _hover={{
+                    bg: "ca6",
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </Stack>
+            )}
+          </Flex>
         </Flex>
 
         <Collapse

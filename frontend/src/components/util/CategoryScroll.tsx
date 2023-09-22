@@ -18,7 +18,7 @@ function CategoryScroll({ category }: { category: string }) {
           key={product._id}
           to={`/products/${product._id}`}
           style={{ marginRight: "16px" }}
-          className="hover:scale-110"
+          className="hover:scale-110 shrink-0"
         >
           <img
             src={product.imageUrls![0] || "/images/logo2.svg"}

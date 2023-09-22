@@ -170,14 +170,17 @@ function App() {
           />
         </div>
         {recentProducts && recentProducts.length > 0 && (
-          <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
+          <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
             <h2>Recently Viewed</h2>
             <div className="flex space-x-2 bg-ca3 rounded-md overflow-x-auto py-3 px-2">
               {recentProducts &&
                 recentProducts.map((product) => (
                   <img
+                    onClick={() =>
+                      (window.location.pathname = `products/${product._id}`)
+                    }
                     key={product._id || uuidv4()}
-                    className="w-20 h-20 cursor-pointer hover:scale-110 rounded-full bg-ca1 p-1"
+                    className="w-20 h-20 cursor-pointer hover:scale-110 shrink-0 rounded-full bg-ca1 p-1"
                     src={product?.imageUrls?.[0] || "/images/logo2.svg"}
                     alt="Product Image"
                   />
@@ -185,19 +188,19 @@ function App() {
             </div>
           </div>
         )}
-        <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
+        <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
           <h3>Technology & Electronics</h3>
           <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
             <CategoryScroll category={"Technology"} />
           </div>
         </div>
-        <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
+        <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
           <h3>Clothing and Fashion</h3>
           <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
             <CategoryScroll category={"ClothingFashion"} />
           </div>
         </div>
-        <div className="flex flex-col space-y-4 w-[85%] md:w-[80%] mx-auto mt-8">
+        <div className="flex flex-col space-y-4 w-[93%] md:w-[80%] mx-auto mt-8">
           <h3>Home Living</h3>
           <div className="flex bg-ca3 rounded-md overflow-x-auto py-2">
             <CategoryScroll category={"HomeLiving"} />
@@ -205,7 +208,7 @@ function App() {
         </div>
         <div
           ref={divRef}
-          className="justify-center p-4 flex-wrap rounded-md mt-20 items-center flex flex-col w-[85%] md:w-[80%] mx-auto gap-4 bg-ca3"
+          className="justify-center p-4 flex-wrap rounded-md mt-20 items-center flex flex-col w-[93%] md:w-[80%] mx-auto gap-4 bg-ca3"
         >
           <h2 className="py-5">All Products</h2>
           {paginatedProducts &&
@@ -232,3 +235,5 @@ function App() {
 }
 
 export default App;
+
+//category/all overflow white

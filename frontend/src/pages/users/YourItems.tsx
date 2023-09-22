@@ -47,9 +47,11 @@ function YourItems() {
 
   useEffect(() => {
     if (viewProductsRef.current) {
-      setTimeout(() => {
-        viewProductsRef.current.scrollIntoView({ behavior: "smooth" });
-      }, 525);
+      if (window.innerWidth >= 768) {
+        setTimeout(() => {
+          viewProductsRef.current.scrollIntoView({ behavior: "smooth" });
+        }, 525);
+      }
     }
   }, [items]);
 
@@ -62,10 +64,10 @@ function YourItems() {
       <SignedInNav />
 
       <div className="pt-16 w-full h-screen  bg-ca2">
-        <div className="flex h-full w-full p-5 bg-ca2">
+        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row h-full w-full p-5 bg-ca2">
           <div
-            className={`bg-ca3 mx-3 overflow-y-auto rounded min-w-[150px] px-5 shadow-md shadow-black transition-all duration-500 ${
-              open ? "w-3/12" : "w-5/12"
+            className={`bg-ca3 md:mx-3 w-full overflow-y-auto rounded min-w-[150px] px-5 shadow-md shadow-black transition-all duration-500 ${
+              open ? "md:w-3/12" : "md:w-5/12"
             }`}
           >
             {user && user.isSeller && (
@@ -77,7 +79,7 @@ function YourItems() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="w-6 h-6 cursor-pointer ml-auto"
+                    className="w-6 h-6 cursor-pointer ml-auto hidden md:block"
                     onClick={() => {
                       setNotOpen(!open);
                     }}
@@ -96,7 +98,7 @@ function YourItems() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="w-6 h-6 cursor-pointer ml-auto"
+                    className="w-6 h-6 cursor-pointer ml-auto hidden md:block"
                     onClick={() => {
                       setNotOpen(!open);
                     }}
@@ -133,8 +135,8 @@ function YourItems() {
           </div>
           <div
             ref={divRef}
-            className={`flex flex-col justify-between items-center shadow-md shadow-black overflow-y-auto rounded-md bg-ca1 transition-all duration-500 ${
-              open ? "w-9/12" : "w-7/12"
+            className={`flex flex-col w-full justify-between items-center shadow-md shadow-black overflow-y-auto rounded-md bg-ca1 transition-all duration-500 ${
+              open ? "md:w-9/12" : "md:w-7/12"
             }`}
           >
             <h1>Your items</h1>

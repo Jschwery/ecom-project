@@ -6,6 +6,7 @@
   "scripts": {
     "frontend": "cd frontend && npm start",
     "backend": "cd backend && npm start",
+    "test": "jest",
     "start": "concurrently --kill-others \"npm --prefix backend run start\" \"npm --prefix frontend run start\"",
     "build": "cd backend && npm run build"
   },

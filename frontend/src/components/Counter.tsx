@@ -95,6 +95,7 @@ function Counter({ initialCount = 1, onCountChange }: CounterProps) {
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
+        data-testid="increment-button"
         strokeWidth="1.5"
         stroke="currentColor"
         className="w-6 h-6 flex-none align-middle self-center"

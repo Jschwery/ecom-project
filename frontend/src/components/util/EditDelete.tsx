@@ -22,7 +22,8 @@ function EditDelete({ deleteCallback, itemEditDelete }: EditDeleteProps) {
 
   return (
     <>
-      {itemEditDelete.status !== "Canceled" &&
+      {itemEditDelete &&
+        itemEditDelete.status !== "Canceled" &&
         itemEditDelete.status !== "Fulfilled" && (
           <div className="w-full flex space-x-1 justify-end absolute top-0 -right-1 ">
             <svg
@@ -47,6 +48,7 @@ function EditDelete({ deleteCallback, itemEditDelete }: EditDeleteProps) {
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="currentColor"
+              data-testid="delete-icon"
               className={`min-w-0 hover:text-red-500 ${
                 canDelete ? "w-0 opacity-0" : "w-6 opacity-100"
               } transition-all duration-300`}

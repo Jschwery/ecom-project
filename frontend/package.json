@@ -19,6 +19,7 @@
     "@syncfusion/ej2-react-dropdowns": "^23.1.36",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.5.3",
     "@types/node": "^20.4.8",
@@ -80,6 +81,7 @@
     ]
   },
   "devDependencies": {
+    "@cfaester/enzyme-adapter-react-18": "^0.7.1",
     "@types/enzyme": "^3.10.13"
   }
 }

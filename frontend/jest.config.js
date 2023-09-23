@@ -1,0 +1,12 @@
+module.exports = {
+  preset: "ts-jest",
+  testEnvironment: "node",
+  globals: {
+    "ts-jest": {
+      tsconfig: "tsconfig.jest.json",
+    },
+  },
+  transform: {
+    "^.+\\.jsx?$": "babel-jest",
+  },
+};

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "npm run build && node ./dist/index.js",
+    "start": "npm run build && node --max-old-space-size=512 ./dist/index.js",
     "build": "tsc"
   },
   "keywords": [],

@@ -116,9 +116,13 @@ function Checkout() {
         transactionDate: new Date(),
       };
 
-      await axios.post("http://localhost:5000/api/transactions", dataToSubmit, {
-        withCredentials: true,
-      });
+      await axios.post(
+        "http://54.89.209.73:8080/api/transactions",
+        dataToSubmit,
+        {
+          withCredentials: true,
+        }
+      );
 
       setLocalCart([]);
       if (setOrderSavings) {

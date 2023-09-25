@@ -12,7 +12,7 @@ export const useOrders = () => {
       if (user && user._id) {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/transactions/seller/${user?._id}`
+            `http://54.89.209.73:8080/api/transactions/seller/${user?._id}`
           );
           if (response.status === 200) {
             setOrders(response.data);
@@ -30,7 +30,7 @@ export const useOrders = () => {
   const getOrderById = async (orderID: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/transactions/order/${orderID}`,
+        `http://54.89.209.73:8080/api/transactions/order/${orderID}`,
         {
           withCredentials: true,
         }
@@ -48,7 +48,7 @@ export const useOrders = () => {
   ): Promise<Transaction> => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/transactions/${itemToUpdate._id}`,
+        `http://54.89.209.73:8080/api/transactions/${itemToUpdate._id}`,
         {
           ...itemToUpdate,
           status: "Fulfilled",

@@ -51,7 +51,7 @@ export default function Login() {
         const { ...otherValues } = values;
 
         const response = await axios.post(
-          "http://localhost:5000/api/login",
+          "http://54.89.209.73:8080/api/login",
           { ...otherValues, rememberMe },
           {
             headers: { "Content-Type": "application/json" },

@@ -56,7 +56,7 @@ async function handleProductImageDelete(images: string[]) {
           endpoint: "products",
           object: { imageUrl: image },
           imageProp: "imageUrl",
-          baseUrl: "http://localhost:5000/api",
+          baseUrl: "http://54.89.209.73:8080/api",
           failCallback: () => console.error("Failed to delete image from S3."),
         })
       )
@@ -127,7 +127,7 @@ function DetailedItem({
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/products/images",
+        "http://54.89.209.73:8080/api/products/images",
         formData,
         config
       );
@@ -159,7 +159,7 @@ function DetailedItem({
     );
 
     return axios.put(
-      `http://localhost:5000/api/products/${product._id}`,
+      `http://54.89.209.73:8080/api/products/${product._id}`,
       {
         ...formValues,
         salePrice: salePrice,

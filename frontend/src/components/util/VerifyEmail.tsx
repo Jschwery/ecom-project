@@ -7,7 +7,7 @@ export const VerifyEmail: React.FC = () => {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:5000/verify-email`, { token })
+      .post(`http://54.89.209.73:8080/verify-email`, { token })
       .then((response) => {
         console.log("Email verified!");
       })

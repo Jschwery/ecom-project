@@ -18,7 +18,7 @@ export const createUser = async (req: CustomRequest, res: Response) => {
     req.body.password = passwordHash;
     newUser = await userService.createUser(req.body);
     const token = userService.generateVerificationToken(newUser._id);
-    const verificationLink = `http://localhost:5000/api/verify-email?token=${token}`;
+    const verificationLink = `http://54.89.209.73:8080/api/verify-email?token=${token}`;
     await mailer.sendEmail(
       newUser.email,
       "Email Verification",

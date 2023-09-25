@@ -8,7 +8,7 @@ const clientID =
 export async function handleSignOut() {
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/signout",
+      "http://54.89.209.73:8080/api/signout",
       {},
       {
         withCredentials: true,

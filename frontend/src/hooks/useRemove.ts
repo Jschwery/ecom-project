@@ -10,7 +10,9 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   const removeItem = async (itemToRemove: any) => {
     try {
       const response = await fetch(
-        `${apiURL ?? "http://localhost:5000/api"}/products/${itemToRemove._id}`,
+        `${apiURL ?? "http://54.89.209.73:8080/api"}/products/${
+          itemToRemove._id
+        }`,
         {
           method: "DELETE",
           credentials: "include",
@@ -39,7 +41,7 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   ): Promise<Transaction> => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/transactions/${itemToCancel._id}`,
+        `http://54.89.209.73:8080/api/transactions/${itemToCancel._id}`,
         {
           ...itemToCancel,
           status: "Canceled",
@@ -71,7 +73,9 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
 
     try {
       await fetch(
-        `${apiURL ?? "http://localhost:5000/api"}/products/${itemToRemove._id}`,
+        `${apiURL ?? "http://54.89.209.73:8080/api"}/products/${
+          itemToRemove._id
+        }`,
         {
           method: "DELETE",
           credentials: "include",

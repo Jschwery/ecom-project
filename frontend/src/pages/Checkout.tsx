@@ -18,7 +18,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useCart } from "../global/CartProvider";
 import useUser from "../hooks/useUser";
-import { colors } from "../styles/colors";
 import axios from "axios";
 import useProducts from "../hooks/useProducts";
 import { Product, User } from "../../typings";

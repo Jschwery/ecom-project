@@ -21,6 +21,9 @@
     "concurrently": "^8.2.0"
   },
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-react": "^7.22.15",
     "@chakra-ui/icons": "^2.1.0",
     "axios": "^1.4.0",
     "formik": "^2.4.3",

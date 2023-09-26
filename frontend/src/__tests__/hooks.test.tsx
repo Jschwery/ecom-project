@@ -1,9 +1,7 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import useCategories from "../hooks/useCategories";
 import { useFilteredProducts } from "../hooks/useFilteredProducts";
-import useResponsiveFlex from "../hooks/useResponsiveFlex";
-import axios from "axios";
-import useUser from "../hooks/useUser";
+jest.mock("axios");
 
 it("should return an object with the correct properties", () => {
   const { result } = renderHook(() => useCategories());
@@ -21,7 +19,9 @@ it("should return an object with the correct properties", () => {
 // handleTagChange sets selectedTags to an empty array if newValue is null
 it("should set selectedTags to an empty array when handleTagChange is called with a null newValue", () => {
   const { result } = renderHook(() => useCategories());
-  result.current.handleTagChange(null);
+  act(() => {
+    result.current.handleTagChange(null);
+  });
   expect(result.current.selectedTags).toEqual([]);
 });
 

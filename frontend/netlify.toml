@@ -1,4 +1,4 @@
 [build]
   publish = "frontend/build"
-  command = "npm install --legacy-peer-deps && npm run build"
+  command = "command = "yarn install && yarn build"
   base    = "frontend/"

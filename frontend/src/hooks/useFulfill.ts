@@ -37,7 +37,6 @@ export const useFulfill = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        let alternetProduct = []; // Not used?
         if (order?.productAndCount) {
           const productPromises = order.productAndCount.map(
             async (productInfo) => {

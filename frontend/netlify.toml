@@ -1,4 +1,7 @@
 [build]
-  publish = "frontend/build"
-  command = "command = "yarn install && yarn build"
   base    = "frontend/"
+  command = "yarn install && yarn build"
+  publish = "frontend/build"  
+
+[build.environment]
+  NODE_VERSION = "18.18.0"

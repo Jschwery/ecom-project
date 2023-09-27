@@ -24,6 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import Cart from "../pages/users/Cart";
 import { useCart } from "../global/CartProvider";
 import { DesktopNav, MobileNav } from "./NotSignedIn";
+import { useLocation, useParams } from "react-router-dom";
 
 export type LinkType = {
   name: string;
@@ -137,6 +138,9 @@ type NavLinkProps = {
   to: string;
 };
 const NavLink = ({ children, to }: NavLinkProps) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+
   return (
     <Box
       as="a"
@@ -147,6 +151,7 @@ const NavLink = ({ children, to }: NavLinkProps) => {
         textDecoration: "none",
         bg: "ca2",
       }}
+      className={`${isActive ? "bg-ca2" : ""}`}
       href={to}
       onClick={(e: any) => {
         e.preventDefault();

@@ -148,10 +148,10 @@ function ListedItem({
       <div className="flex flex-col justify-between min-w-0 grow w-full">
         <div className="flex flex-col justify-between px-4 max-w-1/3">
           <div className="flex items-start w-full min-w-0 truncate justify-between pt-3 pl-1">
-            <div className="flex flex-col min-w-[45%]">
+            <div className="flex flex-col px-2 min-w-[45%]">
               <h3
                 title={product.name}
-                className="text-ca9 pr-1 min-w-0 truncate  line-clamp-2"
+                className="text-ca9 pr-1 min-w-0 truncate"
                 style={wrapTextStyle}
               >
                 {product.name

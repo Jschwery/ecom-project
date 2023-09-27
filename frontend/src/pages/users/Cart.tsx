@@ -101,7 +101,6 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
     const existingItemIndex = currentCart.findIndex(
       (item: CartItem) => item.product === productID
     );
-    console.log("existingItemIndex: " + existingItemIndex);
 
     if (existingItemIndex !== -1) {
       currentCart.splice(existingItemIndex, 1);

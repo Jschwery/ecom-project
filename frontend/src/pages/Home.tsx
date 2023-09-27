@@ -12,6 +12,7 @@ import PictureCarousel from "../components/DealCarousel";
 import useResponsiveFlex from "../hooks/useResponsiveFlex";
 import CategoryScroll from "../components/util/CategoryScroll";
 import ViewProducts from "./users/ViewProducts";
+import SearchBar from "../components/SearchBar";
 
 export const loadingStyles: React.CSSProperties = {
   position: "fixed",
@@ -178,6 +179,10 @@ function App() {
         <NotSignedInNav signIn={true} />
       )}
       <div className="pt-16 bg-ca2 pb-4 w-full">
+        <div className="flex pt-4 flex-col items-center h-24">
+          <h4>Find Products</h4>
+          <SearchBar />
+        </div>
         <div className="flex my-5 h-[250px] overflow-hidden p-4 justify-center items-center">
           <PictureCarousel
             hideSvg={cartVisible}

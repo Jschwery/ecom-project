@@ -28,7 +28,7 @@ function useResponsiveFlex(
         break;
       }
     }
-  }, 775);
+  }, 850);
 
   useEffect(() => {
     if (initialDirection !== flexDirection) {

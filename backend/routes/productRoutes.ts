@@ -8,7 +8,7 @@ router.use(expressFileUpload());
 
 router.post("/products", extractTokenAndUser, productController.createProduct);
 
-router.get("/products", extractTokenAndUser, productController.getAllProducts);
+router.get("/products", productController.getAllProducts);
 
 router.put(
   "/products/:productID",

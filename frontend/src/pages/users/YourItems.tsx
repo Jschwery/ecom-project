@@ -43,7 +43,7 @@ function YourItems() {
       setValidItems(validItems);
     };
     itemReset();
-  }, [items]);
+  }, [items, user]);
 
   useEffect(() => {
     if (viewProductsRef.current) {

@@ -22,9 +22,11 @@ function ProductCategory() {
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
-  const flexDirection = useResponsiveFlex(divRef, breakpoints);
   const [scaledPrice, setScaledPrice] = useState<number>();
   const [minimized, setMinimized] = useState<boolean>();
+  const [flexDirection, setFlexDirection] = useState<
+    "flex-row-items" | "flex-col-items"
+  >(window.innerWidth > 768 ? "flex-row-items" : "flex-col-items");
   const [paginatedProducts, setPaginatedProducts] = useState<Product[]>();
   const [filtersState, setFiltersState] = useState<
     {
@@ -44,6 +46,20 @@ function ProductCategory() {
     .split(/(?=[A-Z])/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setFlexDirection("flex-row-items");
+      } else {
+        setFlexDirection("flex-col-items");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!memoizedCategoryName) {

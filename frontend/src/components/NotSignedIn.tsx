@@ -78,7 +78,7 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
   return (
     <>
       <Box
-        className={`z-40 fixed w-full  shadow-sm max-h-[100vh] shadow-black ${
+        className={`z-50 fixed w-full  shadow-sm max-h-[100vh] shadow-black ${
           isOpen ? "overflow-y-auto" : "over-hidden"
         }`}
         ref={mainContainerRef}
@@ -91,7 +91,7 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
           justifyContent={"space-between"}
           className="md:!justify-between"
         >
-          <Flex flex={1} className="md:hidden" justifyContent={"start"}>
+          <Flex flex={1} className="" justifyContent={"start"}>
             <IconButton
               className="!bg-ca1 hover:!bg-ca2"
               size={"md"}
@@ -100,6 +100,20 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
               display={{ md: "none" }}
               onClick={isOpen ? onClose : onOpen}
             />
+            <Flex className="!hidden md:!block">
+              {Links.map((link, index) => (
+                <NavLink
+                  to={`/${(link.path || link.name)
+                    .toLowerCase()
+                    .split(" ")
+                    .join("-")}`}
+                  key={link.name + ` - ${index}`}
+                  className={"p-2 hover:bg-ca2 rounded-md"}
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+            </Flex>
           </Flex>
 
           <Flex flex={1} justifyContent={"center"}>
@@ -147,7 +161,7 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
         </Flex>
 
         <Collapse
-          className="pt-14 !overflow-visible md:!hidden"
+          className="pt-14 !overflow-visible "
           in={isOpen}
           animateOpacity
           style={{ height: isOpen ? "auto" : "0px" }}
@@ -155,8 +169,12 @@ const NotSignedInNav: React.FC<NotSignedInNavProps> = ({ signIn }) => {
           <Stack as={"nav"} spacing={4}>
             {Links.map((link, index) => (
               <NavLink
-                to={`/${(link.path || link.name).toLowerCase()}`}
+                to={`/${(link.path || link.name)
+                  .toLowerCase()
+                  .split(" ")
+                  .join("-")}`}
                 key={link.name + ` - ${index}`}
+                className={"p-2 hover:bg-ca2 rounded-md"}
               >
                 {link.name}
               </NavLink>
@@ -241,7 +259,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ NAV_ITEMS }) => {
                 boxShadow={"xl"}
                 bg={popoverContentBgColor}
                 p={4}
-                className={" !z-50"}
+                className={"!z-50"}
                 rounded={"xl"}
                 minW={"sm"}
               >
@@ -292,6 +310,7 @@ export const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
           >
             {label}
           </Text>
+
           <Text
             fontSize={"xs"}
             transition={"all .3s ease"}

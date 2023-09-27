@@ -51,13 +51,13 @@ function Deals() {
 
   const { filteredProducts, setPriceFilter, setRatingFilter, setTagsFilter } =
     useFilteredProducts(categoryItems || null);
+  const areAnyFiltersActive = filtersState.some((filter) => filter.value);
 
   let maxPrice = getMaxPrice(categoryItems!);
   let scalingFactor = maxPrice ? maxPrice / 100 : 1;
 
   useEffect(() => {
     if (!products || !categoryName) return;
-    console.log("the category name is: " + categoryName);
 
     const categoryItems = products?.filter((product) => {
       if (categoryName === "all") {
@@ -68,8 +68,17 @@ function Deals() {
         product.specialOffer
       );
     });
+
     setCategoryItems(categoryItems);
-  }, [products, categoryName]);
+  }, [products, categoryName, filtersState]);
+
+  useEffect(() => {
+    console.log("the filtered products are");
+    console.log(filteredProducts);
+
+    console.log("the paginated");
+    console.log(paginatedProducts);
+  }, [filteredProducts, paginatedProducts]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -110,8 +119,8 @@ function Deals() {
   }, [divRef.current]);
 
   return (
-    <div className="w-full h-screen bg-ca1">
-      {user ? <SignedInNav /> : <NotSignedInNav />}
+    <div className="w-full h-screen  bg-ca1">
+      {user ? <SignedInNav /> : <NotSignedInNav signIn={true} />}
       <div className="flex flex-col md:flex-row h-full w-full pt-16">
         <div
           className={`w-full h-full transition-all duration-500 ${
@@ -151,11 +160,11 @@ function Deals() {
         </div>
         <div
           ref={divRef}
-          className="h-full w-full items-center p-4 flex flex-col gap-4 bg-ca3"
+          className="h-full grow items-center max-h-[100vh] overflow-y-auto p-4 flex flex-col gap-4 bg-ca3"
         >
           <h1>Products</h1>
-          {paginatedProducts &&
-            paginatedProducts.map((p) => (
+          {(!areAnyFiltersActive || filteredProducts.length > 0) &&
+            paginatedProducts?.map((p) => (
               <ListedItem
                 key={p._id}
                 images={p.imageUrls}
@@ -163,31 +172,34 @@ function Deals() {
                 product={p}
               />
             ))}
-          {paginatedProducts && paginatedProducts.length === 0 && (
-            <div className="md:h-[80vh]  h-[50vh] w-full items-center flex bg-ca3">
-              <div className="flex items-center flex-col w-full space-y-4">
-                <h3 className="text-ca6 text-2xl md:text-3xl">
-                  No Products Found
-                </h3>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-28 h-28 md:w-36 md:h-36 text-ca5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-                  />
-                </svg>
+          {areAnyFiltersActive &&
+            filteredProducts &&
+            filteredProducts.length === 0 && (
+              <div className="md:h-[80vh]  h-[50vh] w-full items-center flex bg-ca3">
+                <div className="flex items-center flex-col w-full space-y-4">
+                  <h3 className="text-ca6 text-2xl md:text-3xl">
+                    No Products Found
+                  </h3>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-28 h-28 md:w-36 md:h-36 text-ca5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                    />
+                  </svg>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           <div>
-            {products && products.length > 0 && (
+            {(!areAnyFiltersActive ||
+              (filteredProducts && filteredProducts.length > 0)) && (
               <ViewProducts
                 itemsList={filteredProducts ?? []}
                 showItemsCallback={setPaginatedProducts}

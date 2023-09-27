@@ -15,9 +15,7 @@ export default function useProducts() {
   const fetchData = useCallback(async (endpoint: string) => {
     try {
       setLoading(true);
-      const response = await axios.get(`${BASE_URL}${endpoint}`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`${BASE_URL}${endpoint}`);
       return response.data;
     } catch (err: any) {
       setError(err);
@@ -71,10 +69,7 @@ export default function useProducts() {
   const findProductOwner = useCallback(async (productID: string) => {
     try {
       const response = await axios.get(
-        `http://54.89.209.73:8080/api/products/owner/${productID}`,
-        {
-          withCredentials: true,
-        }
+        `http://54.89.209.73:8080/api/products/owner/${productID}`
       );
       setProductOwner(response.data);
     } catch (err) {

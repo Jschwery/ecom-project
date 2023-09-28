@@ -104,7 +104,7 @@ export default function UserProfileEdit({
     };
 
     const response = await axios.post(
-      "http://54.89.209.73:8080/api/products/images",
+      "https://34.227.14.81:8080/api/products/images",
       formData,
       config
     );
@@ -119,7 +119,7 @@ export default function UserProfileEdit({
   const submitProfileData = async (formData?: any, profilePic?: string) => {
     try {
       const response = await axios.put(
-        "http://54.89.209.73:8080/api/users/edit",
+        "https://34.227.14.81:8080/api/users/edit",
         {
           ...formData,
           profilePicture: profilePic ? profilePic : null,
@@ -201,7 +201,7 @@ export default function UserProfileEdit({
           endpoint: "users",
           object: { imageUrl: user.profilePicture },
           imageProp: "imageUrl",
-          baseUrl: "http://54.89.209.73:8080/api",
+          baseUrl: "https://34.227.14.81:8080/api",
           failCallback: () => console.error("Failed to delete image from S3."),
         });
       }

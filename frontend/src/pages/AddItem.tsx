@@ -109,7 +109,7 @@ function AddItem() {
       };
 
       const response = await axios.post(
-        "http://54.89.209.73:8080/api/products/images",
+        "https://34.227.14.81:8080/api/products/images",
         formData,
         config
       );
@@ -152,7 +152,7 @@ function AddItem() {
     }
 
     return axios.post(
-      "http://54.89.209.73:8080/api/products",
+      "https://34.227.14.81:8080/api/products",
       {
         ...formValues,
         imageUrls: imageUrls,

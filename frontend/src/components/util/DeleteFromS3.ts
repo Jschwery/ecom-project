@@ -14,7 +14,7 @@ export const deleteImgFromS3 = async ({
   endpoint,
   object,
   imageProp,
-  baseUrl = "http://54.89.209.73:8080/api",
+  baseUrl = "https://34.227.14.81:8080/api",
   successCallback,
   failCallback,
 }: DeleteImageOptions) => {

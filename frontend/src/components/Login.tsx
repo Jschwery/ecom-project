@@ -11,7 +11,7 @@ export default function ContinueWithGoogle() {
       color={"ca1"}
       _hover={{ bg: "ca6" }}
       onClick={() =>
-        (window.location.href = "http://54.89.209.73:8080/api/auth/google")
+        (window.location.href = "https://34.227.14.81:8080/api/auth/google")
       }
     >
       <HStack spacing={2} alignItems="center">

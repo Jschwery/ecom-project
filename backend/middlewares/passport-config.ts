@@ -9,7 +9,7 @@ const usePassport = () => {
       {
         clientID: process.env.GOOGLE_CLIENT!,
         clientSecret: process.env.GOOGLE_SECRET!,
-        callbackURL: "http://54.89.209.73:8080/api/auth/google/callback",
+        callbackURL: "https://34.227.14.81:8080/api/auth/google/callback",
       },
       async function (
         token: string,

@@ -41,7 +41,7 @@ mongoose
       console.log("Counter initialized!");
     }
   })
-  .catch((err) => console.log(err));
+  .catch((err: any) => console.log(err));
 
 usePassport();
 AWS.config.update({

@@ -1,6 +1,6 @@
 [build]
   base    = "frontend/"
-  command = "yarn install --legacy-peer-deps && yarn build"
+  command = "npm install --legacy-peer-deps && npm build"
   publish = "frontend/build"
 
 [build.environment]

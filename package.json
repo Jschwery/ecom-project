@@ -7,7 +7,7 @@
     "frontend": "cd frontend && yarn start",
     "backend": "cd backend && yarn start",
     "test": "jest",
-    "start": "concurrently --kill-others \"yarn --cwd backend start\" \"yarn --cwd frontend start\"",
+    "start": "concurrently --kill-others \"yarn --cwd backend start\" \"npm run --prefix frontend start\"",
     "build": "cd backend && yarn build"
   },
   "repository": {

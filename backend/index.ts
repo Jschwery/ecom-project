@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import transactionRoutes from "./routes/transactionRoutes";
-// import productRoutes from "./routes/productRoutes";
 import authRoutes from "./routes/authRoutes";
 import passport from "passport";
 import session from "express-session";

@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://ecom-project-iota.vercel.app",
     credentials: true,
   })
 );

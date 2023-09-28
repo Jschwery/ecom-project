@@ -1,6 +1,6 @@
 [build]
   base = "frontend/"
-  command = "npm install --legacy-peer-deps && CI=false react-scripts build || true"
+  command = "npm install --legacy-peer-deps && cross-env CI=false react-scripts build || true"
   publish = "frontend/build"
 
 [build.environment]

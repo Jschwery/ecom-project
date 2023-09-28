@@ -14,7 +14,7 @@ export const deleteImgFromS3 = async ({
   endpoint,
   object,
   imageProp,
-  baseUrl = "https://34.227.14.81:8080/api",
+  baseUrl = "https://orchtin.online/api",
   successCallback,
   failCallback,
 }: DeleteImageOptions) => {

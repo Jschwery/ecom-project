@@ -109,7 +109,7 @@ function AddItem() {
       };
 
       const response = await axios.post(
-        "https://34.227.14.81:8080/api/products/images",
+        "https://orchtin.online/api/products/images",
         formData,
         config
       );
@@ -152,7 +152,7 @@ function AddItem() {
     }
 
     return axios.post(
-      "https://34.227.14.81:8080/api/products",
+      "https://orchtin.online/api/products",
       {
         ...formValues,
         imageUrls: imageUrls,

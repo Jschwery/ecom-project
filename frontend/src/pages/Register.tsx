@@ -72,7 +72,7 @@ export default function Register() {
         const { confirmPassword, ...otherValues } = values;
 
         const response = await axios.post(
-          "https://34.227.14.81:8080/api/register-user",
+          "https://orchtin.online/api/register-user",
           otherValues,
           { headers: { "Content-Type": "application/json" } }
         );

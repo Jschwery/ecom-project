@@ -116,7 +116,7 @@ function Checkout() {
       };
 
       await axios.post(
-        "https://34.227.14.81:8080/api/transactions",
+        "https://orchtin.online/api/transactions",
         dataToSubmit,
         {
           withCredentials: true,

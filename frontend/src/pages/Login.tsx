@@ -51,7 +51,7 @@ export default function Login() {
         const { ...otherValues } = values;
 
         const response = await axios.post(
-          "https://34.227.14.81:8080/api/login",
+          "https://orchtin.online/api/login",
           { ...otherValues, rememberMe },
           {
             headers: { "Content-Type": "application/json" },

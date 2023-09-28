@@ -18,7 +18,7 @@ export const createUser = async (req: CustomRequest, res: Response) => {
     req.body.password = passwordHash;
     newUser = await userService.createUser(req.body);
     const token = userService.generateVerificationToken(newUser._id);
-    const verificationLink = `https://34.227.14.81:8080/api/verify-email?token=${token}`;
+    const verificationLink = `https://orchtin.online/api/verify-email?token=${token}`;
     await mailer.sendEmail(
       newUser.email,
       "Email Verification",

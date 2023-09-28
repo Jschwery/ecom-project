@@ -12,7 +12,7 @@ export const useOrders = () => {
       if (user && user._id) {
         try {
           const response = await axios.get(
-            `https://34.227.14.81:8080/api/transactions/seller/${user?._id}`
+            `https://orchtin.online/api/transactions/seller/${user?._id}`
           );
           if (response.status === 200) {
             setOrders(response.data);
@@ -30,7 +30,7 @@ export const useOrders = () => {
   const getOrderById = async (orderID: string) => {
     try {
       const response = await axios.get(
-        `https://34.227.14.81:8080/api/transactions/order/${orderID}`,
+        `https://orchtin.online/api/transactions/order/${orderID}`,
         {
           withCredentials: true,
         }
@@ -48,7 +48,7 @@ export const useOrders = () => {
   ): Promise<Transaction> => {
     try {
       const response = await axios.put(
-        `https://34.227.14.81:8080/api/transactions/${itemToUpdate._id}`,
+        `https://orchtin.online/api/transactions/${itemToUpdate._id}`,
         {
           ...itemToUpdate,
           status: "Fulfilled",

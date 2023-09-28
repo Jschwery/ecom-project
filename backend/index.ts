@@ -14,8 +14,18 @@ import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
 import productRoutes from "./routes/productRoutes";
 import { Counter } from "./models/Transaction";
+import fs from "fs";
+import https from "https";
 
 dotenv.config();
+const privateKey = fs.readFileSync("/etc/certs/privkey.pem", "utf8");
+const certificate = fs.readFileSync("/etc/certs/fullchain.pem", "utf8");
+const ca = fs.readFileSync("/etc/certs/chain.pem", "utf8");
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  ca: ca,
+};
 const app = express();
 app.use(cookieParser());
 
@@ -64,6 +74,8 @@ app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server is running on port ${process.env.PORT || 5000}`);
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(443, () => {
+  console.log("HTTPS Server running on port 443");
 });

@@ -23,6 +23,7 @@
     "mongoose": "^7.4.2",
     "nodemailer": "^6.9.4",
     "nodemailer-ses-transport": "^1.5.1",
+    "passport": "^your_version",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

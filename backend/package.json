@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "yarn build && node --max-old-space-size=1024 ./dist/index.js",
+    "start": "yarn build && node --max-old-space-size=2560 ./dist/index.js",
     "build": "tsc"
   },
   "keywords": [],

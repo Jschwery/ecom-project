@@ -80,7 +80,7 @@ it("should return an object with filteredProducts and all filter setters when in
         },
       ],
       quantity: 10,
-      imageUrls: ["url3", "url4"],
+      imageUrls: ["url2", "url5"],
       tags: ["tag2", "tag3"],
       creationDate: new Date("2022-02-01"),
     },
@@ -93,6 +93,11 @@ it("should return an object with filteredProducts and all filter setters when in
   expect(result.current.filteredProducts).toEqual(initialProducts);
   expect(result.current.setRatingFilter).toBeInstanceOf(Function);
   expect(result.current.setSpecialOfferFilter).toBeInstanceOf(Function);
+  expect(
+    result.current.filteredProducts.some(
+      (product) => product.name === "Product 2"
+    )
+  ).toBe(true);
   expect(result.current.setCategoryFilter).toBeInstanceOf(Function);
   expect(result.current.setPriceFilter).toBeInstanceOf(Function);
   expect(result.current.setTagsFilter).toBeInstanceOf(Function);

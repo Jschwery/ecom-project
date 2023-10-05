@@ -109,7 +109,7 @@ function AddItem() {
       };
 
       const response = await axios.post(
-        "https://orchtin.online/api/products/images",
+        "http://localhost:5000/api/products/images",
         formData,
         config
       );
@@ -152,7 +152,7 @@ function AddItem() {
     }
 
     return axios.post(
-      "https://orchtin.online/api/products",
+      "http://localhost:5000/api/products",
       {
         ...formValues,
         imageUrls: imageUrls,
@@ -262,7 +262,7 @@ function AddItem() {
               className="hidden md:block cursor-ew-resize bg-ca8 sm:h-screen w-5 px-2"
             ></div>
 
-            <div className="flex flex-col w-full  bg-ca3 px-5 space-y-5 p-16 sm:px-16 mt-2 overflow-auto">
+            <div className="flex flex-col w-full bg-ca3 px-5 space-y-5 p-16 sm:px-16 mt-2 overflow-auto">
               <h2 className="pb-2">Create product listing</h2>
               <FormControl
                 id="name"
@@ -325,8 +325,15 @@ function AddItem() {
                     value={formik.values.price}
                     onBlur={formik.handleBlur}
                     onChange={(valueAsString, valueAsNumber) => {
-                      if (valueAsNumber > 999) {
-                        formik.setFieldValue("price", 999);
+                      if (isNaN(valueAsNumber)) {
+                        formik.setFieldValue("price", 0);
+                        return;
+                      }
+
+                      if (valueAsNumber > 9999) {
+                        formik.setFieldValue("price", 9999);
+                      } else if (valueAsNumber <= 0) {
+                        formik.setFieldValue("price", 0);
                       } else {
                         formik.setFieldValue("price", valueAsNumber);
                       }

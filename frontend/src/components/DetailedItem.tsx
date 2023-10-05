@@ -56,7 +56,7 @@ async function handleProductImageDelete(images: string[]) {
           endpoint: "products",
           object: { imageUrl: image },
           imageProp: "imageUrl",
-          baseUrl: "https://orchtin.online/api",
+          baseUrl: "http://localhost:5000/api",
           failCallback: () => console.error("Failed to delete image from S3."),
         })
       )
@@ -127,7 +127,7 @@ function DetailedItem({
       };
 
       const response = await axios.post(
-        "https://orchtin.online/api/products/images",
+        "http://localhost:5000/api/products/images",
         formData,
         config
       );
@@ -159,7 +159,7 @@ function DetailedItem({
     );
 
     return axios.put(
-      `https://orchtin.online/api/products/${product._id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/api/products/${product._id}`,
       {
         ...formValues,
         salePrice: salePrice,

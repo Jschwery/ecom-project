@@ -19,7 +19,7 @@ export const googleAuthCallback = async (req: CustomRequest, res: Response) => {
       maxAge: 1000 * 60 * 60 * 24,
     });
 
-    return res.redirect(`http://localhost:3000/`);
+    return res.redirect(`${process.env.FRONTEND_URL}/`);
   } catch (err) {
     console.error(err);
     return res.status(500).send("Internal Server Error");

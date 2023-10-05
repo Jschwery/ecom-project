@@ -18,6 +18,12 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
   const [creationDateFilter, setCreationDateFilter] = useState<Date | null>(
     null
   );
+  const [internalProducts, setInternalProducts] = useState<Product[] | null>(
+    initialProducts
+  );
+  useEffect(() => {
+    setInternalProducts(initialProducts);
+  }, [initialProducts]);
 
   const filteredProducts = useMemo(() => {
     if (!initialProducts) return [];
@@ -69,10 +75,12 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
     priceFilter,
     tagsFilter,
     creationDateFilter,
+    internalProducts,
   ]);
 
   return {
     filteredProducts,
+    setInternalProducts,
     setRatingFilter,
     setSpecialOfferFilter,
     setCategoryFilter,

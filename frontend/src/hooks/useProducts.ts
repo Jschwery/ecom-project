@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
 import { useToast } from "@chakra-ui/react";
 
-const BASE_URL = "https://orchtin.online";
+const BASE_URL = "http://localhost:5000";
 
 export default function useProducts() {
   const [products, setProducts] = useState<Product[] | null>(null);
@@ -29,7 +29,7 @@ export default function useProducts() {
     setLoading(true);
     try {
       const response = await axios.put(
-        `https://orchtin.online/api/products/${product._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/products/${product._id}`,
         product,
         {
           withCredentials: true,
@@ -69,7 +69,7 @@ export default function useProducts() {
   const findProductOwner = useCallback(async (productID: string) => {
     try {
       const response = await axios.get(
-        `https://orchtin.online/api/products/owner/${productID}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/products/owner/${productID}`
       );
       setProductOwner(response.data);
     } catch (err) {
@@ -80,7 +80,7 @@ export default function useProducts() {
   const getProductsByCategory = useCallback(async (category: string) => {
     try {
       const response = await axios.get(
-        `https://orchtin.online/api/products/category/${category}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/products/category/${category}`
       );
       return response.data;
     } catch (err) {
@@ -91,7 +91,7 @@ export default function useProducts() {
   const getProductOwner = useCallback(async (productID: string) => {
     try {
       const response = await axios.get(
-        `https://orchtin.online/api/products/owner/${productID}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/products/owner/${productID}`,
         {
           withCredentials: true,
         }

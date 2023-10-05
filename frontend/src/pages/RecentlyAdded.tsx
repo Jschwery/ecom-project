@@ -36,8 +36,13 @@ function RecentlyAdded() {
     { filterName: "tagFilter", value: false },
     { filterName: "ratingFilter", value: false },
   ]);
-  const { filteredProducts, setPriceFilter, setRatingFilter, setTagsFilter } =
-    useFilteredProducts(recentProducts || null);
+  const {
+    filteredProducts,
+    setInternalProducts,
+    setPriceFilter,
+    setRatingFilter,
+    setTagsFilter,
+  } = useFilteredProducts(recentProducts || null);
   const areAnyFiltersActive = filtersState.some((filter) => filter.value);
 
   useEffect(() => {
@@ -53,6 +58,24 @@ function RecentlyAdded() {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    console.log("the filtered products are:");
+    console.log(filteredProducts);
+  }, [filteredProducts]);
+
+  useEffect(() => {
+    if (areAnyFiltersActive === false) {
+      recentProducts &&
+        setTimeout(() => {
+          console.log("here are the recent products");
+          console.log([...recentProducts]);
+
+          setRecentProducts([...recentProducts]);
+          setInternalProducts([...recentProducts]);
+        }, 2000);
+    }
+  }, [areAnyFiltersActive, recentProducts]);
 
   useEffect(() => {
     if (!products) {
@@ -146,7 +169,7 @@ function RecentlyAdded() {
           {areAnyFiltersActive &&
             filteredProducts &&
             filteredProducts.length === 0 && (
-              <div className="md:h-[80vh] h-[50vh] w-full items-center flex bg-ca3">
+              <div className="md:h-[80vh] h-[50vh] w-full items-center justify-center flex bg-ca3">
                 <div className="flex items-center flex-col space-y-4">
                   <h3 className="text-ca6 text-2xl md:text-3xl">
                     No Products Found
@@ -171,7 +194,13 @@ function RecentlyAdded() {
           {(!areAnyFiltersActive ||
             (filteredProducts && filteredProducts.length > 0)) && (
             <ViewProducts
-              itemsList={filteredProducts ?? []}
+              itemsList={
+                (!areAnyFiltersActive
+                  ? recentProducts && recentProducts.length > 0
+                    ? [...recentProducts]
+                    : []
+                  : filteredProducts) ?? []
+              }
               showItemsCallback={setPaginatedProducts}
             />
           )}

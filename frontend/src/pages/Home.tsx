@@ -146,6 +146,12 @@ function App() {
     fetchProducts();
   }, [user]);
 
+  useEffect(() => {
+    if (!products) {
+      getProducts();
+    }
+  }, []);
+
   if (productsLoading) {
     return (
       <>

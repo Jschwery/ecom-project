@@ -98,7 +98,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             const quantity = getProductQuantity(productDetail);
             const fullPrice = productDetail.price * quantity;
             const salePrice =
-              (productDetail.salePrice || productDetail.price) * quantity;
+              (productDetail.specialOffer && productDetail.salePrice
+                ? productDetail.salePrice
+                : productDetail.price) * quantity;
             const savings = fullPrice - salePrice;
 
             setOrderSavings((prevSavings) => (prevSavings || 0) + savings);
@@ -112,7 +114,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               acc +
               cartItem.quantity *
                 Number(
-                  (productDetail.salePrice || productDetail.price).toFixed(2)
+                  (productDetail.specialOffer && productDetail.salePrice
+                    ? productDetail.salePrice
+                    : productDetail.price
+                  ).toFixed(2)
                 )
             );
           }

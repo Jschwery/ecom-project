@@ -33,7 +33,11 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
       setProductCounts((prev) => ({
         ...prev,
         [product._id || ""]: Number(
-          ((product.salePrice || product.price) * quantity).toFixed(2)
+          (
+            (product.specialOffer && product.salePrice
+              ? product.salePrice
+              : product.price) * quantity
+          ).toFixed(2)
         ),
       }));
     });
@@ -126,11 +130,11 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                 return (
                   <div
                     key={idx}
-                    className="w-full flex flex-col bg-ca4 rounded-md"
+                    className="w-full flex flex-col bg-ca4 rounded-md "
                   >
-                    <div className="w-full flex flex-col justify-between md:flex-row  truncate line-clamp-2 px-0.5 bg-ca4 p-2 space-y-2 md:space-x-2 rounded-md">
+                    <div className="w-full flex flex-col shrink-0 justify-between md:flex-row truncate line-clamp-2 bg-ca4 md:space-x-2 rounded-md">
                       <img
-                        className="self-center md:mr-6 w-[60%] h-16 md:w-[30%] min-w-[30%]"
+                        className="self-center rounded-md h-full !shrink-0 md:mr-6 w-full md:w-[30%] min-w-[30%]"
                         src={
                           product.imageUrls && product.imageUrls[0]
                             ? product.imageUrls[0]
@@ -142,12 +146,12 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                         title={product.name}
                         className="md:hidden w-full flex justify-center"
                       >
-                        <h4 className=" md:hidden truncate">{product.name}</h4>
+                        <h4 className="md:hidden truncate">{product.name}</h4>
                       </div>
-                      <div className="md:hidden flex flex-col  items-center space-y-2">
-                        <div className="relative mx-auto mb-6 ">
+                      <div className="md:hidden flex flex-col  items-center space-y-2 pb-3">
+                        <div className="relative mx-auto mb-2 ">
                           <h5
-                            className={`flex-shrink-0  text-ca9 mr-auto sale-item ${
+                            className={`flex-shrink-0 text-xl text-ca9 mr-auto sale-item ${
                               product.specialOffer && product.salePrice
                                 ? "line-through"
                                 : ""
@@ -227,7 +231,7 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
                         </div>
                       </div>
 
-                      <div className="flex md:flex-col space-y-1  items-center md:w-[50px] md:!mr-5 md:!self-center md:px-0 justify-between md:!space-y-3">
+                      <div className="flex md:flex-col space-y-1 p-3 items-center md:w-[50px] md:!mr-5 md:!self-center md:px-0 justify-between md:!space-y-3">
                         <div className="flex flex-col md:hidden">
                           <h4>Total:</h4>
                           <h4 className="text-ca9 font-semibold">

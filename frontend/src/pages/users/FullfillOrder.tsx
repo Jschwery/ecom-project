@@ -12,7 +12,10 @@ interface ProductProps {
 }
 
 function calculateSubtotal(product: Product) {
-  const preTaxTotal = product.price * (product.quantity || 0);
+  const preTaxTotal =
+    (product.specialOffer && product.salePrice
+      ? product.salePrice
+      : product.price) * (product.quantity || 0);
   const tax = preTaxTotal * 0.08;
   return preTaxTotal + tax;
 }
@@ -40,7 +43,11 @@ const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
     const preTaxTotalWithoutSavings = product.price * quantity;
 
     const savings = product.salePrice
-      ? (product.price - product.salePrice) * quantity
+      ? (product.price -
+          (product.specialOffer && product.salePrice
+            ? product.salePrice
+            : product.price)) *
+        quantity
       : 0;
 
     const preTaxTotal = preTaxTotalWithoutSavings - savings;
@@ -78,7 +85,7 @@ const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
             <h4>${tax.toFixed(2)}</h4>
           </div>
           <div className="flex items-center space-x-2 order-row">
-            <h4>SubTotal:</h4>
+            <h4>Total:</h4>
             <h4>${subtotal.toFixed(2)}</h4>
           </div>
         </div>
@@ -106,6 +113,9 @@ function FullfillOrder() {
   productsRef.current = memoizedProducts;
 
   const total = useMemo(() => {
+    console.log("the memo products are");
+    console.log(memoizedProducts);
+
     return memoizedProducts.reduce(
       (acc, product) => acc + calculateSubtotal(product),
       0
@@ -288,9 +298,9 @@ function FullfillOrder() {
           ))}
           <Divider className="my-2" />
 
-          <div className="flex w-full justify-between mb-3 min-w-[300px] items-center space-x-4 px-5">
+          <div className="flex w-full justify-between mb-3 min-w-[300px] items-center space-x-4 px-2">
             <div className="flex items-center space-x-2">
-              <h4>Total</h4>
+              <h4>Order Total:</h4>
               <h4>${total.toFixed(2)}</h4>
             </div>
             {order?.status === "Pending" ? (

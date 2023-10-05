@@ -266,7 +266,7 @@ function ProductPage() {
                                   : ""
                               }`}
                               data-sale-price={
-                                product.salePrice
+                                product.specialOffer && product.salePrice
                                   ? `Sale: $${product.salePrice}`
                                   : ""
                               }
@@ -337,7 +337,7 @@ function ProductPage() {
                         : ""
                     }`}
                     data-sale-price={
-                      foundProduct.salePrice
+                      foundProduct.specialOffer && foundProduct.salePrice
                         ? `Sale: $${foundProduct.salePrice}`
                         : ""
                     }

@@ -7,6 +7,8 @@ import SignedInNav from "../components/SignedInNavBar";
 import useUser from "../hooks/useUser";
 import { getDivWidth } from "./AddItem";
 import { breakpoints } from "./Home";
+import { debounce } from "lodash";
+
 function shuffleArray(array: Product[]) {
   let newArr = [...array];
   for (let i = newArr.length - 1; i > 0; i--) {
@@ -15,7 +17,6 @@ function shuffleArray(array: Product[]) {
   }
   return newArr;
 }
-
 function Discover() {
   const { products, loading } = useProducts();
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
@@ -24,18 +25,34 @@ function Discover() {
   const [flexDirection, setFlexDirection] = useState("");
   const hasScrolled = useRef(false);
   const bottomRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const divRef: React.MutableRefObject<HTMLDivElement | null> =
-    useRef<HTMLDivElement | null>(null);
+  const divRef = useRef<HTMLDivElement | null>(null);
   const lastFlexDirection = useRef(flexDirection);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     if (products && products.length) {
       const shuffledProducts = shuffleArray(products);
-      setDisplayedProducts(shuffledProducts.slice(0, productIndex));
+      setDisplayedProducts((prevProducts) => {
+        const newProducts = shuffledProducts.slice(0, productIndex);
+        const combinedProducts = [...prevProducts, ...newProducts];
+        return Array.from(new Set(combinedProducts.map((p) => p._id)))
+          .map((id) => combinedProducts.find((p) => p._id === id))
+          .filter(Boolean) as Product[];
+      });
+      setLoadingMore(false);
     }
-  }, [products]);
+  }, [products, productIndex]);
+
+  const loadMoreProducts = debounce((products: Product[]) => {
+    if (!loadingMore) {
+      setLoadingMore(true);
+      if (productIndex < products!.length) {
+        setProductIndex((prevIndex) => prevIndex + 10);
+      } else {
+        setLoadingMore(false);
+      }
+    }
+  }, 360);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,30 +60,20 @@ function Discover() {
     };
 
     divRef.current?.addEventListener("scroll", handleScroll);
-
-    return () => {
-      divRef.current?.removeEventListener("scroll", handleScroll);
-    };
+    return () => divRef.current?.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (!products) {
-      return;
-    }
-
     const observer = new IntersectionObserver((entries) => {
-      if (!loading && entries[0].isIntersecting) {
-        setIsLoading(true);
-
-        const loadTimeout = setTimeout(() => {
-          if (hasScrolled.current) {
-            loadMoreProducts(products);
-            hasScrolled.current = false;
-          }
-          setIsLoading(false);
-        }, 1000);
-
-        return () => clearTimeout(loadTimeout);
+      if (!loading && entries[0].isIntersecting && !loadingMore) {
+        hasScrolled.current = true;
+        if (!products) {
+          return;
+        }
+        loadMoreProducts(products);
+        if (bottomRef.current) {
+          observer.unobserve(bottomRef.current);
+        }
       }
     });
 
@@ -79,32 +86,11 @@ function Discover() {
         observer.unobserve(bottomRef.current);
       }
     };
-  }, [bottomRef, bottomRef.current, products]);
-
-  function loadMoreProducts(products: Product[] | undefined) {
-    if (!products || products.length === 0) {
-      return;
-    }
-
-    const additionalProducts = products.slice(productIndex, productIndex + 10);
-
-    setDisplayedProducts((prevProducts) => {
-      const existingProductIds = new Set(prevProducts.map((p) => p._id));
-
-      const uniqueAdditionalProducts = additionalProducts.filter(
-        (product) => !existingProductIds.has(product._id)
-      );
-
-      return [...prevProducts, ...uniqueAdditionalProducts];
-    });
-
-    setProductIndex((prevIndex) => prevIndex + 10);
-  }
+  }, [loading, loadingMore, products]);
 
   useEffect(() => {
     const handleResize = () => {
       const currentWidth = getDivWidth(divRef.current);
-
       for (let bp of breakpoints) {
         if (currentWidth <= bp.max) {
           if (lastFlexDirection.current !== bp.class) {
@@ -123,21 +109,6 @@ function Discover() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  useLayoutEffect(() => {
-    const currentWidth = getDivWidth(divRef.current);
-
-    if (currentWidth > breakpoints[breakpoints.length - 1].max) {
-      if (
-        lastFlexDirection.current !== breakpoints[breakpoints.length - 1].class
-      ) {
-        setFlexDirection(breakpoints[breakpoints.length - 1].class);
-        lastFlexDirection.current = breakpoints[breakpoints.length - 1].class;
-      }
-
-      return;
-    }
-  }, [divRef.current]);
 
   return (
     <div className="w-full h-screen items-center bg-ca1  flex flex-col">

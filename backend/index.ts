@@ -18,20 +18,16 @@ import fs from "fs";
 import https from "https";
 
 dotenv.config();
-const privateKey = fs.readFileSync("/etc/certs/privkey.pem", "utf8");
-const certificate = fs.readFileSync("/etc/certs/fullchain.pem", "utf8");
-const ca = fs.readFileSync("/etc/certs/chain.pem", "utf8");
-const credentials = {
-  key: privateKey,
-  cert: certificate,
-  ca: ca,
-};
+const shouldInitialize = process.env.NODE_ENV === "development";
+
 const app = express();
 app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "https://ecom-project-iota.vercel.app",
+    origin: shouldInitialize
+      ? `${process.env.FRONTEND_URL}`
+      : "https://ecom-project-iota.vercel.app",
     credentials: true,
   })
 );
@@ -53,6 +49,7 @@ mongoose
   .catch((err: any) => console.log(err));
 
 usePassport();
+
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -74,11 +71,31 @@ app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
 
-const httpsServer = https.createServer(credentials, app);
+if (!shouldInitialize) {
+  const privateKey = fs.readFileSync(
+    "/etc/letsencrypt/live/www.orchtin.online/privkey.pem"
+  );
+  const certificate = fs.readFileSync(
+    "/etc/letsencrypt/live/www.orchtin.online/fullchain.pem"
+  );
+  const ca = fs.readFileSync(
+    "/etc/letsencrypt/live/www.orchtin.online/chain.pem",
+    "utf8"
+  );
 
-httpsServer.listen(443, () => {
-  console.log("HTTPS Server running on port 443");
-});
-// app.listen(process.env.PORT || 5000, () => {
-//   console.log(`Server is running on port ${process.env.PORT || 5000}`);
-// });
+  const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca,
+  };
+
+  const httpsServer = https.createServer(credentials, app);
+
+  httpsServer.listen(443, () => {
+    console.log("HTTPS Server running on port 443");
+  });
+} else {
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`Server is running on port ${process.env.PORT || 5000}`);
+  });
+}

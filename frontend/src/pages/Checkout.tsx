@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Divider,
   Flex,
@@ -12,6 +13,8 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Tag,
+  Tooltip,
   useTheme,
   useToast,
 } from "@chakra-ui/react";
@@ -115,13 +118,9 @@ function Checkout() {
         transactionDate: new Date(),
       };
 
-      await axios.post(
-        "https://orchtin.online/api/transactions",
-        dataToSubmit,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.post("http://localhost:5000/api/transactions", dataToSubmit, {
+        withCredentials: true,
+      });
 
       setLocalCart([]);
       if (setOrderSavings) {
@@ -135,7 +134,7 @@ function Checkout() {
         duration: 5000,
         isClosable: true,
       });
-      window.location.pathname = "/orders";
+      window.location.pathname = "/";
     } catch (error) {
       console.error("Error processing order:", error);
 
@@ -266,7 +265,11 @@ function Checkout() {
             </div>
           </div>
         </div>
-        <p className="p-6">Change</p>
+        <div className="p-6">
+          <Tooltip label="Dummy payment info" aria-label="A tooltip">
+            <p className="cursor-pointer">Change</p>
+          </Tooltip>
+        </div>
       </div>
 
       <div className="flex w-full lg:w-[80%] xl:w-[65%] md:mx-auto rounded-sm bg-ca3">

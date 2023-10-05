@@ -151,7 +151,7 @@ function ListedItem({
             <div className="flex flex-col px-2 min-w-[45%]">
               <h3
                 title={product.name}
-                className="text-ca9 pr-1 min-w-0 truncate"
+                className="text-ca9 pr-1 min-w-0 md:line-clamp-2 max-w-[100%] truncate"
                 style={wrapTextStyle}
               >
                 {product.name

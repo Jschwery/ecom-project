@@ -20,6 +20,7 @@ it("should increase count by 1 when increment button is clicked", () => {
     "Enter a number"
   ) as HTMLInputElement;
   fireEvent.click(incrementButton);
+
   expect(input.value).toBe("2");
 });
 

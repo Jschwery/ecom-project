@@ -14,9 +14,7 @@ export async function extractTokenAndUser(
     token = req.cookies.googleToken;
   } else if (req.cookies.emailToken) {
     token = req.cookies.emailToken;
-  } else {
-    console.log("No token found in cookies");
-  }
+  } // Removed the console.log here
 
   if (!token) {
     return res.status(400).send("No token found!");
@@ -35,11 +33,9 @@ export async function extractTokenAndUser(
       req.foundUser = user;
       next();
     } else {
-      console.log("User not found in DB for decoded token");
       return res.status(404).send("User not found.");
     }
   } catch (err) {
-    console.error("JWT verification error:", err);
     return res.status(401).send("Unauthorized");
   }
 }

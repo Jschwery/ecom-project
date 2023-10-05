@@ -54,7 +54,7 @@ div::-webkit-scrollbar-thumb:hover {
 }
 
 .cart-slide-in {
-  @apply fixed top-0 right-[-30vw] w-[30vw] md:min-w-[425px] md:max-w-[515px] min-w-[150px] md:right-[-55vw] md:w-[55vw] h-[100vh] opacity-0  bg-ca2 transition-all duration-500 overflow-y-auto z-50;
+  @apply fixed top-0 right-[-30vw] w-[30vw] md:min-w-[425px] md:max-w-[515px] min-w-[200px] md:right-[-55vw] md:w-[55vw] h-[100vh] opacity-0  bg-ca2 transition-all duration-500 overflow-y-auto z-50;
 }
 
 .cart-slide-in.visible {

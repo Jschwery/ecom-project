@@ -201,7 +201,13 @@ function Deals() {
             {(!areAnyFiltersActive ||
               (filteredProducts && filteredProducts.length > 0)) && (
               <ViewProducts
-                itemsList={filteredProducts ?? []}
+                itemsList={
+                  (!areAnyFiltersActive
+                    ? categoryItems && categoryItems.length > 0
+                      ? [...categoryItems]
+                      : []
+                    : filteredProducts) ?? []
+                }
                 showItemsCallback={setPaginatedProducts}
               />
             )}

@@ -9,29 +9,56 @@ import { CustomRequest } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import Product, { IProduct } from "../models/Product";
 import mongoose from "mongoose";
+import initialProductData from "../resources/data/initialProducts";
+
+export const initializeUserProducts = async (user: any) => {
+  const productPromises = initialProductData.map(async (productData) => {
+    const product = new Product({
+      ...productData,
+      sellerID: user._id,
+    });
+    await product.save();
+    return product._id;
+  });
+
+  const productIds = await Promise.all(productPromises);
+
+  await User.findByIdAndUpdate(user._id, {
+    $push: { products: { $each: productIds } },
+  });
+};
 
 export const createUser = async (req: CustomRequest, res: Response) => {
-  let newUser: any;
-
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10);
-    req.body.password = passwordHash;
-    newUser = await userService.createUser(req.body);
-    const token = userService.generateVerificationToken(newUser._id);
-    const verificationLink = `https://orchtin.online/api/verify-email?token=${token}`;
+    const shouldInitialize = process.env.NODE_ENV === "development";
+
+    const newUser = new User({
+      ...req.body,
+      password: passwordHash,
+    });
+
+    const savedUser = await newUser.save();
+
+    if (shouldInitialize && !savedUser.initialized) {
+      await initializeUserProducts(savedUser);
+      savedUser.initialized = true;
+      await savedUser.save();
+    }
+    const token = userService.generateVerificationToken(savedUser._id);
+    const verificationLink = `${process.env.BACKEND_URL}/api/verify-email?token=${token}`;
     await mailer.sendEmail(
-      newUser.email,
+      savedUser.email,
       "Email Verification",
       mailer.createVerificationEmail(verificationLink)
     );
+
     res.status(201).send({
       message:
         "Registration successful! Please check your email to verify your account.",
+      userId: savedUser._id,
     });
   } catch (error: any) {
-    if (newUser && newUser._id) {
-      await userService.deleteUserById(newUser._id);
-    }
     if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
       return res
         .status(400)
@@ -39,8 +66,8 @@ export const createUser = async (req: CustomRequest, res: Response) => {
     }
     res.status(500).send({
       success: false,
-      message: "Verify email with Amazon SES",
-      error: error,
+      message: "An error occurred while creating the user.",
+      error: error.message,
     });
   }
 };
@@ -72,12 +99,12 @@ export const verifyEmail = async (req: CustomRequest, res: Response) => {
     const verified: any = jwt.verify(token, process.env.JWT_SECRET as string);
     await User.findByIdAndUpdate(verified._id, { isVerified: true });
 
-    res.status(200).redirect("http://localhost:3000/");
+    res.status(200).redirect(`${process.env.FRONTEND_URL}/`);
   } catch (error: any) {
     res.status(400).send({
       message: "Email verification failed.",
       error: error,
-      redirectTo: "http://localhost:3000/error",
+      redirectTo: `${process.env.FRONTEND_URL}/error`,
     });
   }
 };
@@ -253,7 +280,6 @@ export async function checkUser(req: CustomRequest, res: Response) {
       return res.status(404).json({ message: "User not found" });
     }
   } catch (err) {
-    console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 }

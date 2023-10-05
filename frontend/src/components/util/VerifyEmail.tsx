@@ -7,7 +7,7 @@ export const VerifyEmail: React.FC = () => {
 
   useEffect(() => {
     axios
-      .post(`https://orchtin.online/verify-email`, { token })
+      .post(`http://localhost:5000/verify-email`, { token })
       .then((response) => {
         console.log("Email verified!");
       })

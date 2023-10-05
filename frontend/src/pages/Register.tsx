@@ -72,7 +72,7 @@ export default function Register() {
         const { confirmPassword, ...otherValues } = values;
 
         const response = await axios.post(
-          "https://orchtin.online/api/register-user",
+          "http://localhost:5000/api/register-user",
           otherValues,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -291,10 +291,10 @@ export default function Register() {
                       loadingText="Submitting"
                       size="lg"
                       width={"100%"}
-                      bg={"co6"}
+                      bg={"ca7"}
                       color={"co1"}
                       _hover={{
-                        bg: "co4",
+                        bg: "ca6",
                       }}
                     >
                       Sign up
@@ -316,18 +316,7 @@ export default function Register() {
                     </Center>
                   </Box>
 
-                  <Button
-                    type="button"
-                    size="lg"
-                    bg={"co6"}
-                    width={"100%"}
-                    color={"co1"}
-                    _hover={{
-                      bg: "co4",
-                    }}
-                  >
-                    <ContinueWithGoogle />
-                  </Button>
+                  <ContinueWithGoogle />
                 </Flex>
                 <Stack pt={6}>
                   <Text align={"center"} color={"ca7"}>

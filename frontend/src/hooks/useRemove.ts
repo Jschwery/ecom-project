@@ -10,9 +10,7 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   const removeItem = async (itemToRemove: any) => {
     try {
       const response = await fetch(
-        `${apiURL ?? "https://orchtin.online/api"}/products/${
-          itemToRemove._id
-        }`,
+        `${apiURL ?? "http://localhost:5000/api"}/products/${itemToRemove._id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -41,7 +39,7 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   ): Promise<Transaction> => {
     try {
       const response = await axios.put(
-        `https://orchtin.online/api/transactions/${itemToCancel._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/transactions/${itemToCancel._id}`,
         {
           ...itemToCancel,
           status: "Canceled",
@@ -73,9 +71,7 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
 
     try {
       await fetch(
-        `${apiURL ?? "https://orchtin.online/api"}/products/${
-          itemToRemove._id
-        }`,
+        `${apiURL ?? "http://localhost:5000/api"}/products/${itemToRemove._id}`,
         {
           method: "DELETE",
           credentials: "include",

@@ -18,7 +18,6 @@ import { Option } from "../components/util/ProductFilters";
 function ProductCategory() {
   const { user } = useUser();
   const { categoryName } = useParams();
-  const memoizedCategoryName = useMemo(() => categoryName, [categoryName]);
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
@@ -39,7 +38,7 @@ function ProductCategory() {
     { filterName: "ratingFilter", value: false },
   ]);
   const { filteredProducts, setPriceFilter, setRatingFilter, setTagsFilter } =
-    useFilteredProducts([...categoryProducts] || null);
+    useFilteredProducts(categoryProducts || null);
   const { getProductsByCategory } = useProducts();
 
   const formattedCategoryName = categoryName!
@@ -62,22 +61,21 @@ function ProductCategory() {
   }, []);
 
   useEffect(() => {
-    if (!memoizedCategoryName) {
+    if (!categoryName) {
       return;
     }
     const category = async () => {
-      try {
-        const categories: Product[] = await getProductsByCategory(
-          memoizedCategoryName
-        );
+      console.log("hello");
 
+      try {
+        const categories: Product[] = await getProductsByCategory(categoryName);
         setCategoryProducts(categories);
       } catch (err) {
         console.error(err);
       }
     };
     category();
-  }, [memoizedCategoryName]);
+  }, []);
 
   if (!categoryProducts) {
     return <div>Loading products...</div>;

@@ -11,10 +11,12 @@ export interface IUser extends Document {
   lastName?: string;
   email: string;
   password?: string;
+  initialized?: boolean;
   status?: "active" | "suspended" | "banned";
   role: string;
   wishlist?: Schema.Types.ObjectId[];
   isVerified: boolean;
+
   billingAddress?: string;
   address?: string;
   recentlyViewed?: [
@@ -102,6 +104,7 @@ const UserSchema: Schema = new Schema(
     address: { type: String, required: false },
     googleID: { type: String, required: false },
     rating: { type: Number, required: false },
+    initialized: { type: Boolean, default: false, required: false },
     age: { type: Number, required: false },
     sellerName: { type: String, required: false },
     products: [

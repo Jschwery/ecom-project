@@ -8,7 +8,7 @@ const clientID =
 export async function handleSignOut() {
   try {
     const response = await axios.post(
-      "https://orchtin.online/api/signout",
+      "http://localhost:5000/api/signout",
       {},
       {
         withCredentials: true,

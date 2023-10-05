@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Product, User } from "../../typings";
 import { getLocalCart } from "../components/util/CartUtil";
-const BASE_URL = "https://orchtin.online";
+const BASE_URL = "http://localhost:5000";
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,7 +38,7 @@ export default function useUser() {
   const getUserProducts = useCallback(async () => {
     try {
       const productRequest = await axios.get(
-        "https://orchtin.online/api/users/products",
+        "http://localhost:5000/api/users/products",
         {
           withCredentials: true,
         }
@@ -55,7 +55,7 @@ export default function useUser() {
 
     try {
       const productRequest = await axios.get(
-        `https://orchtin.online/api/users/${userID}/products`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/${userID}/products`,
         {
           withCredentials: true,
         }
@@ -70,7 +70,7 @@ export default function useUser() {
   const returnUserProducts = useCallback(async (userID: String) => {
     try {
       const productRequest = await axios.get(
-        `https://orchtin.online/api/users/${userID}/products`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/${userID}/products`,
         {
           withCredentials: true,
         }
@@ -88,7 +88,7 @@ export default function useUser() {
       setIsLoading(true);
       try {
         const response = await axios.put(
-          "https://orchtin.online/api/users/edit",
+          "http://localhost:5000/api/users/edit",
           user,
           {
             withCredentials: true,
@@ -118,7 +118,7 @@ export default function useUser() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        "https://orchtin.online/api/users/edit/atomic",
+        "http://localhost:5000/api/users/edit/atomic",
         { buyer, seller },
         {
           withCredentials: true,
@@ -142,7 +142,7 @@ export default function useUser() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        "https://orchtin.online/api/users/edit",
+        "http://localhost:5000/api/users/edit",
         user,
         {
           withCredentials: true,
@@ -169,12 +169,11 @@ export default function useUser() {
   useEffect(() => {
     const checkUserStatus = async () => {
       try {
-        const resp = await axios.get("https://orchtin.online/api/users/check", {
+        const resp = await axios.get("http://localhost:5000/api/users/check", {
           withCredentials: true,
         });
         setUser(resp.data);
       } catch (err) {
-        console.error(err);
       } finally {
         setIsLoading(false);
       }

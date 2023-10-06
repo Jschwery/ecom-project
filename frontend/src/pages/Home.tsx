@@ -147,6 +147,26 @@ function App() {
   }, [user]);
 
   useEffect(() => {
+    let intervalId: string | number | NodeJS.Timeout | undefined;
+
+    if (!products) {
+      const fetchNow = () => {
+        getProducts();
+      };
+
+      fetchNow();
+
+      intervalId = setInterval(fetchNow, 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [products]);
+
+  useEffect(() => {
     if (!products) {
       getProducts();
     }

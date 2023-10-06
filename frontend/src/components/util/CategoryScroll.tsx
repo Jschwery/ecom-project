@@ -1,12 +1,25 @@
 import { Link } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
+import { useEffect, useState } from "react";
+import { Product } from "../../../typings";
 
 function CategoryScroll({ category }: { category: string }) {
-  const { products } = useProducts();
+  const { products, getProducts } = useProducts();
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>();
+  useEffect(() => {
+    if (!products) {
+      getProducts();
+    }
+  }, []);
 
-  const filteredProducts = products?.filter(
-    (product) => product.category === category
-  );
+  useEffect(() => {
+    if (!products) {
+      return;
+    }
+    setFilteredProducts(
+      products.filter((product) => product.category === category)
+    );
+  }, [products]);
 
   return (
     <div

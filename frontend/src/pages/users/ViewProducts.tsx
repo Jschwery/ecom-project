@@ -1,4 +1,4 @@
-import React, { Ref, forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import Pagination from "../../components/util/Pagination";
 
 interface ViewItemsProps {

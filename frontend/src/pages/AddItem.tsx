@@ -1,13 +1,11 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -19,7 +17,6 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Select,
   Stack,
   Text,
   Textarea,
@@ -36,7 +33,7 @@ import { dataURItoBlob } from "../components/util/URItoBlob";
 import Creatable from "react-select/creatable";
 import useUser from "../hooks/useUser";
 import { Product } from "../../typings";
-import { TAGS_STARTER, TagsStarterMap } from "../data/tags";
+import { TagsStarterMap } from "../data/tags";
 import useResizable from "../hooks/useResizable";
 import useCategories from "../hooks/useCategories";
 import Dropdown from "react-dropdown";

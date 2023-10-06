@@ -1,7 +1,5 @@
 import { Input, useToast } from "@chakra-ui/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import useUser from "../hooks/useUser";
-import { CartItem } from "../global/CartProvider";
+import React, { useEffect, useState } from "react";
 
 interface CounterProps {
   initialCount?: number;

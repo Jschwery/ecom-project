@@ -1,19 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import Pagination from "../../components/util/Pagination";
+import { useEffect, useRef, useState } from "react";
 import useUser from "../../hooks/useUser";
 import SignedInNav from "../../components/SignedInNavBar";
-import axios from "axios";
-import { Button } from "@chakra-ui/react";
-import FileUpload from "../../components/util/UploadFile";
-import { Product, Transaction } from "../../../typings";
-import ListedItem from "../../components/util/ListedItem";
-import useResizable from "../../hooks/useResizable";
-import { getDivWidth } from "../AddItem";
+import { Transaction } from "../../../typings";
 import DetailedItem from "../../components/DetailedItem";
 import useRemove from "../../hooks/useRemove";
-import { ref } from "yup";
 import ViewProducts from "./ViewProducts";
-import { deleteImgFromS3 } from "../../components/util/DeleteFromS3";
 import Orders from "../../components/Orders";
 import FilterComponent from "../../components/util/FilterUtil";
 

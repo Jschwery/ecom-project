@@ -1,13 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useUser from "../hooks/useUser";
-import useCategories from "../hooks/useCategories";
 import useProducts from "../hooks/useProducts";
 import NotSignedInNav from "../components/NotSignedIn";
 import SignedInNav from "../components/SignedInNavBar";
 import { useParams } from "react-router-dom";
 import { Product } from "../../typings";
-import useResponsiveFlex from "../hooks/useResponsiveFlex";
-import { breakpoints } from "./Home";
 import { useFilteredProducts } from "../hooks/useFilteredProducts";
 import { getMaxPrice } from "./Deals";
 import ProductFilters from "../components/util/ProductFilters";

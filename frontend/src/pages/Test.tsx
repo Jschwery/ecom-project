@@ -1,4 +1,3 @@
-import React from "react";
 import ProductFilters from "../components/util/ProductFilters";
 
 function Test() {

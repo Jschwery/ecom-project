@@ -1,7 +1,6 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
-import { getLocalCart } from "../components/util/CartUtil";
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 export default function useUser() {

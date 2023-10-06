@@ -3,7 +3,6 @@ import {
   Flex,
   Avatar,
   HStack,
-  Text,
   IconButton,
   Button,
   Menu,
@@ -12,19 +11,17 @@ import {
   MenuItem,
   MenuDivider,
   useDisclosure,
-  useColorModeValue,
   Stack,
   Collapse,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { handleSignOut } from "./Logout";
 import useUser from "../hooks/useUser";
-import { lighten } from "polished";
 import { useEffect, useRef, useState } from "react";
 import Cart from "../pages/users/Cart";
 import { useCart } from "../global/CartProvider";
 import { DesktopNav, MobileNav } from "./NotSignedIn";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export type LinkType = {
   name: string;

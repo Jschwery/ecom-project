@@ -1,7 +1,7 @@
 import * as userController from "../controllers/userController";
 import { extractTokenAndUser } from "../middlewares/extractToken";
 import expressFileUpload from "express-fileupload";
-import express, { Response } from "express";
+import express from "express";
 import { middleLogger } from "../middlewares/logger";
 
 const router = express.Router();

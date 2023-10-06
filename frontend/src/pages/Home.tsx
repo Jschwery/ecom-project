@@ -1,11 +1,9 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import NotSignedInNav from "../components/NotSignedIn";
 import SignedInNav from "../components/SignedInNavBar";
 import ListedItem from "../components/util/ListedItem";
 import useProducts from "../hooks/useProducts";
-import useResizable from "../hooks/useResizable";
 import useUser from "../hooks/useUser";
-import { getDivWidth } from "./AddItem";
 import { Product } from "../../typings";
 import { v4 as uuidv4 } from "uuid";
 import PictureCarousel from "../components/DealCarousel";

@@ -1,11 +1,8 @@
 import { Key, useEffect, useState } from "react";
-import useUser from "../../hooks/useUser";
 import useProducts from "../../hooks/useProducts";
-import useSWR from "swr";
 import { Product } from "../../../typings";
 import Counter from "../../components/Counter";
 import { Button } from "@chakra-ui/react";
-import { count } from "console";
 import { CartItem, useCart } from "../../global/CartProvider";
 
 interface CartProps {

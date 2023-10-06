@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { getLocalCart } from "../components/util/CartUtil";
 import { Product } from "../../typings";
 import useUser from "../hooks/useUser";

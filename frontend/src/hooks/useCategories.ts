@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TAGS_STARTER, TagsStarterMap } from "../data/tags";
 import { MultiValue } from "../pages/AddItem";
-import { ActionMeta } from "react-select/dist/declarations/src";
 
 export default function useCategories() {
   const categories: string[] = Object.keys(TAGS_STARTER);

@@ -1,9 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User";
-import { error } from "console";
-import initialProductData from "../resources/initialProducts";
-import Product from "../models/Product";
 import { initializeUserProducts } from "../controllers/userController";
 import dotenv from "dotenv";
 dotenv.config();

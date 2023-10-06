@@ -1,5 +1,4 @@
-import axios, { AxiosResponse } from "axios";
-import useUser from "../../hooks/useUser";
+import axios from "axios";
 
 interface DeleteImageOptions {
   endpoint: string;

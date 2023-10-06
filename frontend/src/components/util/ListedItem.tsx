@@ -8,11 +8,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import * as Yup from "yup";
-
 import { Product } from "../../../typings";
 import { CartItem, useCart } from "../../global/CartProvider";
-import useProductData from "../../hooks/useProductData";
 import { dealMetaData } from "../../pages/Home";
 import useProducts from "../../hooks/useProducts";
 interface ListedItemProps {

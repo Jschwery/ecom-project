@@ -1,5 +1,4 @@
 import { HStack, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
-import React from "react";
 
 interface TagProps {
   tagName: string;

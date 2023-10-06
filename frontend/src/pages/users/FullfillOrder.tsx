@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useMemo, useRef } from "react";
 import { useOrders } from "../../hooks/useOrders";
-import { Product, Transaction, User } from "../../../typings";
+import { Product, User } from "../../../typings";
 import useUser from "../../hooks/useUser";
 import { Divider, useToast } from "@chakra-ui/react";
 import useProducts from "../../hooks/useProducts";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useProducts from "../hooks/useProducts";
 import ListedItem from "../components/util/ListedItem";
 import { Product } from "../../typings";

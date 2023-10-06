@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useOrders } from "../hooks/useOrders";
 import { Transaction } from "../../typings";
 import useProducts from "../hooks/useProducts";
 import EditDelete from "./util/EditDelete";
 import useRemove from "../hooks/useRemove";
 import { useToast } from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
-import FilterComponent from "./util/FilterUtil";
 
 interface OrderProps {
   isEnlarged: boolean;

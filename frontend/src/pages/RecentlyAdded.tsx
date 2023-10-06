@@ -5,8 +5,6 @@ import NotSignedInNav from "../components/NotSignedIn";
 import SignedInNav from "../components/SignedInNavBar";
 import useUser from "../hooks/useUser";
 import ListedItem from "../components/util/ListedItem";
-import useResponsiveFlex from "../hooks/useResponsiveFlex";
-import { breakpoints } from "./Home";
 import { useFilteredProducts } from "../hooks/useFilteredProducts";
 import ViewProducts from "./users/ViewProducts";
 import { getMaxPrice } from "./Deals";

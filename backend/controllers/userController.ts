@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import * as userService from "../services/userService";
 import jwt from "jsonwebtoken";
 import * as mailer from "../util/mailer";

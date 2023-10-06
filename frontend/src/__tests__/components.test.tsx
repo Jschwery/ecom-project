@@ -1,7 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Counter from "../components/Counter";
-import ContinueWithGoogle from "../components/Login";
-import ShippingAddresses from "../components/ShippingAddresses";
 
 // Counter renders with default count of 1
 it("should render with default count of 1", () => {

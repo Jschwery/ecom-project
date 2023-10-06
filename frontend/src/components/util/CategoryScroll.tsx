@@ -5,7 +5,7 @@ import { Product } from "../../../typings";
 
 function CategoryScroll({ category }: { category: string }) {
   const { products, getProducts } = useProducts();
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>();
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   useEffect(() => {
     if (!products) {
       getProducts();

@@ -109,7 +109,7 @@ function AddItem() {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/products/images",
+        `${process.env.REACT_APP_BACKEND_URL}/api/products/images`,
         formData,
         config
       );
@@ -152,7 +152,7 @@ function AddItem() {
     }
 
     return axios.post(
-      "http://localhost:5000/api/products",
+      `${process.env.REACT_APP_BACKEND_URL}/api/products`,
       {
         ...formValues,
         imageUrls: imageUrls,

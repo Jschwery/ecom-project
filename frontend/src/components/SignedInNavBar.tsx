@@ -332,7 +332,10 @@ export default function Simple({ describeCart }: NavBarProps) {
           <Stack as={"nav"} spacing={4}>
             {Links.map((link, index) => (
               <NavLink
-                to={`/${(link.path || link.name).toLowerCase()}`}
+                to={`/${(link.path || link.name)
+                  .toLowerCase()
+                  .split(" ")
+                  .join("-")}`}
                 key={link.name + ` - ${index}`}
               >
                 {link.name}

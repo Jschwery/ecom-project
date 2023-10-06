@@ -72,7 +72,7 @@ export default function Register() {
         const { confirmPassword, ...otherValues } = values;
 
         const response = await axios.post(
-          "http://localhost:5000/api/register-user",
+          `${process.env.REACT_APP_BACKEND_URL}/api/register-user`,
           otherValues,
           { headers: { "Content-Type": "application/json" } }
         );

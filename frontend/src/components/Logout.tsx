@@ -8,7 +8,7 @@ const clientID =
 export async function handleSignOut() {
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/signout",
+      `${process.env.REACT_APP_BACKEND_URL}/api/signout`,
       {},
       {
         withCredentials: true,

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
 import { useToast } from "@chakra-ui/react";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 export default function useProducts() {
   const [products, setProducts] = useState<Product[] | null>(null);

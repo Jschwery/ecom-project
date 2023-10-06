@@ -1,4 +1,8 @@
-const imageBasePath = "backend/resources/images/products/";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const imageBasePath = `${process.env.BACKEND_URL}/backend/images/`;
 
 const initialProductData = [
   {

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Product, User } from "../../typings";
 import { getLocalCart } from "../components/util/CartUtil";
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,7 +38,7 @@ export default function useUser() {
   const getUserProducts = useCallback(async () => {
     try {
       const productRequest = await axios.get(
-        "http://localhost:5000/api/users/products",
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/products`,
         {
           withCredentials: true,
         }
@@ -88,7 +88,7 @@ export default function useUser() {
       setIsLoading(true);
       try {
         const response = await axios.put(
-          "http://localhost:5000/api/users/edit",
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/edit`,
           user,
           {
             withCredentials: true,
@@ -118,7 +118,7 @@ export default function useUser() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/users/edit/atomic",
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/edit/atomic`,
         { buyer, seller },
         {
           withCredentials: true,
@@ -142,7 +142,7 @@ export default function useUser() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/users/edit",
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/edit`,
         user,
         {
           withCredentials: true,
@@ -169,9 +169,12 @@ export default function useUser() {
   useEffect(() => {
     const checkUserStatus = async () => {
       try {
-        const resp = await axios.get("http://localhost:5000/api/users/check", {
-          withCredentials: true,
-        });
+        const resp = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/check`,
+          {
+            withCredentials: true,
+          }
+        );
         setUser(resp.data);
       } catch (err) {
       } finally {

@@ -2,9 +2,11 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User";
 import { error } from "console";
-import initialProductData from "../resources/data/initialProducts";
+import initialProductData from "../resources/initialProducts";
 import Product from "../models/Product";
 import { initializeUserProducts } from "../controllers/userController";
+import dotenv from "dotenv";
+dotenv.config();
 
 const usePassport = () => {
   passport.use(
@@ -12,7 +14,7 @@ const usePassport = () => {
       {
         clientID: process.env.GOOGLE_CLIENT!,
         clientSecret: process.env.GOOGLE_SECRET!,
-        callbackURL: "http://localhost:5000/api/auth/google/callback",
+        callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`,
       },
       async function (
         token: string,

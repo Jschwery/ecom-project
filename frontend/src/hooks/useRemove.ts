@@ -10,7 +10,9 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   const removeItem = async (itemToRemove: any) => {
     try {
       const response = await fetch(
-        `${apiURL ?? "http://localhost:5000/api"}/products/${itemToRemove._id}`,
+        `${apiURL ?? `${process.env.REACT_APP_BACKEND_URL}/api`}/products/${
+          itemToRemove._id
+        }`,
         {
           method: "DELETE",
           credentials: "include",
@@ -71,7 +73,9 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
 
     try {
       await fetch(
-        `${apiURL ?? "http://localhost:5000/api"}/products/${itemToRemove._id}`,
+        `${apiURL ?? `${process.env.REACT_APP_BACKEND_URL}/api`}/products/${
+          itemToRemove._id
+        }`,
         {
           method: "DELETE",
           credentials: "include",

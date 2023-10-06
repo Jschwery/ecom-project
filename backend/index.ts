@@ -16,12 +16,19 @@ import productRoutes from "./routes/productRoutes";
 import { Counter } from "./models/Transaction";
 import fs from "fs";
 import https from "https";
+import path from "path";
 
 dotenv.config();
 const shouldInitialize = process.env.NODE_ENV === "development";
 
 const app = express();
 app.use(cookieParser());
+
+console.log(
+  "Setting up static route for images at:",
+  path.join(__dirname, "images")
+);
+app.use("/backend/images", express.static(path.join(__dirname, "images")));
 
 app.use(
   cors({

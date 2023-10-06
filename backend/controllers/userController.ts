@@ -9,7 +9,7 @@ import { CustomRequest } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import Product, { IProduct } from "../models/Product";
 import mongoose from "mongoose";
-import initialProductData from "../resources/data/initialProducts";
+import initialProductData from "../resources/initialProducts";
 
 export const initializeUserProducts = async (user: any) => {
   const productPromises = initialProductData.map(async (productData) => {

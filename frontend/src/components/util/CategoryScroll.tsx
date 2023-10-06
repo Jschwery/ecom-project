@@ -16,9 +16,9 @@ function CategoryScroll({ category }: { category: string }) {
     if (!products || !Array.isArray(products)) {
       return;
     }
-    setFilteredProducts(
-      products.filter((product) => product.category === category)
-    );
+    // setFilteredProducts(
+    //   products.filter((product) => product.category === category)
+    // );
   }, [products]);
 
   return (

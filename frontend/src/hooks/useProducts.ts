@@ -6,7 +6,7 @@ import { useToast } from "@chakra-ui/react";
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 export default function useProducts() {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<Product[] | null>([]);
   const [loading, setLoading] = useState(true);
   const [productOwner, setProductOwner] = useState<User>();
   const [error, setError] = useState<Error | null>(null);

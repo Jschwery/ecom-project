@@ -13,7 +13,7 @@ function CategoryScroll({ category }: { category: string }) {
   }, []);
 
   useEffect(() => {
-    if (!products) {
+    if (!products || !Array.isArray(products)) {
       return;
     }
     setFilteredProducts(

@@ -14,82 +14,94 @@ export const useFulfill = () => {
   const [order, setOrder] = useState<Transaction>();
   const [buyer, setBuyer] = useState<User>();
   const [products, setProducts] = useState<Product[]>([]);
+  const [hasTriedLoading, setHasTriedLoading] = useState(false);
+
+  const fetchOrderAndUser = async () => {
+    try {
+      if (orderID) {
+        const fetchedOrder: Transaction = await getOrderById(orderID);
+        setOrder(fetchedOrder);
+
+        if (fetchedOrder?.buyerID) {
+          const fetchedUser: User = await getUserById(fetchedOrder.buyerID);
+          setBuyer(fetchedUser);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      if (order?.productAndCount) {
+        const productPromises = order.productAndCount.map(
+          async (productInfo) => {
+            const product: Product = await getProductById(
+              productInfo.productID
+            );
+            if (!product) {
+              const syntheticProduct: Product = {
+                accountId: "Buyer",
+                name: productInfo.productDetails.name,
+                description: productInfo.productDetails.description,
+                category: "CatX",
+                price: productInfo.productDetails.price,
+                quantity: productInfo.productCount,
+                imageUrls: productInfo.productDetails.imageUrls,
+                specialOffer: productInfo.productDetails.specialOffer,
+              };
+
+              return syntheticProduct;
+            }
+            return product;
+          }
+        );
+
+        const allProducts: Product[] = await Promise.all(productPromises);
+
+        const fetchedProducts: Product[] = allProducts.filter((product) =>
+          user?.products?.some((p) => product._id === p)
+        );
+
+        const updatedProducts = fetchedProducts.map((product) => {
+          const matchingProductInfo = order?.productAndCount?.find(
+            (p) => p.productID === product?._id
+          );
+
+          return {
+            ...product,
+            quantity: matchingProductInfo
+              ? matchingProductInfo.productCount
+              : 0,
+          };
+        });
+
+        setProducts(updatedProducts.length > 0 ? updatedProducts : allProducts);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrderAndUser = async () => {
-      try {
-        if (orderID) {
-          const fetchedOrder: Transaction = await getOrderById(orderID);
-          setOrder(fetchedOrder);
-
-          if (fetchedOrder?.buyerID) {
-            const fetchedUser: User = await getUserById(fetchedOrder.buyerID);
-            setBuyer(fetchedUser);
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
     fetchOrderAndUser();
   }, [orderID]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        if (order?.productAndCount) {
-          const productPromises = order.productAndCount.map(
-            async (productInfo) => {
-              const product: Product = await getProductById(
-                productInfo.productID
-              );
-              if (!product) {
-                const syntheticProduct: Product = {
-                  accountId: "Buyer",
-                  name: productInfo.productDetails.name,
-                  description: productInfo.productDetails.description,
-                  category: "CatX",
-                  price: productInfo.productDetails.price,
-                  quantity: productInfo.productCount,
-                  imageUrls: productInfo.productDetails.imageUrls,
-                  specialOffer: productInfo.productDetails.specialOffer,
-                };
-
-                return syntheticProduct;
-              }
-              return product;
-            }
-          );
-
-          const allProducts: Product[] = await Promise.all(productPromises);
-
-          const fetchedProducts: Product[] = allProducts.filter((product) =>
-            user?.products?.some((p) => product._id === p)
-          );
-
-          const updatedProducts = fetchedProducts.map((product) => {
-            const matchingProductInfo = order?.productAndCount?.find(
-              (p) => p.productID === product?._id
-            );
-
-            return {
-              ...product,
-              quantity: matchingProductInfo
-                ? matchingProductInfo.productCount
-                : 0,
-            };
-          });
-
-          setProducts(
-            updatedProducts.length > 0 ? updatedProducts : allProducts
-          );
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
     fetchProducts();
   }, [user]);
+
+  useEffect(() => {
+    if (hasTriedLoading) {
+      const intervalId = setInterval(() => {
+        fetchProducts();
+      }, 2000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [hasTriedLoading, user]);
 
   return {
     products,

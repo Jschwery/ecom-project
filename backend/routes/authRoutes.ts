@@ -4,7 +4,10 @@ import * as userController from "../controllers/userController";
 import * as authController from "../controllers/authController";
 import { Response } from "express";
 import { CustomRequest } from "../types";
+import dotenv from "dotenv";
 
+dotenv.config();
+const isDevelopment = process.env.NODE_ENV === "development";
 const router = express.Router();
 
 router.get(
@@ -28,6 +31,8 @@ router.post("/signout", (req: CustomRequest, res: Response) => {
   res.cookie("googleToken", "", {
     expires: new Date(0),
     httpOnly: true,
+    secure: isDevelopment ? false : true,
+    sameSite: isDevelopment ? "lax" : "none",
     path: "/",
   });
   res.cookie("emailToken", "", {

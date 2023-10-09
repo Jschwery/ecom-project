@@ -14,7 +14,7 @@ export async function extractTokenAndUser(
     token = req.cookies.googleToken;
   } else if (req.cookies.emailToken) {
     token = req.cookies.emailToken;
-  } // Removed the console.log here
+  }
 
   if (!token) {
     return res.status(400).send("No token found!");

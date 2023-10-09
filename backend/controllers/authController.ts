@@ -4,6 +4,10 @@ import * as userService from "../services/userService";
 import User, { IUser } from "../models/User";
 import bcrypt from "bcrypt";
 import { CustomRequest } from "../types";
+import dotenv from "dotenv";
+
+dotenv.config();
+const isDevelopment = process.env.NODE_ENV === "development";
 
 export const googleAuthCallback = async (req: CustomRequest, res: Response) => {
   if (!req.user) {
@@ -14,8 +18,8 @@ export const googleAuthCallback = async (req: CustomRequest, res: Response) => {
     const token = userService.generateVerificationToken(user._id as string);
     res.cookie("googleToken", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isDevelopment ? false : true,
+      sameSite: isDevelopment ? "lax" : "none",
       maxAge: 1000 * 60 * 60 * 24,
     });
 
@@ -48,8 +52,8 @@ export const handleLogin = async (req: CustomRequest, res: Response) => {
   res
     .cookie("emailToken", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isDevelopment ? false : true,
+      sameSite: isDevelopment ? "lax" : "none",
       maxAge: maxAge,
     })
     .status(200)

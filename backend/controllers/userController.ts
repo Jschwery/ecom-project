@@ -265,23 +265,11 @@ export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
   }
 };
 
-export async function checkUser(req: CustomRequest, res: Response) {
+export function checkUser(req: CustomRequest, res: Response) {
   if (!req.foundUser) {
     return res.status(401).json({ message: "Not authenticated" });
   }
-  try {
-    const user = await User.findOne({ _id: req.foundUser.id }).select(
-      "-password"
-    );
-
-    if (user) {
-      return res.status(200).json(user);
-    } else {
-      return res.status(404).json({ message: "User not found" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+  return res.status(200).json(req.foundUser);
 }
 
 export async function getAllUserProduct(req: CustomRequest, res: Response) {

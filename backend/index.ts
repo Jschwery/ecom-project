@@ -20,6 +20,7 @@ import path from "path";
 
 dotenv.config();
 const shouldInitialize = process.env.NODE_ENV === "development";
+console.log("Value of shouldInitialize:", shouldInitialize);
 
 const app = express();
 app.use(cookieParser());
@@ -32,9 +33,7 @@ app.use("/backend/images", express.static(path.join(__dirname, "images")));
 
 app.use(
   cors({
-    origin: shouldInitialize
-      ? `${process.env.FRONTEND_URL}`
-      : "https://ecom-project-iota.vercel.app",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -68,6 +67,11 @@ app.use(
     secret: `${process.env.JWT_SECRET}`,
     resave: true,
     saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: process.env.NODE_ENV !== "development" ? "none" : "lax",
+      httpOnly: true,
+    },
   })
 );
 
@@ -97,12 +101,16 @@ if (!shouldInitialize) {
   };
 
   const httpsServer = https.createServer(credentials, app);
+  httpsServer.on("error", (error) => {
+    console.error("HTTPS server error:", error);
+  });
 
   httpsServer.listen(443, () => {
     console.log("HTTPS Server running on port 443");
   });
 } else {
-  app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server is running on port ${process.env.PORT || 5000}`);
+  app.listen(5000, () => {
+    console.log("Starting HTTP server...");
+    console.log("Server is running on port 5000");
   });
 }

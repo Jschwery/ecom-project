@@ -108,6 +108,7 @@ export const useFulfill = () => {
     buyer,
     order,
     setOrder,
+    fetchProducts,
     orderID,
   };
 };

@@ -1,10 +1,11 @@
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useOrders } from "../../hooks/useOrders";
 import { Product, User } from "../../../typings";
 import useUser from "../../hooks/useUser";
 import { Divider, useToast } from "@chakra-ui/react";
 import useProducts from "../../hooks/useProducts";
 import { useFulfill } from "../../hooks/useFulfill";
+import { loadingStyles, loadingStyles, spinnerStyles } from "../Home";
 interface ProductProps {
   product: Product;
   index: number;
@@ -94,10 +95,12 @@ const MemoizedProductComponent: React.FC<ProductProps> = React.memo(
 );
 
 function FullfillOrder() {
-  const { products, order, buyer } = useFulfill();
+  const { products, order, buyer, fetchProducts } = useFulfill();
   const { updateOrder } = useOrders();
   const { updateProduct, getProductById } = useProducts();
   const { getUserById, atomicUserUpdate, user } = useUser();
+  const [needsRefresh, setNeedsRefresh] = useState(false);
+
   const toast = useToast();
 
   const productsRef = useRef(products);
@@ -109,12 +112,23 @@ function FullfillOrder() {
       return existingProduct || product;
     });
   }, [products]);
+
+  useEffect(() => {
+    if (needsRefresh) {
+      setNeedsRefresh(false);
+      fetchProducts();
+    }
+  }, [needsRefresh]);
+
   productsRef.current = memoizedProducts;
 
   const total = useMemo(() => {
     console.log("the memo products are");
     console.log(memoizedProducts);
-
+    if (!memoizedProducts) {
+      setNeedsRefresh(true);
+      return;
+    }
     return memoizedProducts.reduce(
       (acc, product) => acc + calculateSubtotal(product),
       0
@@ -202,12 +216,12 @@ function FullfillOrder() {
 
       const buyer: User = {
         ...buyerDetails,
-        cashBalance: (buyerDetails.cashBalance || 0) - total,
+        cashBalance: (buyerDetails.cashBalance || 0) - total!,
       };
 
       const seller: User = {
         ...user,
-        cashBalance: (user.cashBalance || 0) + total,
+        cashBalance: (user.cashBalance || 0) + total!,
       };
 
       try {
@@ -230,119 +244,139 @@ function FullfillOrder() {
   };
 
   return (
-    <div className="w-full h-screen bg-ca2 p-6">
-      <div
-        className={`flex items-center rounded-md flex-col max-h-[95vh] overflow-y-auto min-w-[350px] max-w-[600px] w-2/3 mx-auto bg-ca3 ${
-          order?.status === "Fulfilled"
-            ? "border border-dashed border-green-600"
-            : order?.status === "Canceled"
-            ? "border border-dashed border-red-600"
-            : ""
-        }`}
-      >
-        <div className="flex flex-col min-w-[300px] items-start ">
-          {order?.status === "Fulfilled" ? (
-            <>
-              <div className="flex flex-col ml-auto ">
-                <h3 className="py-2">Fulfilled</h3>
-                <h5>
-                  {order.transactionDate
-                    ? formatDateAndTime(order.transactionDate)
-                    : "N/A"}
-                </h5>
-              </div>
-            </>
-          ) : (
-            ""
-          )}
-          <h1 className="mb-5 mx-auto pt-2">Fulfill Order</h1>
-          <div className="flex flex-col space-y-1 px-2 bg-ca1 w-full">
-            <div className="flex min-w-[300px] items-center space-x-4 ">
-              <h4>Order #</h4>
-              <h5>{Number(order?.orderNumber) || 0}</h5>
-            </div>
-            <div className="flex min-w-[300px] items-center space-x-4">
-              <h4>Buyer:</h4>
-              <h5>{buyer?.name}</h5>
-            </div>
-            <div className="flex items-center space-x-4">
-              <h4>Address:</h4>
-              <h5>
-                {buyer?.shippingAddresses && buyer.shippingAddresses.length > 0
-                  ? `${
-                      (buyer.shippingAddresses[0] &&
-                        buyer.shippingAddresses[0].name) ||
-                      ""
-                    }, ${
-                      (buyer.shippingAddresses[0] &&
-                        buyer.shippingAddresses[0].state) ||
-                      ""
-                    }, ${
-                      (buyer.shippingAddresses[0] &&
-                        buyer.shippingAddresses[0].zip) ||
-                      ""
-                    }`
-                  : "No Address Found"}
-              </h5>
-            </div>
-          </div>
-          <Divider className="my-2" />
-
-          {memoizedProducts.map((product, index) => (
-            <MemoizedProductComponent
-              key={product._id || `product-${index}`}
-              index={index}
-              product={product}
+    <>
+      {memoizedProducts && memoizedProducts.length === 0 ? (
+        <>
+          <div className="w-full h-screen flex justify-center items-start p-4">
+            <img
+              className="mt-12"
+              width={240}
+              height={240}
+              src="/images/logo2.svg"
+              alt="Logo"
             />
-          ))}
-          <Divider className="my-2" />
+          </div>
+          <div style={loadingStyles}>
+            <div style={spinnerStyles}></div>
+          </div>
+        </>
+      ) : (
+        <div className="w-full h-screen bg-ca2 p-6">
+          <div
+            className={`flex items-center rounded-md flex-col max-h-[95vh] overflow-y-auto min-w-[350px] max-w-[600px] w-2/3 mx-auto bg-ca3 ${
+              order?.status === "Fulfilled"
+                ? "border border-dashed border-green-600"
+                : order?.status === "Canceled"
+                ? "border border-dashed border-red-600"
+                : ""
+            }`}
+          >
+            <div className="flex flex-col min-w-[300px] items-start ">
+              {order?.status === "Fulfilled" ? (
+                <>
+                  <div className="flex flex-col ml-auto ">
+                    <h3 className="py-2">Fulfilled</h3>
+                    <h5>
+                      {order.transactionDate
+                        ? formatDateAndTime(order.transactionDate)
+                        : "N/A"}
+                    </h5>
+                  </div>
+                </>
+              ) : (
+                ""
+              )}
+              <h1 className="mb-5 mx-auto pt-2">Fulfill Order</h1>
+              <div className="flex flex-col space-y-1 px-2 bg-ca1 w-full">
+                <div className="flex min-w-[300px] items-center space-x-4 ">
+                  <h4>Order #</h4>
+                  <h5>{Number(order?.orderNumber) || 0}</h5>
+                </div>
+                <div className="flex min-w-[300px] items-center space-x-4">
+                  <h4>Buyer:</h4>
+                  <h5>{buyer?.name}</h5>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <h4>Address:</h4>
+                  <h5>
+                    {buyer?.shippingAddresses &&
+                    buyer.shippingAddresses.length > 0
+                      ? `${
+                          (buyer.shippingAddresses[0] &&
+                            buyer.shippingAddresses[0].name) ||
+                          ""
+                        }, ${
+                          (buyer.shippingAddresses[0] &&
+                            buyer.shippingAddresses[0].state) ||
+                          ""
+                        }, ${
+                          (buyer.shippingAddresses[0] &&
+                            buyer.shippingAddresses[0].zip) ||
+                          ""
+                        }`
+                      : "No Address Found"}
+                  </h5>
+                </div>
+              </div>
+              <Divider className="my-2" />
 
-          <div className="flex w-full justify-between mb-3 min-w-[300px] items-center space-x-4 px-2">
-            <div className="flex items-center space-x-2">
-              <h4>Order Total:</h4>
-              <h4>${total.toFixed(2)}</h4>
+              {memoizedProducts.map((product, index) => (
+                <MemoizedProductComponent
+                  key={product._id || `product-${index}`}
+                  index={index}
+                  product={product}
+                />
+              ))}
+              <Divider className="my-2" />
+
+              <div className="flex w-full justify-between mb-3 min-w-[300px] items-center space-x-4 px-2">
+                <div className="flex items-center space-x-2">
+                  <h4>Order Total:</h4>
+                  <h4>${total!.toFixed(2)}</h4>
+                </div>
+                {order?.status === "Pending" ? (
+                  <div title="Fullfill order">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-6  h-6 cursor-pointer hover:scale-110 duration-200"
+                      onClick={() => handleFullFillOrder()}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M7.875 14.25l1.214 1.942a2.25 2.25 0 001.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 011.872 1.002l.164.246a2.25 2.25 0 001.872 1.002h2.092a2.25 2.25 0 001.872-1.002l.164-.246A2.25 2.25 0 0116.954 9h4.636M2.41 9a2.25 2.25 0 00-.16.832V12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 01.382-.632l3.285-3.832a2.25 2.25 0 011.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0021.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 002.25 2.25z"
+                      />
+                    </svg>
+                  </div>
+                ) : (
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-6  h-6 cursor-pointer scale-110"
+                      onClick={() => (window.location.pathname = "your-items")}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
             </div>
-            {order?.status === "Pending" ? (
-              <div title="Fullfill order">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6  h-6 cursor-pointer hover:scale-110 duration-200"
-                  onClick={() => handleFullFillOrder()}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7.875 14.25l1.214 1.942a2.25 2.25 0 001.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 011.872 1.002l.164.246a2.25 2.25 0 001.872 1.002h2.092a2.25 2.25 0 001.872-1.002l.164-.246A2.25 2.25 0 0116.954 9h4.636M2.41 9a2.25 2.25 0 00-.16.832V12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 01.382-.632l3.285-3.832a2.25 2.25 0 011.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0021.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 002.25 2.25z"
-                  />
-                </svg>
-              </div>
-            ) : (
-              <div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6  h-6 cursor-pointer scale-110"
-                  onClick={() => (window.location.pathname = "your-items")}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-                  />
-                </svg>
-              </div>
-            )}
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 export default FullfillOrder;

@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import * as userService from "../services/userService";
 import jwt from "jsonwebtoken";
 import * as mailer from "../util/mailer";
@@ -28,11 +28,14 @@ export const initializeUserProducts = async (user: any) => {
   });
 };
 
-export const createUser = async (req: CustomRequest, res: Response) => {
+export const createUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10);
     const shouldInitialize = process.env.NODE_ENV === "development";
-
     const newUser = new User({
       ...req.body,
       password: passwordHash,
@@ -45,6 +48,7 @@ export const createUser = async (req: CustomRequest, res: Response) => {
       savedUser.initialized = true;
       await savedUser.save();
     }
+
     const token = userService.generateVerificationToken(savedUser._id);
     const verificationLink = `${process.env.BACKEND_URL}/api/verify-email?token=${token}`;
     await mailer.sendEmail(
@@ -59,20 +63,15 @@ export const createUser = async (req: CustomRequest, res: Response) => {
       userId: savedUser._id,
     });
   } catch (error: any) {
-    if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Email already exists" });
-    }
-    res.status(500).send({
-      success: false,
-      message: "An error occurred while creating the user.",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-export const getRecentProducts = async (req: CustomRequest, res: Response) => {
+export const getRecentProducts = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = req.foundUser;
     if (!user || !user.productsViewed) {
@@ -85,62 +84,53 @@ export const getRecentProducts = async (req: CustomRequest, res: Response) => {
         async (product) => await Product.findById(product)
       )
     );
-
     return res.status(200).send(userProducts);
   } catch (error: any) {
-    return res.status(500).send({ message: error.message });
+    next(error);
   }
 };
 
-export const verifyEmail = async (req: CustomRequest, res: Response) => {
-  const token = req.query.token as string;
-
+export const verifyEmail = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    const token = req.query.token as string;
     const verified: any = jwt.verify(token, process.env.JWT_SECRET as string);
     await User.findByIdAndUpdate(verified._id, { isVerified: true });
-
     res.status(200).redirect(`${process.env.FRONTEND_URL}/`);
   } catch (error: any) {
-    res.status(400).send({
-      message: "Email verification failed.",
-      error: error,
-      redirectTo: `${process.env.FRONTEND_URL}/error`,
-    });
+    next(error);
   }
 };
 
-export const getUserProducts = async (req: CustomRequest, res: Response) => {
+export const getUserProducts = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = req.foundUser;
-
     if (!user || !user.products) {
       return res
         .status(404)
         .send({ message: "User not found or user has no products." });
     }
-
     const userProducts = await Promise.all(
       user.products.map(async (product) => await Product.findById(product))
     );
-
     return res.status(200).send(userProducts);
   } catch (error) {
-    console.error("Error fetching user products:", error);
-    return res.status(500).send({ message: "Internal server error." });
+    next(error);
   }
 };
 
-export async function getUserByID(req: CustomRequest, res: Response) {
-  try {
-    const user = await User.findById(req.params.userID);
-
-    return res.status(200).json(user);
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-export async function atomicUpdate(req: CustomRequest, res: Response) {
+export const atomicUpdate = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -158,23 +148,22 @@ export async function atomicUpdate(req: CustomRequest, res: Response) {
     res.status(200).send("Transaction successful");
   } catch (err: any) {
     await session.abortTransaction();
-    console.error(err);
-    if (err.message === "Insufficient funds") {
-      res.status(400).send("Insufficient funds");
-    } else {
-      res.status(500).send("Internal server error");
-    }
+    next(err);
   } finally {
     session.endSession();
   }
-}
-
-export const updateUser = async (req: CustomRequest, res: Response) => {
+};
+export const updateUser = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     if (req.body.password) {
       const passwordHash = await bcrypt.hash(req.body.password, 10);
       req.body.password = passwordHash;
     }
+
     if (req.foundUser) {
       const updatePayload = {
         ...req.body,
@@ -185,7 +174,6 @@ export const updateUser = async (req: CustomRequest, res: Response) => {
         req.foundUser._id,
         updatePayload
       );
-
       res.status(200).send(user);
     } else {
       console.warn("Attempted to update user, but user was not found.");
@@ -194,15 +182,15 @@ export const updateUser = async (req: CustomRequest, res: Response) => {
       });
     }
   } catch (error: any) {
-    console.error(`Error while updating user. Error: ${error.message}`);
-    res.status(500).send({
-      message: "An error occurred while updating the user.",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-export const uploadToS3 = async (req: CustomRequest, res: Response) => {
+export const uploadToS3 = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const s3 = new AWS.S3({
     signatureVersion: "v4",
   });
@@ -232,21 +220,20 @@ export const uploadToS3 = async (req: CustomRequest, res: Response) => {
     console.log("Upload Success", s3Response.Location);
     res.status(200).send({ url: s3Response.Location });
   } catch (error: any) {
-    console.error("Error while uploading to S3:", error);
-    res.status(500).send({
-      message: "Failed to upload image to S3",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
+export const deleteFromS3 = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const s3 = new AWS.S3({
     signatureVersion: "v4",
   });
 
   const imageUrl = req.body.imageUrl;
-
   const key = imageUrl.split("orchtinimages.s3.us-east-2.amazonaws.com/")[1];
 
   const deleteParams = {
@@ -258,21 +245,30 @@ export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
     await s3.deleteObject(deleteParams).promise();
     res.status(200).send({ message: "Image successfully deleted" });
   } catch (error: any) {
-    res.status(500).send({
-      message: "Failed to delete image from S3",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-export function checkUser(req: CustomRequest, res: Response) {
-  if (!req.foundUser) {
-    return res.status(401).json({ message: "Not authenticated" });
+export function checkUser(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.foundUser) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    return res.status(200).json(req.foundUser);
+  } catch (err) {
+    next(err);
   }
-  return res.status(200).json(req.foundUser);
 }
 
-export async function getAllUserProduct(req: CustomRequest, res: Response) {
+export async function getAllUserProduct(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const userId = req.params.userID;
 
@@ -286,7 +282,6 @@ export async function getAllUserProduct(req: CustomRequest, res: Response) {
 
     return res.json(products);
   } catch (err) {
-    console.error("Error retrieving user products:", err);
-    return res.status(500).json({ error: "Internal Server Error" });
+    next(err);
   }
 }

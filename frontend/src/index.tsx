@@ -20,6 +20,7 @@ import RecentlyAdded from "./pages/RecentlyAdded";
 import Test from "./pages/Test";
 import Discover from "./pages/Discover";
 import ProductCategory from "./pages/ProductCategory";
+import { EnvironmentProvider } from "./global/EnvironmentProvider";
 
 const root = document.getElementById("root");
 
@@ -57,32 +58,34 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <CSSReset />
       <CartProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/test" element={<Test />} />
-            <Route path="/your-items" element={<YourItems />} />
-            <Route path="/add-item" element={<AddItem />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/edit-profile" element={<UserProfileEdit />} />
-            <Route path="/verify-email/:token" element={<VerifyEmail />} />
-            <Route path="/products/:productID" element={<ProductPage />} />
-            <Route path="/seller/:sellerID" element={<SellerPage />} />
-            <Route path="/orders/:orderID" element={<FullfillOrder />} />
-            <Route path="/discover" element={<Discover />} />
-            <Route
-              path="/category/:categoryName/special-offer"
-              element={<Deals />}
-            />
-            <Route
-              path="/category/:categoryName"
-              element={<ProductCategory />}
-            />
-            <Route path="/just-added" element={<RecentlyAdded />} />
-          </Routes>
-        </Router>
+        <EnvironmentProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/test" element={<Test />} />
+              <Route path="/your-items" element={<YourItems />} />
+              <Route path="/add-item" element={<AddItem />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/edit-profile" element={<UserProfileEdit />} />
+              <Route path="/verify-email/:token" element={<VerifyEmail />} />
+              <Route path="/products/:productID" element={<ProductPage />} />
+              <Route path="/seller/:sellerID" element={<SellerPage />} />
+              <Route path="/orders/:orderID" element={<FullfillOrder />} />
+              <Route path="/discover" element={<Discover />} />
+              <Route
+                path="/category/:categoryName/special-offer"
+                element={<Deals />}
+              />
+              <Route
+                path="/category/:categoryName"
+                element={<ProductCategory />}
+              />
+              <Route path="/just-added" element={<RecentlyAdded />} />
+            </Routes>
+          </Router>
+        </EnvironmentProvider>
       </CartProvider>
     </ChakraProvider>
   </React.StrictMode>,

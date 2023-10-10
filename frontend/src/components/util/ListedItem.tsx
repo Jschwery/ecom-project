@@ -79,7 +79,6 @@ function ListedItem({
               salePrice: salePrice,
             });
           } catch (err) {
-            console.error(err);
             toast({
               title: "Error updating product.",
               description: "Unable to apply sale percentage.",
@@ -93,10 +92,6 @@ function ListedItem({
       updateProductWithSale();
     }
   }, [dealMetaData, product]);
-
-  useEffect(() => {
-    console.log("ListedItem re-rendered, new flexDirection:", flexDirection);
-  }, [flexDirection]);
 
   const getAverageRating = (reviews: any) => {
     const totalRating = reviews.reduce(

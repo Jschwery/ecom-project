@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
 import { useToast } from "@chakra-ui/react";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
@@ -11,6 +12,7 @@ export default function useProducts() {
   const [productOwner, setProductOwner] = useState<User>();
   const [error, setError] = useState<Error | null>(null);
   const toast = useToast();
+  const isDevelopment = useEnvironment();
 
   const fetchData = useCallback(async (endpoint: string) => {
     try {

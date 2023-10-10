@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
+import { useEnvironment } from "../global/EnvironmentProvider";
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 export default function useUser() {
@@ -8,6 +9,7 @@ export default function useUser() {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setUserProducts] = useState<Product[] | null>(null);
   const [allProducts, setAllProducts] = useState<Product[] | null>(null);
+  const isDevelopment = useEnvironment();
 
   const fetchData = useCallback(async (endpoint: string) => {
     try {

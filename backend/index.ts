@@ -14,21 +14,18 @@ import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
 import productRoutes from "./routes/productRoutes";
 import { Counter } from "./models/Transaction";
+import { createLogger, format, transports } from "winston";
 import fs from "fs";
 import https from "https";
 import path from "path";
+import middleLogger from "./middlewares/logger";
 
 dotenv.config();
 const shouldInitialize = process.env.NODE_ENV === "development";
-console.log("Value of shouldInitialize:", shouldInitialize);
 
 const app = express();
 app.use(cookieParser());
 
-console.log(
-  "Setting up static route for images at:",
-  path.join(__dirname, "images")
-);
 app.use("/backend/images", express.static(path.join(__dirname, "images")));
 
 app.use(
@@ -40,10 +37,35 @@ app.use(
 
 app.use(express.json());
 
+export const logger = createLogger({
+  level: "info",
+  format: format.combine(
+    format.timestamp({
+      format: "YYYY-MM-DD HH:mm:ss",
+    }),
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json()
+  ),
+  defaultMeta: { service: "orchtin-ecom" },
+  transports: [
+    new transports.File({ filename: "error.log", level: "error" }),
+    new transports.File({ filename: "combined.log" }),
+  ],
+});
+
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.combine(format.colorize(), format.simple()),
+    })
+  );
+}
+
 mongoose
   .connect(process.env.MONGODB_URL!)
   .then(async () => {
-    console.log("Database connected!");
+    logger.info("Database connected!");
 
     const existingCounter = await Counter.findById("transaction");
     if (!existingCounter) {
@@ -81,6 +103,7 @@ app.use("/api", transactionRoutes);
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
+app.use(middleLogger);
 
 if (!shouldInitialize) {
   const privateKey = fs.readFileSync(
@@ -98,19 +121,20 @@ if (!shouldInitialize) {
     key: privateKey,
     cert: certificate,
     ca: ca,
+    sessionIdContext: "EcomServer1",
   };
 
   const httpsServer = https.createServer(credentials, app);
   httpsServer.on("error", (error) => {
-    console.error("HTTPS server error:", error);
+    logger.error("HTTPS server error:", error);
   });
 
   httpsServer.listen(443, () => {
-    console.log("HTTPS Server running on port 443");
+    logger.info("HTTPS Server running on port 443");
   });
 } else {
   app.listen(5000, () => {
-    console.log("Starting HTTP server...");
-    console.log("Server is running on port 5000");
+    logger.info("Starting HTTP server...");
+    logger.info("Server is running on port 5000");
   });
 }

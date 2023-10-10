@@ -4,6 +4,7 @@ import useProducts from "./useProducts";
 import useUser from "./useUser";
 import { useEffect, useState } from "react";
 import { Product, Transaction, User } from "../../typings";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 export const useFulfill = () => {
   const { orderID } = useParams();
@@ -15,6 +16,7 @@ export const useFulfill = () => {
   const [buyer, setBuyer] = useState<User>();
   const [products, setProducts] = useState<Product[]>([]);
   const [hasTriedLoading, setHasTriedLoading] = useState(false);
+  const isDevelopment = useEnvironment();
 
   const fetchOrderAndUser = async () => {
     try {

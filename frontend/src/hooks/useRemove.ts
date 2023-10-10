@@ -2,9 +2,11 @@ import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { Transaction } from "../../typings";
 import axios from "axios";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   const [items, setItems] = useState<any[]>([]);
+  const isDevelopment = useEnvironment();
   const toast = useToast();
 
   const removeItem = async (itemToRemove: any) => {

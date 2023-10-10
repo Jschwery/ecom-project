@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as productService from "../services/productService";
 import { CustomRequest } from "../types";
 import Product, { IProduct } from "../models/Product";
@@ -6,7 +6,11 @@ import * as AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import User from "../models/User";
 
-export const findProductById = async (req: CustomRequest, res: Response) => {
+export const findProductById = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const productIds: string[] = req.body.productIds;
 
@@ -18,22 +22,30 @@ export const findProductById = async (req: CustomRequest, res: Response) => {
 
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).send(error);
+    next(error);
   }
 };
 
-export const getProductById = async (req: CustomRequest, res: Response) => {
+export const getProductById = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const productId: string = req.params.productId;
 
     const product = await productService.findProductById(productId);
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).send(error);
+    next(error);
   }
 };
 
-export const updateProduct = async (req: CustomRequest, res: Response) => {
+export const updateProduct = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const product = await productService.updateProduct(
       req.params.productID,
@@ -41,11 +53,15 @@ export const updateProduct = async (req: CustomRequest, res: Response) => {
     );
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).send(error);
+    next(error);
   }
 };
 
-export const findProductOwner = async (req: CustomRequest, res: Response) => {
+export const findProductOwner = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const productId: string = req.params.productId;
 
@@ -54,31 +70,37 @@ export const findProductOwner = async (req: CustomRequest, res: Response) => {
       .exec();
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found!" });
+      throw new Error("Product not found");
     }
 
     if (!product.sellerID) {
-      return res.status(404).json({ message: "Seller not found!" });
+      throw new Error("Seller not found");
     }
     const foundUser = await User.findById(product.sellerID);
     res.status(200).json(foundUser);
   } catch (error) {
-    console.error("Error fetching product:", error);
-    res.status(500).send({ message: "Internal Server Error" });
+    next(error);
   }
 };
 
-export const deleteProductById = async (req: CustomRequest, res: Response) => {
+export const deleteProductById = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     await productService.deleteProductById(req.params.productId);
     res.status(200).send({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error("Error deleting product:", error);
-    res.status(500).send({ error: "Failed to delete product" });
+    next(error);
   }
 };
 
-export const createProduct = async (req: CustomRequest, res: Response) => {
+export const createProduct = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const product = new Product(req.body);
     await product.save();
@@ -90,11 +112,15 @@ export const createProduct = async (req: CustomRequest, res: Response) => {
 
     res.status(201).json({ message: "Product created successfully", product });
   } catch (error) {
-    res.status(500).json({ message: "Error creating product", error });
+    next(error);
   }
 };
 
-export const uploadToS3 = async (req: CustomRequest, res: Response) => {
+export const uploadToS3 = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const s3 = new AWS.S3({
     signatureVersion: "v4",
   });
@@ -123,16 +149,16 @@ export const uploadToS3 = async (req: CustomRequest, res: Response) => {
     const s3Response = await s3.upload(uploadParams).promise();
     console.log("Upload Success", s3Response.Location);
     res.status(200).send({ url: s3Response.Location });
-  } catch (error: any) {
-    console.error("Error while uploading to S3:", error);
-    res.status(500).send({
-      message: "Failed to upload image to S3",
-      error: error.message,
-    });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
+export const deleteFromS3 = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   const s3 = new AWS.S3({
     signatureVersion: "v4",
   });
@@ -149,26 +175,29 @@ export const deleteFromS3 = async (req: CustomRequest, res: Response) => {
   try {
     await s3.deleteObject(deleteParams).promise();
     res.status(200).send({ message: "Image successfully deleted" });
-  } catch (error: any) {
-    res.status(500).send({
-      message: "Failed to delete image from S3",
-      error: error.message,
-    });
+  } catch (error) {
+    next(error);
   }
 };
-export const getAllProducts = async (req: CustomRequest, res: Response) => {
+export const getAllProducts = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const products = await Product.find();
 
     return res.status(200).send(products);
-  } catch (error: any) {
-    return res
-      .status(500)
-      .send({ message: "Error fetching products", error: error.message });
+  } catch (error) {
+    next(error);
   }
 };
 
-export async function findByCategory(req: CustomRequest, res: Response) {
+export async function findByCategory(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const category = req.params.categoryName;
     if (!category) {
@@ -181,7 +210,6 @@ export async function findByCategory(req: CustomRequest, res: Response) {
 
     return res.status(200).json(products);
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Server error" });
+    next(err);
   }
 }

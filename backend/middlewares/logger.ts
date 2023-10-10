@@ -1,13 +1,22 @@
-import { NextFunction, Response } from "express";
-import { CustomRequest } from "../types";
+import { NextFunction, Request, Response } from "express";
+import { logger } from "../index";
 
-export async function middleLogger(
-  req: CustomRequest,
+const middleLogger = (
+  err: any,
+  req: Request,
   res: Response,
   next: NextFunction
-) {
-  console.log(`Incoming request to ${req.path}`);
-  console.log(`request: ${req}`);
+) => {
+  const logLevel = err.logLevel || "error";
 
-  next();
-}
+  (logger as any)[logLevel](`[${req.method} ${req.url}] - ${err.message}`);
+
+  const responseMessage =
+    process.env.NODE_ENV === "development"
+      ? err.message
+      : "Internal Server Error";
+
+  res.status(err.statusCode || 500).json({ message: responseMessage });
+};
+
+export default middleLogger;

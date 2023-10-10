@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import useUser from "./useUser";
 import axios from "axios";
 import { Transaction } from "../../typings";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 export const useOrders = () => {
   const { user } = useUser();
   const [orders, setOrders] = useState<Transaction[]>();
+  const isDevelopment = useEnvironment();
 
   useEffect(() => {
     const getOrders = async () => {

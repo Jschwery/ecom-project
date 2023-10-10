@@ -1,18 +1,31 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import * as transactionService from "../services/transactionService";
 import { CustomRequest } from "../types";
 import Transaction from "../models/Transaction";
 
-export const createTransaction = async (req: CustomRequest, res: Response) => {
+export const createTransaction = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const result = await transactionService.createTransaction(req.body);
     res.status(201).json(result);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    next({
+      message: "Failed to create transaction",
+      error,
+      statusCode: 500,
+      logLevel: "error",
+    });
   }
 };
 
-export async function updateTransaction(req: CustomRequest, res: Response) {
+export async function updateTransaction(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const result = await transactionService.updateTransaction(
       req.params.transactionID,
@@ -20,11 +33,20 @@ export async function updateTransaction(req: CustomRequest, res: Response) {
     );
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    next({
+      message: "Failed to update transaction",
+      error,
+      statusCode: 500,
+      logLevel: "error",
+    });
   }
 }
 
-export async function getBuyerTransaction(req: CustomRequest, res: Response) {
+export async function getBuyerTransaction(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const result = await transactionService.getBuyerTransaction(
       req.params.buyerID
@@ -32,14 +54,27 @@ export async function getBuyerTransaction(req: CustomRequest, res: Response) {
     if (result && result.length > 0) {
       res.status(200).json(result);
     } else {
-      res.status(404).json({ message: "Transactions not found for the buyer" });
+      next({
+        message: "Transactions not found for the buyer",
+        statusCode: 404,
+        logLevel: "warn",
+      });
     }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    next({
+      message: "Error fetching buyer transactions",
+      error,
+      statusCode: 500,
+      logLevel: "error",
+    });
   }
 }
 
-export async function getSellerTransaction(req: CustomRequest, res: Response) {
+export async function getSellerTransaction(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const result = await transactionService.getSellerTransaction(
       req.params.sellerID
@@ -49,28 +84,45 @@ export async function getSellerTransaction(req: CustomRequest, res: Response) {
     if (result && result.length > 0) {
       res.status(200).json(result);
     } else {
-      res
-        .status(404)
-        .json({ message: "Transactions not found for the seller" });
+      next({
+        message: "Transactions not found for the seller",
+        statusCode: 404,
+        logLevel: "warn",
+      });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    next({
+      message: "Error fetching seller transactions",
+      error,
+      statusCode: 500,
+      logLevel: "error",
+    });
   }
 }
 
-export async function getOrderTransaction(req: CustomRequest, res: Response) {
+export async function getOrderTransaction(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
   const orderID = req.params.orderID;
   try {
     const transactionFound = await Transaction.findById(orderID);
     if (transactionFound) {
       res.status(200).json(transactionFound);
     } else {
-      res
-        .status(404)
-        .json({ message: "Transactions not found for the seller" });
+      next({
+        message: "Transaction not found for the order",
+        statusCode: 404,
+        logLevel: "warn",
+      });
     }
   } catch (error) {
-    console.error(error);
+    next({
+      message: "Error fetching order transaction",
+      error,
+      statusCode: 500,
+      logLevel: "error",
+    });
   }
 }

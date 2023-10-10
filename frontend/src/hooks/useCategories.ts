@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TAGS_STARTER, TagsStarterMap } from "../data/tags";
 import { MultiValue } from "../pages/AddItem";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 export default function useCategories() {
   const categories: string[] = Object.keys(TAGS_STARTER);
@@ -8,6 +9,7 @@ export default function useCategories() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTags, setSelectedTags] = useState<MultiValue[]>([]);
   const tagsStarter: TagsStarterMap = TAGS_STARTER;
+  const isDevelopment = useEnvironment();
 
   const selectCategory = (category: keyof TagsStarterMap) => {
     setSelectedCategory(category);

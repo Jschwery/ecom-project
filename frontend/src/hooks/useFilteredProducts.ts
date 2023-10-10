@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Product } from "../../typings";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 type Option = {
   label: string;
@@ -21,6 +22,8 @@ export function useFilteredProducts(initialProducts: Product[] | null) {
   const [internalProducts, setInternalProducts] = useState<Product[] | null>(
     initialProducts
   );
+  const isDevelopment = useEnvironment();
+
   useEffect(() => {
     setInternalProducts(initialProducts);
   }, [initialProducts]);

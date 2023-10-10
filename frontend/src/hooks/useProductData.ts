@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useProducts from "./useProducts";
 import { Product, User } from "../../typings";
 import useUser from "./useUser";
+import { useEnvironment } from "../global/EnvironmentProvider";
 
 export default function useProductData(productID: string) {
   const { getProductById, findProductOwner, productOwner } = useProducts();
@@ -16,6 +17,7 @@ export default function useProductData(productID: string) {
   const [reviewUsers, setReviewUsers] = useState<any[]>([]);
   const [userImages, setUserImages] = useState<User[]>([]);
   const [sellerRating, setSellerRating] = useState<number>();
+  const isDevelopment = useEnvironment();
 
   useEffect(() => {
     const getProduct = async () => {

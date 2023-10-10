@@ -5,7 +5,7 @@ import useUser from "../../hooks/useUser";
 import { Divider, useToast } from "@chakra-ui/react";
 import useProducts from "../../hooks/useProducts";
 import { useFulfill } from "../../hooks/useFulfill";
-import { loadingStyles, loadingStyles, spinnerStyles } from "../Home";
+import { loadingStyles, spinnerStyles } from "../Home";
 interface ProductProps {
   product: Product;
   index: number;

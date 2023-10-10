@@ -58,17 +58,9 @@ function RecentlyAdded() {
   }, []);
 
   useEffect(() => {
-    console.log("the filtered products are:");
-    console.log(filteredProducts);
-  }, [filteredProducts]);
-
-  useEffect(() => {
     if (areAnyFiltersActive === false) {
       recentProducts &&
         setTimeout(() => {
-          console.log("here are the recent products");
-          console.log([...recentProducts]);
-
           setRecentProducts([...recentProducts]);
           setInternalProducts([...recentProducts]);
         }, 2000);

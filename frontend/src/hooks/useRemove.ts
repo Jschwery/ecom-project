@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Transaction } from "../../typings";
 import axios from "axios";
 import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 
 function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
   const [items, setItems] = useState<any[]>([]);
   const isDevelopment = useEnvironment();
+  const { addErrorToQueue } = useError();
   const toast = useToast();
 
   const removeItem = async (itemToRemove: any) => {
@@ -33,8 +35,12 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
       if (onDeleteCallback) {
         onDeleteCallback(itemToRemove);
       }
-    } catch (error) {
-      console.error("Failed to delete the item", error);
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
     }
   };
 
@@ -52,14 +58,16 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
-
         return response.data;
       } else {
         throw new Error("Failed to update the order");
       }
-    } catch (error) {
-      console.error("Failed to cancel the order");
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
       throw error;
     }
   };
@@ -89,8 +97,12 @@ function useRemove(onDeleteCallback?: (item: any) => void, apiURL?: string) {
       if (onDeleteCallback) {
         onDeleteCallback(itemToRemove);
       }
-    } catch (error) {
-      console.error("Failed to delete the item", error);
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
     }
   };
 

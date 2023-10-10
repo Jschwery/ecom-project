@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
 import { useToast } from "@chakra-ui/react";
 import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
@@ -13,6 +14,7 @@ export default function useProducts() {
   const [error, setError] = useState<Error | null>(null);
   const toast = useToast();
   const isDevelopment = useEnvironment();
+  const { addErrorToQueue } = useError();
 
   const fetchData = useCallback(async (endpoint: string) => {
     try {
@@ -52,7 +54,11 @@ export default function useProducts() {
         return { status: response.status, error: "Unexpected response code." };
       }
     } catch (err: any) {
-      console.error(err);
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
       return { status: null, error: err.message };
     } finally {
       setLoading(false);
@@ -63,8 +69,12 @@ export default function useProducts() {
     try {
       const productsData = await fetchData("/api/products");
       setProducts(productsData);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   }, []);
 
@@ -74,8 +84,12 @@ export default function useProducts() {
         `${process.env.REACT_APP_BACKEND_URL}/api/products/owner/${productID}`
       );
       setProductOwner(response.data);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   }, []);
 
@@ -85,8 +99,12 @@ export default function useProducts() {
         `${process.env.REACT_APP_BACKEND_URL}/api/products/category/${category}`
       );
       return response.data;
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   }, []);
 
@@ -99,16 +117,24 @@ export default function useProducts() {
         }
       );
       return response.data;
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   }, []);
 
   const getProductById = useCallback(async (productId: string) => {
     try {
       return await fetchData(`/api/products/${productId}`);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   }, []);
 

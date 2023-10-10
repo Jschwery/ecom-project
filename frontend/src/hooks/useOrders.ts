@@ -3,11 +3,13 @@ import useUser from "./useUser";
 import axios from "axios";
 import { Transaction } from "../../typings";
 import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 
 export const useOrders = () => {
   const { user } = useUser();
   const [orders, setOrders] = useState<Transaction[]>();
   const isDevelopment = useEnvironment();
+  const { addErrorToQueue } = useError();
 
   useEffect(() => {
     const getOrders = async () => {
@@ -18,11 +20,13 @@ export const useOrders = () => {
           );
           if (response.status === 200) {
             setOrders(response.data);
-          } else {
-            console.log(`Unsuccessful orders found with id: ${user?._id}`);
           }
-        } catch (err) {
-          console.error(err);
+        } catch (err: any) {
+          if (isDevelopment) {
+            console.error(err);
+          } else {
+            addErrorToQueue(err);
+          }
         }
       }
     };
@@ -40,8 +44,12 @@ export const useOrders = () => {
       if (response.status === 200) {
         return response.data;
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   };
 
@@ -63,8 +71,12 @@ export const useOrders = () => {
       } else {
         throw new Error("Failed to update the order");
       }
-    } catch (error) {
-      console.error("Failed to cancel the order");
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
       throw error;
     }
   };

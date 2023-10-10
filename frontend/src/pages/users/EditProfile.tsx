@@ -286,8 +286,6 @@ export default function UserProfileEdit({
 
         return prevAddresses;
       });
-    } else {
-      console.log("could not find address at index: " + indx);
     }
   };
 
@@ -299,7 +297,6 @@ export default function UserProfileEdit({
           event.preventDefault();
 
           if (Object.keys(formik.errors).length > 0) {
-            console.log("Formik errors:", formik.errors);
             return;
           }
           formik.handleSubmit(event);

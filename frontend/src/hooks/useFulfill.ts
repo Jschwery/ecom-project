@@ -5,6 +5,7 @@ import useUser from "./useUser";
 import { useEffect, useState } from "react";
 import { Product, Transaction, User } from "../../typings";
 import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 
 export const useFulfill = () => {
   const { orderID } = useParams();
@@ -17,6 +18,7 @@ export const useFulfill = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [hasTriedLoading, setHasTriedLoading] = useState(false);
   const isDevelopment = useEnvironment();
+  const { addErrorToQueue } = useError();
 
   const fetchOrderAndUser = async () => {
     try {
@@ -29,8 +31,12 @@ export const useFulfill = () => {
           setBuyer(fetchedUser);
         }
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   };
 
@@ -81,8 +87,12 @@ export const useFulfill = () => {
 
         setProducts(updatedProducts.length > 0 ? updatedProducts : allProducts);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
     }
   };
 

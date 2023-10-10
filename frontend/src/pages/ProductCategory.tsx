@@ -62,8 +62,6 @@ function ProductCategory() {
       return;
     }
     const category = async () => {
-      console.log("hello");
-
       try {
         const categories: Product[] = await getProductsByCategory(categoryName);
         setCategoryProducts(categories);

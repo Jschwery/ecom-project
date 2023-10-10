@@ -73,14 +73,6 @@ function Deals() {
   }, [products, categoryName, filtersState]);
 
   useEffect(() => {
-    console.log("the filtered products are");
-    console.log(filteredProducts);
-
-    console.log("the paginated");
-    console.log(paginatedProducts);
-  }, [filteredProducts, paginatedProducts]);
-
-  useEffect(() => {
     const handleResize = () => {
       const currentWidth = getDivWidth(divRef.current);
 

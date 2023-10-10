@@ -3,6 +3,7 @@ import useProducts from "./useProducts";
 import { Product, User } from "../../typings";
 import useUser from "./useUser";
 import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 
 export default function useProductData(productID: string) {
   const { getProductById, findProductOwner, productOwner } = useProducts();
@@ -18,6 +19,7 @@ export default function useProductData(productID: string) {
   const [userImages, setUserImages] = useState<User[]>([]);
   const [sellerRating, setSellerRating] = useState<number>();
   const isDevelopment = useEnvironment();
+  const { addErrorToQueue } = useError();
 
   useEffect(() => {
     const getProduct = async () => {
@@ -30,7 +32,11 @@ export default function useProductData(productID: string) {
           console.warn("Product not found or is undefined");
         }
       } catch (e: any) {
-        console.error(e);
+        if (isDevelopment) {
+          console.error(e);
+        } else {
+          addErrorToQueue(e);
+        }
       }
     };
 
@@ -49,8 +55,12 @@ export default function useProductData(productID: string) {
           await getAllUserProducts(productOwner?._id);
         }
         setIsLoading(false);
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        if (isDevelopment) {
+          console.error(error);
+        } else {
+          addErrorToQueue(error);
+        }
       }
     };
     findProducts();

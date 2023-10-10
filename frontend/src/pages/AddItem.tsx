@@ -133,7 +133,6 @@ function AddItem() {
 
       if (response.status >= 200 && response.status < 300) {
         formik.resetForm();
-        console.log("200 response OK");
         window.location.pathname = "/";
       }
     } catch (error: any) {
@@ -469,7 +468,6 @@ function AddItem() {
               >
                 <ModalOverlay
                   onClick={() => {
-                    console.log("clicked");
                     toggleModal();
                   }}
                   bgColor="rgba(0, 0, 0, 0.9)"

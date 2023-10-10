@@ -123,8 +123,6 @@ function FullfillOrder() {
   productsRef.current = memoizedProducts;
 
   const total = useMemo(() => {
-    console.log("the memo products are");
-    console.log(memoizedProducts);
     if (!memoizedProducts) {
       setNeedsRefresh(true);
       return;

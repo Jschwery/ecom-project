@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 type ErrorContextType = {
-  errorQueue: Error[];
+  errorQueue: any[];
   addErrorToQueue: (error: Error) => void;
 };
 

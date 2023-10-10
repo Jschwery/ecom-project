@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
 import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 export default function useUser() {
@@ -10,7 +11,7 @@ export default function useUser() {
   const [products, setUserProducts] = useState<Product[] | null>(null);
   const [allProducts, setAllProducts] = useState<Product[] | null>(null);
   const isDevelopment = useEnvironment();
-
+  const { addErrorToQueue } = useError();
   const fetchData = useCallback(async (endpoint: string) => {
     try {
       setIsLoading(true);
@@ -46,14 +47,16 @@ export default function useUser() {
       );
 
       setUserProducts(productRequest.data);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
     }
   }, []);
 
   const getAllUserProducts = async (userID: String) => {
-    console.log("getAllUserProducts called with userID:", userID);
-
     try {
       const productRequest = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/api/users/${userID}/products`,
@@ -63,8 +66,12 @@ export default function useUser() {
       );
 
       setAllProducts(productRequest.data);
-    } catch (error) {
-      console.error("Error fetching user products:", error);
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error("Error fetching user products:", error);
+      } else {
+        addErrorToQueue(error);
+      }
     }
   };
 
@@ -77,8 +84,12 @@ export default function useUser() {
         }
       );
       return productRequest;
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
     }
   }, []);
 
@@ -106,7 +117,11 @@ export default function useUser() {
           };
         }
       } catch (err: any) {
-        console.error(err);
+        if (isDevelopment) {
+          console.error(err);
+        } else {
+          addErrorToQueue(err);
+        }
         return { status: null, error: err.message };
       } finally {
         setIsLoading(false);
@@ -132,7 +147,11 @@ export default function useUser() {
         return { status: response.status, error: "Unexpected response code." };
       }
     } catch (err: any) {
-      console.error(err);
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
       return { status: null, error: err.message };
     } finally {
       setIsLoading(false);
@@ -156,7 +175,11 @@ export default function useUser() {
         return { status: response.status, error: "Unexpected response code." };
       }
     } catch (err: any) {
-      console.error(err);
+      if (isDevelopment) {
+        console.error(err);
+      } else {
+        addErrorToQueue(err);
+      }
       return { status: null, error: err.message };
     } finally {
       setIsLoading(false);
@@ -177,7 +200,12 @@ export default function useUser() {
           }
         );
         setUser(resp.data);
-      } catch (err) {
+      } catch (err: any) {
+        if (isDevelopment) {
+          console.error(err);
+        } else {
+          addErrorToQueue(err);
+        }
       } finally {
         setIsLoading(false);
       }

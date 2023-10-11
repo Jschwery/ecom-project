@@ -74,8 +74,6 @@ export default function Login() {
   });
 
   if (isLoading) {
-    console.log("in LOGIN CONTINUE IS LOADING");
-
     return (
       <>
         <div className="w-full h-screen flex justify-center items-start p-4">

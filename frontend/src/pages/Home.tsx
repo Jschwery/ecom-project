@@ -66,7 +66,7 @@ export const breakpoints = [
 ];
 
 function App() {
-  const { user, isLoading: userLoading } = useUser();
+  const { user } = useUser();
   const {
     products,
     loading: productsLoading,

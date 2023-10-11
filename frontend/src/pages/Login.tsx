@@ -19,11 +19,12 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 import ContinueWithGoogle from "../components/Login";
+import { loadingStyles, spinnerStyles } from "./Home";
 
 export default function Login() {
   const [showBadAlert, setShowBadAlert] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string()
@@ -71,6 +72,25 @@ export default function Login() {
       }
     },
   });
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="w-full h-screen flex justify-center items-start p-4">
+          <img
+            className="mt-12"
+            width={240}
+            height={240}
+            src="/images/logo2.svg"
+            alt="Logo"
+          />
+        </div>
+        <div style={loadingStyles}>
+          <div style={spinnerStyles}></div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <Stack
@@ -131,7 +151,7 @@ export default function Login() {
 
                 <Text color={"blue.500"}>Forgot password?</Text>
               </Stack>
-              <ContinueWithGoogle />
+              <ContinueWithGoogle onLoading={setIsLoading} />
               <Button
                 backgroundColor={"ca7"}
                 textColor={"ca1"}

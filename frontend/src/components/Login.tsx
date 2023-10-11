@@ -1,6 +1,32 @@
 import { Button, HStack, Icon, Text } from "@chakra-ui/react";
+import axios from "axios";
+import { useState } from "react";
+import { useEnvironment } from "../global/EnvironmentProvider";
+import { useError } from "../global/ErrorProvider";
 
-export default function ContinueWithGoogle() {
+interface ContinueGoogleProps {
+  onLoading: (value: boolean) => void;
+}
+
+export default function ContinueWithGoogle({ onLoading }: ContinueGoogleProps) {
+  const isDevelopment = useEnvironment();
+  const { addErrorToQueue } = useError();
+
+  const handleGoogleLogin = async () => {
+    onLoading(true);
+
+    try {
+      await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`);
+    } catch (error: any) {
+      if (isDevelopment) {
+        console.error(error);
+      } else {
+        addErrorToQueue(error);
+      }
+    } finally {
+      onLoading(false);
+    }
+  };
   return (
     <Button
       type="button"
@@ -10,9 +36,7 @@ export default function ContinueWithGoogle() {
       width={"100%"}
       color={"ca1"}
       _hover={{ bg: "ca6" }}
-      onClick={() =>
-        (window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google`)
-      }
+      onClick={handleGoogleLogin}
     >
       <HStack spacing={2} alignItems="center">
         <Icon boxSize={6}>

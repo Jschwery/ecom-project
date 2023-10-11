@@ -7,10 +7,10 @@ import authRoutes from "./routes/authRoutes";
 import passport from "passport";
 import session from "express-session";
 import usePassport from "./middlewares/passport-config";
-import User from "./models/User";
 import usersRoutes from "./routes/usersRoutes";
+import logRoutes from "./routes/logRoutes";
+
 import * as AWS from "aws-sdk";
-import fileUpload from "express-fileupload";
 import cookieParser from "cookie-parser";
 import productRoutes from "./routes/productRoutes";
 import { Counter } from "./models/Transaction";
@@ -103,6 +103,8 @@ app.use("/api", transactionRoutes);
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api", usersRoutes);
+app.use("/api", logRoutes);
+
 app.use(middleLogger);
 
 if (!shouldInitialize) {

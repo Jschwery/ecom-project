@@ -13,6 +13,8 @@ export default function ContinueWithGoogle({ onLoading }: ContinueGoogleProps) {
   const { addErrorToQueue } = useError();
 
   const handleGoogleLogin = async () => {
+    console.log("loading true");
+
     onLoading(true);
 
     try {
@@ -24,6 +26,8 @@ export default function ContinueWithGoogle({ onLoading }: ContinueGoogleProps) {
         addErrorToQueue(error);
       }
     } finally {
+      console.log("loading false");
+
       onLoading(false);
     }
   };

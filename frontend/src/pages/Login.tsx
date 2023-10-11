@@ -153,7 +153,7 @@ export default function Login() {
 
                 <Text color={"blue.500"}>Forgot password?</Text>
               </Stack>
-              <ContinueWithGoogle onLoading={setIsLoading} />
+              <ContinueWithGoogle onLoading={(value) => setIsLoading(value)} />
               <Button
                 backgroundColor={"ca7"}
                 textColor={"ca1"}

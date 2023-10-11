@@ -4,31 +4,11 @@ import { useState } from "react";
 import { useEnvironment } from "../global/EnvironmentProvider";
 import { useError } from "../global/ErrorProvider";
 
-interface ContinueGoogleProps {
-  onLoading: (value: boolean) => void;
-}
-
-export default function ContinueWithGoogle({ onLoading }: ContinueGoogleProps) {
-  const isDevelopment = useEnvironment();
-  const { addErrorToQueue } = useError();
-
-  const handleGoogleLogin = async () => {
-    onLoading(true);
-
-    try {
-      await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google`);
-    } catch (error: any) {
-      if (isDevelopment) {
-        console.error(error);
-      } else {
-        addErrorToQueue(error);
-      }
-    } finally {
-      console.log("loading false");
-
-      onLoading(false);
-    }
+export default function ContinueWithGoogle() {
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/auth/google`;
   };
+
   return (
     <Button
       type="button"

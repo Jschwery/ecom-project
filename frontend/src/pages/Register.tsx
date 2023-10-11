@@ -46,7 +46,6 @@ const validationSchema = Yup.object().shape({
 
 export default function Register() {
   const [currentAlert, displayAlert] = useAlert();
-  const [isLoading, setIsLoading] = useState(false);
 
   const clientID =
     "843159100565-q92pmj816jh17g0arofo3jaocq7co3mv.apps.googleusercontent.com";
@@ -94,25 +93,6 @@ export default function Register() {
       }
     },
   });
-
-  if (isLoading) {
-    return (
-      <>
-        <div className="w-full h-screen flex justify-center items-start p-4">
-          <img
-            className="mt-12"
-            width={240}
-            height={240}
-            src="/images/logo2.svg"
-            alt="Logo"
-          />
-        </div>
-        <div style={loadingStyles}>
-          <div style={spinnerStyles}></div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -338,9 +318,7 @@ export default function Register() {
                     </Center>
                   </Box>
 
-                  <ContinueWithGoogle
-                    onLoading={(value) => setIsLoading(value)}
-                  />
+                  <ContinueWithGoogle />
                 </Flex>
                 <Stack pt={6}>
                   <Text align={"center"} color={"ca7"}>

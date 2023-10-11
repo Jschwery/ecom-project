@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, {
   ReactNode,
   createContext,
@@ -5,6 +6,8 @@ import React, {
   useState,
   useEffect,
 } from "react";
+import { useEnvironment } from "./EnvironmentProvider";
+const isDevelopment = useEnvironment();
 
 type ErrorContextType = {
   errorQueue: any[];
@@ -31,8 +34,22 @@ export const ErrorProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const sendErrors = async () => {
       if (!isDevelopment) {
-        console.log("Sending errors:", errorQueue);
-        setErrorQueue([]);
+        try {
+          await Promise.all(
+            errorQueue.map((err) =>
+              axios.post(process.env.REACT_APP_BACKEND_URL!, err, {
+                withCredentials: true,
+              })
+            )
+          );
+          setErrorQueue([]);
+        } catch (e: any) {
+          if (isDevelopment) {
+            console.error(e);
+          } else {
+            addErrorToQueue(e);
+          }
+        }
       }
     };
 

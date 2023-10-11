@@ -2,7 +2,7 @@ import * as userController from "../controllers/userController";
 import { extractTokenAndUser } from "../middlewares/extractToken";
 import expressFileUpload from "express-fileupload";
 import express from "express";
-import { middleLogger } from "../middlewares/logger";
+import middleLogger from "../middlewares/logger";
 
 const router = express.Router();
 router.use(expressFileUpload());
@@ -33,6 +33,6 @@ router.get(
   userController.getAllUserProduct
 );
 
-router.get("/users/:userID", userController.getUserByID);
+router.get("/users/:userID", extractTokenAndUser, userController.getUserByID);
 
 export default router;

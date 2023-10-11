@@ -285,3 +285,20 @@ export async function getAllUserProduct(
     next(err);
   }
 }
+export async function getUserByID(
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = await User.findById(req.params.userID);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: `No user found with ID: ${req.params.userID}` });
+    }
+    return res.status(200).json(user);
+  } catch (err) {
+    next(err);
+  }
+}

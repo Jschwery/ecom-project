@@ -75,8 +75,6 @@ export const ErrorProvider: React.FC<{ children: ReactNode }> = ({
 
 export const useError = () => {
   const context = useContext(ErrorContext);
-  if (context === undefined) {
-    throw new Error("useError must be used within an ErrorProvider");
-  }
+  console.log("the context: " + context);
   return context;
 };

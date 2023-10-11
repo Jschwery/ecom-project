@@ -1,3 +1,6 @@
 {"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-11 05:28:03"}
 {"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-11 05:28:03"}
 {"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-11 05:28:04"}
+{"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-11 05:31:22"}
+{"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-11 05:31:22"}
+{"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-11 05:31:23"}

@@ -14,6 +14,5 @@ export const EnvironmentProvider = ({ children }: { children: ReactNode }) => {
 
 export const useEnvironment = () => {
   const context = useContext(EnvironmentContext);
-  console.log("the context: " + context);
   return context;
 };

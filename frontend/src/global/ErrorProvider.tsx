@@ -31,13 +31,17 @@ export const ErrorProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const sendErrors = async () => {
-      if (!isDevelopment) {
+      if (!isDevelopment && errorQueue.length > 0) {
         try {
           await Promise.all(
             errorQueue.map((err) =>
-              axios.post(process.env.REACT_APP_BACKEND_URL!, err, {
-                withCredentials: true,
-              })
+              axios.post(
+                `${process.env.REACT_APP_BACKEND_URL!}/api/logs`,
+                err,
+                {
+                  withCredentials: true,
+                }
+              )
             )
           );
           setErrorQueue([]);
@@ -75,6 +79,5 @@ export const ErrorProvider: React.FC<{ children: ReactNode }> = ({
 
 export const useError = () => {
   const context = useContext(ErrorContext);
-  console.log("the context: " + context);
   return context;
 };

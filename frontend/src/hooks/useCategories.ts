@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { TAGS_STARTER, TagsStarterMap } from "../data/tags";
 import { MultiValue } from "../pages/AddItem";
-import { useEnvironment } from "../global/EnvironmentProvider";
-import { useError } from "../global/ErrorProvider";
 
 export default function useCategories() {
   const categories: string[] = Object.keys(TAGS_STARTER);

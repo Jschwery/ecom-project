@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Product } from "../../typings";
-import { useEnvironment } from "../global/EnvironmentProvider";
-import { useError } from "../global/ErrorProvider";
 
 type Option = {
   label: string;

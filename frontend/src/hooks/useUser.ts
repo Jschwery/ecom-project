@@ -3,7 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import { Product, User } from "../../typings";
 import { useEnvironment } from "../global/EnvironmentProvider";
 import { useError } from "../global/ErrorProvider";
+import useSWR from "swr";
+
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}`;
+const fetcher = (url: string) =>
+  axios.get(url, { withCredentials: true }).then((res) => res.data);
 
 export default function useUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -12,6 +16,33 @@ export default function useUser() {
   const [allProducts, setAllProducts] = useState<Product[] | null>(null);
   const isDevelopment = useEnvironment();
   const { addErrorToQueue } = useError();
+  const { data: userProducts, error: userProductsError } = useSWR(
+    user ? `/api/users/${user._id}/products` : null,
+    fetcher
+  );
+  const { data: userStatus, error: userStatusError } = useSWR(
+    "/api/users/check",
+    fetcher,
+    { shouldRetryOnError: false }
+  );
+  useEffect(() => {
+    if (userProducts) {
+      setUserProducts(userProducts);
+    }
+    if (userProductsError) {
+      addErrorToQueue(userProductsError);
+    }
+  }, [userProducts, userProductsError]);
+
+  useEffect(() => {
+    if (userStatus) {
+      setUser(userStatus);
+    }
+    if (userStatusError) {
+      addErrorToQueue(userStatusError);
+    }
+  }, [userStatus, userStatusError]);
+
   const fetchData = useCallback(async (endpoint: string) => {
     try {
       setIsLoading(true);
@@ -34,25 +65,6 @@ export default function useUser() {
       return userFound;
     } catch (err) {
       console.error(err);
-    }
-  }, []);
-
-  const getUserProducts = useCallback(async () => {
-    try {
-      const productRequest = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/users/products`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      setUserProducts(productRequest.data);
-    } catch (error: any) {
-      if (isDevelopment) {
-        console.error(error);
-      } else {
-        addErrorToQueue(error);
-      }
     }
   }, []);
 
@@ -186,45 +198,17 @@ export default function useUser() {
     }
   }, []);
 
-  useEffect(() => {
-    getUserProducts();
-  }, []);
-
-  useEffect(() => {
-    const checkUserStatus = async () => {
-      try {
-        const resp = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/users/check`,
-          {
-            withCredentials: true,
-          }
-        );
-        setUser(resp.data);
-      } catch (err: any) {
-        if (isDevelopment) {
-          console.error(err);
-        } else {
-          addErrorToQueue(err);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkUserStatus();
-  }, []);
-
   return {
     user,
     setIsLoading,
     updateUser,
     isLoading,
     products,
+    allProducts: userProducts as Product[],
     setUserProducts,
     getUserById,
     atomicUserUpdate,
     getAllUserProducts,
-    allProducts,
     updateOtherUser,
     returnUserProducts,
   };

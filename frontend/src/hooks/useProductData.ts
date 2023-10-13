@@ -22,9 +22,15 @@ export default function useProductData(productID: string) {
   const { addErrorToQueue } = useError();
 
   useEffect(() => {
+    console.log("the found product");
+    console.log(foundProduct);
+  }, [foundProduct]);
+
+  useEffect(() => {
     const getProduct = async () => {
       try {
         const product = await getProductById(productID);
+
         if (product) {
           setFoundProduct(product);
           setReviewUsers(product.reviews ?? []);

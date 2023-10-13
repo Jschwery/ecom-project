@@ -11,6 +11,8 @@ import useResponsiveFlex from "../hooks/useResponsiveFlex";
 import CategoryScroll from "../components/util/CategoryScroll";
 import ViewProducts from "./users/ViewProducts";
 import SearchBar from "../components/SearchBar";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 
 export const loadingStyles: React.CSSProperties = {
   position: "fixed",
@@ -65,8 +67,17 @@ export const breakpoints = [
   { max: 1800, class: "flex-row-items" },
 ];
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 function App() {
+  let query = useQuery();
+  const navigate = useNavigate();
+  let orderSuccess = query.get("order-success");
+
   const { user } = useUser();
+  const toast = useToast();
   const { products, loading: productsLoading, getProductById } = useProducts();
   const [recentProducts, setRecentProduct] = useState<Product[]>();
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
@@ -74,6 +85,7 @@ function App() {
   const [cartVisible, setCartVisible] = useState<boolean>();
   const [paginatedProducts, setPaginatedProduct] = useState<Product[]>([]);
   let initialFlexDirection = "";
+
   if (typeof window !== "undefined") {
     const windowWidth = window.innerWidth;
 
@@ -145,31 +157,19 @@ function App() {
     fetchProducts();
   }, [user]);
 
-  // useEffect(() => {
-  //   let intervalId: string | number | NodeJS.Timeout | undefined;
+  useEffect(() => {
+    if (orderSuccess) {
+      toast({
+        title: "Success",
+        description: "Order successfully placed!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
 
-  //   if (!products) {
-  //     const fetchNow = () => {
-  //       getProducts();
-  //     };
-
-  //     fetchNow();
-
-  //     intervalId = setInterval(fetchNow, 1000);
-  //   }
-
-  //   return () => {
-  //     if (intervalId) {
-  //       clearInterval(intervalId);
-  //     }
-  //   };
-  // }, [products]);
-
-  // useEffect(() => {
-  //   if (!products) {
-  //     getProducts();
-  //   }
-  // }, []);
+      navigate(".", { replace: true });
+    }
+  }, [orderSuccess, navigate]);
 
   if (productsLoading) {
     return (

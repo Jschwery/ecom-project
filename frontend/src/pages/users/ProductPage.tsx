@@ -177,6 +177,15 @@ function ProductPage() {
     );
   }
 
+  if (!foundProduct) {
+    return (
+      <div className="product-not-found">
+        <h2>Oops!</h2>
+        <p>The product you're looking for is no longer available.</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <SignedInNav />
@@ -310,7 +319,7 @@ function ProductPage() {
               <div className="order-1 min-h-[250px] p-2 md:min-h-0 overflow-hidden flex items-center grow mb-4 md:mb-0  px-4 w-full md:w-[40%] min-w-[300px]">
                 <PictureCarousel
                   images={
-                    foundProduct.imageUrls!.length > 0
+                    (foundProduct?.imageUrls || []).length > 0
                       ? foundProduct.imageUrls
                       : "/images/logo2.svg"
                   }

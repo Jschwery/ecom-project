@@ -1,7 +1,6 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Product, User } from "../../typings";
-import { useToast } from "@chakra-ui/react";
 import { useEnvironment } from "../global/EnvironmentProvider";
 import { useError } from "../global/ErrorProvider";
 import useSWR from "swr";
@@ -92,10 +91,10 @@ export default function useProducts() {
 
   const getProductById = useCallback(async (productId: string) => {
     try {
-      const product: Product = await axios.get(`/api/products/${productId}`, {
+      const product = await axios.get(`${BASE_URL}/api/products/${productId}`, {
         withCredentials: true,
       });
-      return product;
+      return product.data as Product;
     } catch (err: any) {
       if (isDevelopment) {
         console.error(err);

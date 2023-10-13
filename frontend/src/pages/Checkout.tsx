@@ -130,14 +130,7 @@ function Checkout() {
         setOrderSavings(0);
       }
       window.localStorage.clear();
-      toast({
-        title: "Success",
-        description: "Order successfully placed!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      window.location.pathname = "/";
+      window.location.href = "/?order-success=true";
     } catch (error) {
       console.error("Error processing order:", error);
 

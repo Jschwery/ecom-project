@@ -16,12 +16,13 @@ export default function useUser() {
   const [allProducts, setAllProducts] = useState<Product[] | null>(null);
   const isDevelopment = useEnvironment();
   const { addErrorToQueue } = useError();
+
   const { data: userProducts, error: userProductsError } = useSWR(
-    user ? `/api/users/${user._id}/products` : null,
+    user ? `${BASE_URL}/api/users/${user._id}/products` : null,
     fetcher
   );
   const { data: userStatus, error: userStatusError } = useSWR(
-    "/api/users/check",
+    `${BASE_URL}/api/users/check`,
     fetcher,
     { shouldRetryOnError: false }
   );

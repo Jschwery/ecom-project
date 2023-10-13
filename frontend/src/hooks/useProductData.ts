@@ -24,7 +24,7 @@ export default function useProductData(productID: string) {
   useEffect(() => {
     const getProduct = async () => {
       try {
-        const product: Product = await getProductById(productID);
+        const product = await getProductById(productID);
         if (product) {
           setFoundProduct(product);
           setReviewUsers(product.reviews ?? []);

@@ -4,13 +4,8 @@ import { useEffect, useState } from "react";
 import { Product } from "../../../typings";
 
 function CategoryScroll({ category }: { category: string }) {
-  const { products, getProducts } = useProducts();
+  const { products } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  useEffect(() => {
-    if (!products) {
-      getProducts();
-    }
-  }, []);
 
   useEffect(() => {
     if (!products || !Array.isArray(products)) {

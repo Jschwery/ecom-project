@@ -67,12 +67,7 @@ export const breakpoints = [
 
 function App() {
   const { user } = useUser();
-  const {
-    products,
-    loading: productsLoading,
-    getProducts,
-    getProductById,
-  } = useProducts();
+  const { products, loading: productsLoading, getProductById } = useProducts();
   const [recentProducts, setRecentProduct] = useState<Product[]>();
   const divRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement | null>(null);
@@ -95,6 +90,9 @@ function App() {
     breakpoints,
     initialFlexDirection
   );
+  function isProduct(x: any): x is Product {
+    return x && typeof x._id === "string";
+  }
 
   useEffect(() => {
     async function fetchProducts() {
@@ -117,6 +115,9 @@ function App() {
         );
 
         validProducts.sort((a, b) => {
+          if (!isProduct(a) || !isProduct(b)) {
+            return 0;
+          }
           const aViewed = user.recentlyViewed!.find(
             (item) => item.product === a._id
           )?.timeViewed;
@@ -137,38 +138,38 @@ function App() {
           return 0;
         });
 
-        setRecentProduct(validProducts);
+        setRecentProduct(validProducts as Product[]);
       }
     }
 
     fetchProducts();
   }, [user]);
 
-  useEffect(() => {
-    let intervalId: string | number | NodeJS.Timeout | undefined;
+  // useEffect(() => {
+  //   let intervalId: string | number | NodeJS.Timeout | undefined;
 
-    if (!products) {
-      const fetchNow = () => {
-        getProducts();
-      };
+  //   if (!products) {
+  //     const fetchNow = () => {
+  //       getProducts();
+  //     };
 
-      fetchNow();
+  //     fetchNow();
 
-      intervalId = setInterval(fetchNow, 1000);
-    }
+  //     intervalId = setInterval(fetchNow, 1000);
+  //   }
 
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [products]);
+  //   return () => {
+  //     if (intervalId) {
+  //       clearInterval(intervalId);
+  //     }
+  //   };
+  // }, [products]);
 
-  useEffect(() => {
-    if (!products) {
-      getProducts();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!products) {
+  //     getProducts();
+  //   }
+  // }, []);
 
   if (productsLoading) {
     return (

@@ -136,7 +136,9 @@ function FullfillOrder() {
   const handleProductUpdate = async (product: Product) => {
     try {
       const foundProduct = await getProductById(product._id as string);
-
+      if (!foundProduct) {
+        return;
+      }
       if (foundProduct.quantity - product.quantity <= 0) {
         throw new Error("Insufficient product quantity");
       }
@@ -172,6 +174,9 @@ function FullfillOrder() {
     const invalidProducts = [];
     for (const product of memoizedProducts) {
       const foundProduct = await getProductById(product._id as string);
+      if (!foundProduct) {
+        return;
+      }
       if (foundProduct.quantity - product.quantity <= 0) {
         invalidProducts.push(product);
       }

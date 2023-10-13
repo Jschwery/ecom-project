@@ -4,3 +4,17 @@
 {"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-11 05:31:22"}
 {"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-11 05:31:22"}
 {"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-11 05:31:23"}
+{"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-12 07:00:53"}
+{"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-12 07:00:53"}
+{"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-12 07:00:53"}
+{"level":"warn","message":"[GET /api/transactions/seller/6527e0012ed2237494d2f88c] - Transactions not found for the seller","service":"orchtin-ecom","timestamp":"2023-10-12 08:35:15"}
+{"level":"warn","message":"[GET /api/transactions/seller/6527e0012ed2237494d2f88c] - Transactions not found for the seller","service":"orchtin-ecom","timestamp":"2023-10-12 08:35:51"}
+{"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-12 14:31:19"}
+{"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-12 14:31:19"}
+{"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-12 14:31:19"}
+{"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-13 07:47:26"}
+{"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-13 07:47:26"}
+{"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-13 07:47:27"}
+{"level":"info","message":"Starting HTTP server...","service":"orchtin-ecom","timestamp":"2023-10-13 07:59:08"}
+{"level":"info","message":"Server is running on port 5000","service":"orchtin-ecom","timestamp":"2023-10-13 07:59:08"}
+{"level":"info","message":"Database connected!","service":"orchtin-ecom","timestamp":"2023-10-13 07:59:09"}

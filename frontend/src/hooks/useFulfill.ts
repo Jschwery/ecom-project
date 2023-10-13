@@ -45,9 +45,7 @@ export const useFulfill = () => {
       if (order?.productAndCount) {
         const productPromises = order.productAndCount.map(
           async (productInfo) => {
-            const product: Product = await getProductById(
-              productInfo.productID
-            );
+            const product = await getProductById(productInfo.productID);
             if (!product) {
               const syntheticProduct: Product = {
                 accountId: "Buyer",

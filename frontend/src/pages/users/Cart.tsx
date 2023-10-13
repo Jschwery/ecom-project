@@ -55,7 +55,9 @@ export default function Cart({ isCartVisible, setShowCart }: CartProps) {
   useEffect(() => {
     Promise.all(localCart.map((item: any) => getProductById(item.product)))
       .then((fetchedProducts) => {
-        const validProducts = fetchedProducts.filter(Boolean);
+        const validProducts = fetchedProducts.filter(
+          (product): product is Product => Boolean(product)
+        );
         setProducts(validProducts);
       })
       .catch((error) => {

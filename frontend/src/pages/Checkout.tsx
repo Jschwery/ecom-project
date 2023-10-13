@@ -63,9 +63,11 @@ function Checkout() {
 
   async function handleOrderSubmit(event: React.MouseEvent<HTMLButtonElement>) {
     try {
-      const localCartItems: Product[] = await Promise.all(
-        localCart.map((item) => getProductById(item.product as string))
-      );
+      const localCartItems: Product[] = (
+        await Promise.all(
+          localCart.map((item) => getProductById(item.product as string))
+        )
+      ).filter((product): product is Product => product !== undefined);
 
       let productAndCountItems = [];
       let totalAmount = 0;

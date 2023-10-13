@@ -82,9 +82,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const getCartTotalCost = async () => {
     if (localCart && localCart.length > 0) {
       try {
-        const localCartItems: Product[] = await Promise.all(
-          localCart.map((item) => getProductById(item.product as string))
-        );
+        const localCartItems: Product[] = (
+          await Promise.all(
+            localCart.map((item) => getProductById(item.product as string))
+          )
+        ).filter((product): product is Product => product !== undefined);
 
         const totalcost = localCartItems.reduce((acc, productDetail) => {
           if (productDetail.specialOffer) {

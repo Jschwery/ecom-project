@@ -9,7 +9,6 @@ import session from "express-session";
 import usePassport from "./middlewares/passport-config";
 import usersRoutes from "./routes/usersRoutes";
 import logRoutes from "./routes/logRoutes";
-
 import * as AWS from "aws-sdk";
 import cookieParser from "cookie-parser";
 import productRoutes from "./routes/productRoutes";
@@ -22,6 +21,7 @@ import middleLogger from "./middlewares/logger";
 
 dotenv.config();
 const shouldInitialize = process.env.NODE_ENV === "development";
+console.log("should initialize is " + shouldInitialize);
 
 const app = express();
 app.use(cookieParser());
@@ -108,6 +108,9 @@ app.use("/api", logRoutes);
 app.use(middleLogger);
 
 if (!shouldInitialize) {
+  console.log("I should not make it here");
+  console.log("should initialize is " + shouldInitialize);
+
   const privateKey = fs.readFileSync(
     "/etc/letsencrypt/live/www.orchtin.online/privkey.pem"
   );

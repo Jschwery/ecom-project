@@ -161,9 +161,11 @@ export default function UserProfileEdit({
         if (
           userImage &&
           userImage.length > 1 &&
-          !userImage.includes("googleuser")
+          !userImage.includes("googleuser") &&
+          !userImage.includes("https://orchtin")
         ) {
           const s3Response = await uploadImageToS3(userImage);
+
           submitProfileData(values, s3Response);
         } else {
           submitProfileData(values, userImage);

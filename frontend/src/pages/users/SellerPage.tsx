@@ -138,7 +138,14 @@ function SellerPage() {
       updateOtherUser({
         ...productOwner,
         reviews: updatedReviews,
-      });
+      })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.error("An error occurred while updating the user:", err);
+        });
+
       setInput("");
     } else {
       console.error("Product not found!");

@@ -130,10 +130,22 @@ function ProductPage() {
 
   if (!foundProduct)
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        Loading...
-      </div>
+      <>
+        <div className="w-full h-screen flex justify-center items-start p-4">
+          <img
+            className="mt-12"
+            width={240}
+            height={240}
+            src="/images/logo2.svg"
+            alt="Logo"
+          />
+        </div>
+        <div style={loadingStyles}>
+          <div style={spinnerStyles}></div>
+        </div>
+      </>
     );
+
   function handleSubmitReview(
     event: React.MouseEvent<HTMLButtonElement>
   ): void {

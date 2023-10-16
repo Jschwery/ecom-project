@@ -9,7 +9,7 @@ const HeadLinks = () => {
 
   return (
     <Helmet>
-      <link rel="preconnect" href={backendUrl} crossorigin />
+      <link rel="preconnect" href={backendUrl} crossOrigin="use-credentials" />
       <link rel="dns-prefetch" href={backendUrl} />
     </Helmet>
   );

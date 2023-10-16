@@ -22,6 +22,7 @@ import Discover from "./pages/Discover";
 import ProductCategory from "./pages/ProductCategory";
 import { EnvironmentProvider } from "./global/EnvironmentProvider";
 import { ErrorProvider } from "./global/ErrorProvider";
+import HeadLinks from "./config/headLinks";
 
 const root = document.getElementById("root");
 
@@ -56,6 +57,7 @@ const theme = extendTheme({
 
 ReactDOM.render(
   <React.StrictMode>
+    <HeadLinks />
     <ChakraProvider theme={theme}>
       <CSSReset />
       <CartProvider>
